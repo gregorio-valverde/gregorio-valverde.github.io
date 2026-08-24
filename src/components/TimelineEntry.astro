@@ -9,9 +9,10 @@ interface Props {
   skills?: string[];
   hasContent?: boolean;
   lang?: Lang;
+  animationDelay?: number;
 }
 
-const { date, title, type, description, skills, hasContent = false, lang = 'es' } = Astro.props;
+const { date, title, type, description, skills, hasContent = false, lang = 'es', animationDelay = 0 } = Astro.props;
 const copy = ui[lang].journey;
 const formattedDate = new Intl.DateTimeFormat(localeCode(lang), { year: 'numeric', month: 'long' }).format(date);
 const typeLabels = {
@@ -22,7 +23,7 @@ const typeLabels = {
 const entryId = `journey-${lang}-${date.getTime()}`;
 ---
 
-<article class="timeline-entry">
+<article class="timeline-entry" style={`--timeline-delay: ${animationDelay}s`}>
   <div class="timeline-marker">
     <div class="timeline-dot" data-type={type}></div>
     <div class="timeline-line"></div>
@@ -107,31 +108,20 @@ const entryId = `journey-${lang}-${date.getTime()}`;
     position: relative;
     overflow: hidden;
     border-radius: 999px;
-    background:
-      linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--color-border) 78%, transparent),
-        color-mix(in srgb, var(--color-accent) 38%, var(--color-border)),
-        color-mix(in srgb, var(--color-border) 78%, transparent)
-      );
-  }
-  .timeline-line::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: -2.2rem;
-    width: 3px;
-    height: 2.2rem;
-    transform: translateX(-50%);
-    border-radius: 999px;
     background: linear-gradient(
       to bottom,
-      transparent,
-      color-mix(in srgb, var(--color-accent) 95%, white 5%),
-      transparent
+      color-mix(in srgb, var(--color-border) 82%, transparent) 0%,
+      color-mix(in srgb, var(--color-border) 82%, transparent) 28%,
+      color-mix(in srgb, var(--color-accent) 92%, white 8%) 46%,
+      color-mix(in srgb, var(--color-accent) 58%, var(--color-border)) 52%,
+      color-mix(in srgb, var(--color-border) 82%, transparent) 68%,
+      color-mix(in srgb, var(--color-border) 82%, transparent) 100%
     );
-    box-shadow: 0 0 10px color-mix(in srgb, var(--color-accent) 48%, transparent);
-    animation: timeline-flow 2.8s linear infinite;
+    background-size: 100% 220%;
+    background-position: 0 -120%;
+    box-shadow: 0 0 6px color-mix(in srgb, var(--color-accent) 12%, transparent);
+    animation: timeline-line-flow 2.35s linear infinite;
+    animation-delay: var(--timeline-delay, 0s);
   }
   .timeline-content { padding-bottom: 3rem; }
   .timeline-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
@@ -153,11 +143,9 @@ const entryId = `journey-${lang}-${date.getTime()}`;
   .timeline-body[hidden] { display: none; }
   .timeline-body { margin-top: 1rem; color: var(--color-text-secondary); }
 
-  @keyframes timeline-flow {
-    0% { top: -2.2rem; opacity: 0; }
-    12% { opacity: 1; }
-    82% { opacity: 1; }
-    100% { top: calc(100% + 0.2rem); opacity: 0; }
+  @keyframes timeline-line-flow {
+    0% { background-position: 0 -120%; }
+    100% { background-position: 0 120%; }
   }
 
   @keyframes timeline-node-pulse {
@@ -167,7 +155,7 @@ const entryId = `journey-${lang}-${date.getTime()}`;
 
   @media (prefers-reduced-motion: reduce) {
     .timeline-dot,
-    .timeline-line::after { animation: none; }
-    .timeline-line::after { top: 42%; opacity: .55; }
+    .timeline-line { animation: none; }
+    .timeline-line { background-position: 0 50%; }
   }
 </style>

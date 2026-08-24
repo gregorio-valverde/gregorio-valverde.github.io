@@ -29,9 +29,9 @@ const entriesWithContent = await Promise.all(sortedJourneyEntries.map(async (ent
           <button data-journey-filter="experience" aria-pressed="false" type="button">{copy.experience}</button>
         </div>
         <div class="journey-timeline" aria-live="polite">
-          {entriesWithContent.map(({ entry, Content, hasContent }) => (
+          {entriesWithContent.map(({ entry, Content, hasContent }, index) => (
             <div class="journey-filter-item" data-entry-type={entry.data.type}>
-              <TimelineEntry date={entry.data.date} title={entry.data.title} type={entry.data.type} description={entry.data.description} skills={entry.data.skills} hasContent={hasContent} lang={lang}>
+              <TimelineEntry date={entry.data.date} title={entry.data.title} type={entry.data.type} description={entry.data.description} skills={entry.data.skills} hasContent={hasContent} lang={lang} animationDelay={index * -0.55}>
                 {hasContent && <Content />}
               </TimelineEntry>
             </div>
