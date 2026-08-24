@@ -1,27 +1,13 @@
 /**
  * Page Metadata Configuration
- * 
- * Centralized SEO metadata for all static pages. Single source of truth
- * for titles and descriptions to ensure consistency across the site.
- * 
- * Usage:
- * ```astro
- * ---
- * import BaseLayout from '../layouts/BaseLayout.astro';
- * import SEO from '../components/SEO.astro';
- * import { pagesConfig } from '../pages.config';
- * ---
- * 
- * <BaseLayout>
- *   <SEO 
- *     slot="head"
- *     title={pagesConfig.projects.title}
- *     description={pagesConfig.projects.description}
- *   />
- *   <!-- Page content -->
- * </BaseLayout>
- * ```
- * 
+ *
+ * Centralized SEO metadata for all static pages.
+ * This file defines page titles, SEO descriptions, visible headings,
+ * and intro texts for the main sections of the portfolio.
+ *
+ * Dynamic pages, such as individual project pages, usually generate
+ * their own metadata from their MDX frontmatter.
+ *
  * @module pages.config
  */
 
@@ -29,102 +15,123 @@
  * Page metadata interface
  */
 interface PageMeta {
-  /** Page title (used in browser tab and SEO) */
+  /** Page title used in browser tab and SEO */
   title: string;
-  
-  /** Page description (used in meta tags and SEO) */
+
+  /** Page description used in meta tags and SEO */
   description: string;
-  
-  /** Page heading (displayed as h1, optional - defaults to title) */
+
+  /** Page heading displayed as h1 */
   heading?: string;
-  
-  /** Page intro text (displayed below heading, optional) */
+
+  /** Intro text displayed below heading */
   intro?: string;
 }
 
 /**
  * Pages configuration object
- * 
- * Contains metadata for all static pages. Dynamic pages (like individual
- * project or article pages) generate their own metadata from content.
+ *
+ * Contains metadata for all static pages.
  */
 export const pagesConfig = {
   /**
    * Home page (/)
-   * Note: Home page uses siteConfig for title/description as it represents the site itself
+   * The home page usually uses siteConfig for title and description.
    */
   home: {
     title: 'Home',
-    description: 'Engineering leader specializing in system architecture, technical decision-making, and delivering measurable business impact.',
+    description:
+      'Professional portfolio focused on Business Intelligence, Data Engineering, and Analytics for business operations and digital transformation.',
   },
-  
+
   /**
    * Projects listing page (/projects)
    */
   projects: {
-    title: 'Projects - Case Studies',
-    description: 'Detailed case studies showcasing problem-solving approach, technical decisions, and measurable impact across various engineering projects.',
+    title: 'Projects - Data & Analytics Case Studies',
+    description:
+      'Case studies about Business Intelligence, Data Engineering, analytics, automation, and practical data solutions for business operations.',
     heading: 'Projects',
-    intro: 'Case studies that demonstrate how I approach complex problems, make technical decisions, and deliver measurable impact. Each project tells the story of the challenge, the constraints, the decisions made, and the outcomes achieved.',
+    intro:
+      'A selection of projects where I document business problems, data architecture decisions, technical implementation, and the value delivered through data pipelines, analytical models, and dashboards.',
   },
-  
+
   /**
    * Decisions listing page (/decisions)
    */
   decisions: {
-    title: 'Decisions - Architectural & Technical Choices',
-    description: 'A log of architectural and technical decisions, documenting the context, alternatives considered, and reasoning behind key engineering choices.',
-    heading: 'Decisions',
-    intro: 'A transparent log of architectural and technical decisions I\'ve made throughout my career. Each entry documents the context, alternatives considered, and the reasoning behind the choice.',
+    title: 'Technical Decisions - Data Engineering & BI',
+    description:
+      'Technical decisions about data architecture, ETL pipelines, analytical modeling, dashboards, and maintainable data solutions.',
+    heading: 'Technical Decisions',
+    intro:
+      'A log of technical decisions made while building data and analytics solutions. Each entry explains the context, alternatives considered, reasoning, and trade-offs behind the decision.',
   },
-  
+
   /**
    * Journey timeline page (/journey)
    */
   journey: {
-    title: 'Journey - Career Growth & Learning Timeline',
-    description: 'A chronological timeline of my professional journey, highlighting key milestones, learning moments, and career transitions that shaped my growth as an engineer.',
+    title: 'Journey - Career Growth in Data & Analytics',
+    description:
+      'A timeline of my professional development in Business Intelligence, Data Engineering, Analytics, and Digital Transformation.',
     heading: 'Journey',
-    intro: 'A timeline of my professional growth and learning progression. This isn\'t a resume—it\'s a story of how I\'ve evolved as an engineer, the pivotal moments that shaped my thinking, and the skills I\'ve developed along the way.',
+    intro:
+      'A timeline of my professional growth, from Physics and data analysis to real business projects involving BI, data engineering, automation, and digital transformation.',
   },
-  
+
   /**
    * Writing/blog listing page (/writing)
+   *
+   * This section can stay configured even if it is not visible
+   * in the navigation yet.
    */
   writing: {
-    title: 'Writing - Technical Articles & Insights',
-    description: 'Technical articles, insights, and lessons learned from building software systems and solving engineering challenges.',
+    title: 'Writing - Data & Analytics Notes',
+    description:
+      'Technical notes and lessons learned about data engineering, business intelligence, analytics, and digital transformation.',
     heading: 'Writing',
-    intro: 'Technical articles, insights, and lessons learned from building software systems. I write about architecture decisions, engineering practices, and the challenges of delivering reliable software at scale.',
+    intro:
+      'Notes and reflections about data engineering, BI, analytics, and the practical challenges of building useful data solutions in business environments.',
   },
 
   /**
    * Speaking engagements page (/speaking)
+   *
+   * Useful later if you want to include internal talks, presentations,
+   * or conference participation.
    */
   speaking: {
     title: 'Speaking - Talks & Presentations',
-    description: 'Conference talks, meetup presentations, podcast appearances, and workshops on software engineering, architecture, and technical leadership.',
+    description:
+      'Talks and presentations about digital transformation, data, business intelligence, and analytics.',
     heading: 'Speaking',
-    intro: 'I regularly speak at conferences, meetups, and on podcasts about software architecture, engineering practices, and technical leadership. Here\'s a collection of my talks and presentations.',
+    intro:
+      'A collection of talks and presentations related to data, business intelligence, analytics, and digital transformation.',
   },
-  
+
   /**
    * Uses/tools page (/uses)
+   *
+   * Useful later if you want to document your technical stack.
    */
   uses: {
     title: 'Uses - Tools, Stack & Environment',
-    description: 'A comprehensive list of the tools, technologies, and environment I use for development work.',
+    description:
+      'Tools and technologies I use for data engineering, business intelligence, analytics, and development workflows.',
     heading: 'Uses',
-    intro: 'A transparent look at the tools, technologies, and environment that power my development workflow. This page documents what I use and why, helping other engineers discover useful tools and understand my technical context.',
+    intro:
+      'A practical overview of the tools and technologies I use to build data pipelines, analytical models, dashboards, and automation workflows.',
   },
-  
+
   /**
    * Contact page (/contact)
    */
   contact: {
     title: 'Contact - Get in Touch',
-    description: 'Get in touch to discuss opportunities, collaborations, or technical challenges.',
-    heading: 'Let\'s Talk',
+    description:
+      'Get in touch to discuss data engineering, business intelligence, analytics, digital transformation, or professional opportunities.',
+    heading: "Let's Talk",
   },
 } as const;
 

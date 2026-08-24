@@ -1,0 +1,112 @@
+---
+title: "Electricity Demand Forecasting with Machine Learning"
+role: "Data Scientist / Machine Learning"
+year: 2024
+duration: "Master's Thesis Project"
+teamSize: 1
+outcomeSummary: "Comparison of statistical and machine learning models to forecast electricity demand using time series, weather data, and exogenous variables."
+overview: "This project explores the use of machine learning and traditional statistical models to forecast electricity demand. The goal was to compare different modeling approaches, evaluate their performance, and understand how external variables such as temperature and holidays influence energy consumption."
+problem: "Electricity demand is highly variable and difficult to store efficiently, making accurate forecasting important for planning, optimization, and reducing economic inefficiencies."
+constraints:
+  - "The project was developed as an academic Master's thesis."
+  - "The available data had daily granularity, which limited the ability to model short-term demand variations."
+  - "Different types of models had to be compared under a consistent preprocessing and evaluation workflow."
+approach: "I built a complete workflow covering data extraction, preprocessing, exploratory analysis, model training, and performance comparison. The project included traditional time series modeling with ARIMAX, supervised machine learning models such as Decision Tree, Random Forest and XGBoost, and a neural network approach using LSTM."
+keyDecisions:
+  - decision: "Compare statistical, machine learning, and deep learning approaches"
+    reasoning: "Electricity demand forecasting can be approached from different modeling perspectives. Comparing ARIMAX, tree-based models, and LSTM helped evaluate trade-offs between interpretability, accuracy, complexity, and computational cost."
+    alternatives:
+      - "Use only traditional time series models"
+      - "Use only machine learning models"
+      - "Focus only on deep learning"
+  - decision: "Include exogenous variables such as weather and holidays"
+    reasoning: "Electricity demand is influenced by external factors. Including variables such as temperature and holidays helped improve the explanatory power of the models."
+    alternatives:
+      - "Use only historical demand"
+      - "Use only calendar-based features"
+  - decision: "Use XGBoost as a strong baseline for tabular time series forecasting"
+    reasoning: "Tree-based gradient boosting models are often effective for structured datasets and can capture non-linear relationships with reasonable computational cost."
+    alternatives:
+      - "Random Forest"
+      - "Decision Tree"
+      - "LSTM"
+techStack:
+  - "Python"
+  - "Pandas"
+  - "NumPy"
+  - "Scikit-learn"
+  - "XGBoost"
+  - "Keras"
+  - "Skforecast"
+  - "Matplotlib"
+  - "Jupyter Notebook"
+impact:
+  metrics:
+    - label: "Models compared"
+      value: "ARIMAX, Decision Tree, Random Forest, XGBoost, LSTM"
+    - label: "Best practical model"
+      value: "XGBoost"
+    - label: "Workflow"
+      value: "Extraction, preprocessing, EDA, modeling, and evaluation"
+  qualitative: "The project helped me understand how to structure a complete machine learning workflow for time series forecasting, from raw data extraction to model comparison and final conclusions."
+learnings:
+  - "Model performance depends not only on the algorithm, but also on data quality, feature engineering, and temporal granularity."
+  - "Exogenous variables can improve forecasting performance when they are relevant and properly processed."
+  - "Complex models such as LSTM are not always the best practical option when computational cost and data granularity are limited."
+featured: true
+status: completed
+order: 3
+---
+
+## Context
+
+This project was developed as my Master's thesis in Big Data and Data Science.
+
+The objective was to analyze whether machine learning techniques could improve electricity demand forecasting compared with more traditional time series approaches.
+
+Electricity demand forecasting is a relevant problem because demand is variable, electricity is difficult to store at scale, and forecasting errors can create operational and economic inefficiencies.
+
+## Project Workflow
+
+The project followed a full machine learning workflow:
+
+1. Data extraction from electricity demand and weather sources.
+2. Data cleaning and preprocessing.
+3. Exploratory data analysis.
+4. Feature engineering using demand, weather, and calendar variables.
+5. Model training and comparison.
+6. Analysis of results and limitations.
+
+## Models Implemented
+
+The project compared several types of models:
+
+- ARIMAX as a traditional statistical time series model.
+- Decision Tree, Random Forest, and XGBoost as supervised machine learning models.
+- LSTM as a deep learning model for sequential data.
+
+This comparison allowed me to evaluate different trade-offs between accuracy, interpretability, computational cost, and model complexity.
+
+## Results
+
+XGBoost showed the best practical balance between predictive performance and computational cost.
+
+The LSTM model showed potential, but its results were limited by processing time and the daily granularity of the data.
+
+The project also showed that exogenous variables, especially temperature and holidays, were relevant for improving the forecasts. Other variables, such as humidity, introduced more noise and were less useful.
+
+## What I Learned
+
+This project helped me consolidate several important skills:
+
+- Working with time series data.
+- Building supervised learning workflows.
+- Comparing statistical, machine learning, and deep learning approaches.
+- Evaluating model performance beyond accuracy alone.
+- Understanding the importance of feature engineering in forecasting problems.
+
+## Repository
+
+The source code, notebooks, data structure, and thesis report are available on GitHub:
+
+[View project on GitHub](https://github.com/gregorio-valverde/electricity-demand-forecasting-ml)

@@ -48,7 +48,7 @@ export const siteConfig = {
    * Should be the full production URL without trailing slash.
    * Example: 'https://example.com'
    */
-  url: getEnv('SITE_URL', 'https://example.com'),
+  url: getEnv('SITE_URL', 'https://gregoriovalverde.github.io'),
   
   /**
    * Site language (ISO 639-1 code)
@@ -63,14 +63,17 @@ export const siteConfig = {
    * 
    * Used as fallback when page-specific title is not provided.
    */
-  title: getEnv('SITE_TITLE', 'Professional Portfolio'),
+  title: getEnv('SITE_TITLE', 'Gregorio Valverde | Data Engineering & Analytics'),
   
   /**
    * Site description
    * 
    * Default meta description for SEO and social sharing.
    */
-  description: getEnv('SITE_DESCRIPTION', 'Engineering leader specializing in system architecture, technical decision-making, and delivering measurable business impact.'),
+  description: getEnv(
+  'SITE_DESCRIPTION',
+  'Professional portfolio of Gregorio Valverde, focused on Business Intelligence, Data Engineering, and Analytics for business operations and digital transformation.'
+),
   
   /**
    * Author information
@@ -80,19 +83,21 @@ export const siteConfig = {
    */
   author: {
     /** Full name */
-    name: getEnv('SITE_AUTHOR_NAME', 'Your Name'),
+    name: getEnv('SITE_AUTHOR_NAME', 'Gregorio Valverde Navarro'),
     
     /** Professional title or role */
-    title: getEnv('SITE_AUTHOR_TITLE', 'Senior Software Engineer'),
+    title: getEnv('SITE_AUTHOR_TITLE', 'Data & Analytics Engineer'),
     
     /** Short biography or professional summary */
-    bio: getEnv('SITE_AUTHOR_BIO', 'Engineering leader focused on solving complex technical challenges through thoughtful architecture and pragmatic trade-off analysis.'),
-    
+    bio: getEnv(
+      'SITE_AUTHOR_BIO',
+      'Physics graduate specialized in Business Intelligence, Data Engineering, and Analytics. I build data pipelines, analytical models, and dashboards that help business teams make better decisions.'
+    ),
     /** Contact email address */
-    email: getEnv('SITE_AUTHOR_EMAIL', 'hello@example.com'),
+    email: getEnv('SITE_AUTHOR_EMAIL', 'gregoriovalverde8@gmail.com'),
     
     /** Location (optional, empty string to hide) */
-    location: getEnv('SITE_AUTHOR_LOCATION', ''),
+    location: getEnv('SITE_AUTHOR_LOCATION', 'Spain'),
   },
   
   /**
@@ -103,10 +108,10 @@ export const siteConfig = {
    */
   social: {
     /** GitHub profile URL */
-    github: getEnv('SOCIAL_GITHUB', ''),
+    github: getEnv('SOCIAL_GITHUB', 'https://github.com/gregorio-valverde/gvn2001'),
     
     /** LinkedIn profile URL */
-    linkedin: getEnv('SOCIAL_LINKEDIN', ''),
+    linkedin: getEnv('SOCIAL_LINKEDIN', 'https://www.linkedin.com/in/gregorio-valverde-navarro-0b324515b/'),
     
     /** Twitter/X profile URL */
     twitter: getEnv('SOCIAL_TWITTER', ''),
@@ -128,9 +133,9 @@ export const siteConfig = {
     { label: 'Projects', href: '/projects' },
     { label: 'Decisions', href: '/decisions' },
     { label: 'Journey', href: '/journey' },
-    { label: 'Writing', href: '/writing' },
-    { label: 'Speaking', href: '/speaking' },
-    { label: 'Uses', href: '/uses' },
+    /**{ label: 'Writing', href: '/writing' }, */
+    /** { label: 'Speaking', href: '/speaking' }, */
+    /** { label: 'Uses', href: '/uses' }, */
     { label: 'Contact', href: '/contact' },
   ],
 } as const;
