@@ -1,4 +1,4 @@
 ---
-import {getCollection} from 'astro:content';import PublicationDetailPage from '../../../components/pages/PublicationDetailPage.astro';import {contentLang,contentSlug} from '../../../i18n';export async function getStaticPaths(){const entries=(await getCollection('publications')).filter(e=>contentLang(e.id)==='en'&&!e.data.draft);return entries.map(entry=>({params:{slug:contentSlug(entry.id)},props:{entry}}))}const {entry}=Astro.props;
+import {getCollection,type CollectionEntry} from 'astro:content';import PublicationDetailPage from '../../../components/pages/PublicationDetailPage.astro';import {contentLang,contentSlug} from '../../../i18n';export async function getStaticPaths(){const entries=(await getCollection('publications')).filter(e=>contentLang(e.id)==='en'&&!e.data.draft);return entries.map(entry=>({params:{slug:contentSlug(entry.id)},props:{entry}}))}interface Props{entry:CollectionEntry<'publications'>}const {entry}=Astro.props as Props;
 ---
 <PublicationDetailPage entry={entry} lang="en" />

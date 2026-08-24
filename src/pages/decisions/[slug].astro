@@ -1,6 +1,6 @@
 ---
 import DecisionDetailPage from '../../components/pages/DecisionDetailPage.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 import { contentLang, contentSlug, localizePath } from '../../i18n';
 
@@ -21,6 +21,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   });
 };
 
-const { decision, alternatePath } = Astro.props;
+interface Props { decision: CollectionEntry<'decisions'>; alternatePath?: string; }
+const { decision, alternatePath } = Astro.props as Props;
 ---
 <DecisionDetailPage decision={decision} lang="es" alternatePath={alternatePath} />

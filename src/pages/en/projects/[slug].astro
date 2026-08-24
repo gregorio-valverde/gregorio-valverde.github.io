@@ -1,6 +1,6 @@
 ---
 import ProjectDetailPage from '../../../components/pages/ProjectDetailPage.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 import { contentLang, contentSlug, localizePath } from '../../../i18n';
 
@@ -21,6 +21,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   });
 };
 
-const { project, alternatePath } = Astro.props;
+interface Props { project: CollectionEntry<'projects'>; alternatePath?: string; }
+const { project, alternatePath } = Astro.props as Props;
 ---
 <ProjectDetailPage project={project} lang="en" alternatePath={alternatePath} />
