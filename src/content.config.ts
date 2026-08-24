@@ -163,10 +163,10 @@ const decisionsCollection = defineCollection({
  * Journey Timeline Collection
  * 
  * Career growth and learning progression timeline with milestones,
- * learning experiences, and career transitions.
+ * learning experiences, and professional experiences.
  * 
  * Features:
- * - Three entry types (milestone, learning, transition)
+ * - Three entry types (milestone, learning, experience)
  * - Skills/technologies per entry
  * - Optional expandable content
  */
@@ -180,7 +180,7 @@ const journeyCollection = defineCollection({
     title: z.string(),
     
     /** Type of timeline entry */
-    type: z.enum(['milestone', 'learning', 'transition']),
+    type: z.enum(['milestone', 'learning', 'experience']),
     
     /** Brief description */
     description: z.string(),

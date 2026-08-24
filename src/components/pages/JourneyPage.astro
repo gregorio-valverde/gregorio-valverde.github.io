@@ -26,7 +26,7 @@ const entriesWithContent = await Promise.all(sortedJourneyEntries.map(async (ent
           <button class="active" data-journey-filter="all" aria-pressed="true" type="button">{lang === 'es' ? 'Todo' : 'All'}</button>
           <button data-journey-filter="milestone" aria-pressed="false" type="button">{copy.milestone}</button>
           <button data-journey-filter="learning" aria-pressed="false" type="button">{copy.learning}</button>
-          <button data-journey-filter="transition" aria-pressed="false" type="button">{copy.transition}</button>
+          <button data-journey-filter="experience" aria-pressed="false" type="button">{copy.experience}</button>
         </div>
         <div class="journey-timeline" aria-live="polite">
           {entriesWithContent.map(({ entry, Content, hasContent }) => (
