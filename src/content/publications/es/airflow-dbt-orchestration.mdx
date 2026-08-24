@@ -1,0 +1,16 @@
+---
+title: "Separar orquestación y transformación con Airflow + dbt"
+description: "Una decisión de arquitectura para mantener responsabilidades claras entre ejecución de pipelines y lógica de transformación."
+date: 2026-08-24
+type: decision
+tags: [Airflow, dbt, Data Engineering, Architecture]
+featured: true
+---
+## Contexto
+Cuando una plataforma de datos crece, mezclar la orquestación con toda la lógica de transformación hace más difícil mantener, probar y evolucionar los pipelines.
+
+## Decisión
+Utilizar Airflow para coordinar dependencias, planificación y ejecución, y dbt para concentrar la transformación SQL, modelado y tests de datos.
+
+## Por qué
+La separación hace que cada herramienta tenga una responsabilidad clara y permite evolucionar la capa de transformación sin convertir el DAG en el lugar donde vive toda la lógica de negocio.

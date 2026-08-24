@@ -1,6 +1,7 @@
 ---
 import BaseCard from './BaseCard.astro';
 import ForwardLink from './ForwardLink.astro';
+import ProjectVisual from './ProjectVisual.astro';
 import { localizePath, ui, type Lang } from '../i18n';
 
 interface Props {
@@ -40,6 +41,7 @@ const href = localizePath(`/projects/${slug}`, lang);
 ---
 
 <BaseCard href={href} class="project-card">
+  <ProjectVisual slot="visual" slug={slug} techStack={techStack} />
   <div slot="badge" class="card-badges">
     {featured && (
       <span class="featured-badge">
@@ -76,5 +78,7 @@ const href = localizePath(`/projects/${slug}`, lang);
   .status-badge { display: inline-flex; align-items: center; font-size: 0.625rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.25rem 0.5rem; border-radius: 4px; }
   .status--ongoing { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
   .status--archived { background: rgba(115, 115, 115, 0.15); color: var(--color-text-muted); }
+  :global(.project-card) { overflow: hidden; transform: translateY(0); transition: transform .22s ease, border-color .22s ease, background .22s ease; }
+  :global(.project-card:hover) { transform: translateY(-4px); }
   .tag-more { font-size: 0.75rem; padding: 0.25rem 0.5rem; color: var(--color-text-muted); }
 </style>

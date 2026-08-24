@@ -223,6 +223,20 @@ const writingCollection = defineCollection({
   }),
 });
 
+
+const publicationsCollection = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/publications' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.coerce.date(),
+    type: z.enum(['decision', 'article', 'note']),
+    tags: z.array(z.string()).default([]),
+    featured: z.boolean().default(false),
+    draft: z.boolean().default(false),
+  }),
+});
+
 /**
  * Uses Collection
  * 
@@ -356,6 +370,7 @@ export const collections = {
   decisions: decisionsCollection,
   journey: journeyCollection,
   writing: writingCollection,
+  publications: publicationsCollection,
   uses: usesCollection,
   speaking: speakingCollection,
   testimonials: testimonialsCollection,

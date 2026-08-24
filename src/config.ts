@@ -94,7 +94,7 @@ export const siteConfig = {
       'Physics graduate specialized in Business Intelligence, Data Engineering, and Analytics. I build data pipelines, analytical models, and dashboards that help business teams make better decisions.'
     ),
     /** Contact email address */
-    email: getEnv('SITE_AUTHOR_EMAIL', 'gregorio.valna@gmail.com'),
+    email: getEnv('SITE_AUTHOR_EMAIL', 'gregoriovalverde8@gmail.com'),
     
     /** Location (optional, empty string to hide) */
     location: getEnv('SITE_AUTHOR_LOCATION', 'Spain'),
@@ -131,7 +131,7 @@ export const siteConfig = {
    */
   nav: [
     { key: 'projects', href: '/projects' },
-    { key: 'decisions', href: '/decisions' },
+    { key: 'publications', href: '/publications' },
     { key: 'journey', href: '/journey' },
     /** { key: 'writing', href: '/writing' }, */
     /** { key: 'speaking', href: '/speaking' }, */

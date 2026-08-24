@@ -21,19 +21,53 @@ const entriesWithContent = await Promise.all(sortedJourneyEntries.map(async (ent
   <main class="page-container">
     <header class="page-header"><h1 class="page-title">{copy.heading}</h1><p class="page-intro">{copy.intro}</p></header>
     {entriesWithContent.length > 0 ? (
-      <div class="journey-timeline">
-        {entriesWithContent.map(({ entry, Content, hasContent }) => (
-          <TimelineEntry date={entry.data.date} title={entry.data.title} type={entry.data.type} description={entry.data.description} skills={entry.data.skills} hasContent={hasContent} lang={lang}>
-            {hasContent && <Content />}
-          </TimelineEntry>
-        ))}
-      </div>
+      <section class="journey-interactive" data-journey-root>
+        <div class="journey-filters" role="group" aria-label={lang === 'es' ? 'Filtrar trayectoria' : 'Filter journey'}>
+          <button class="active" data-journey-filter="all" aria-pressed="true" type="button">{lang === 'es' ? 'Todo' : 'All'}</button>
+          <button data-journey-filter="milestone" aria-pressed="false" type="button">{copy.milestone}</button>
+          <button data-journey-filter="learning" aria-pressed="false" type="button">{copy.learning}</button>
+          <button data-journey-filter="transition" aria-pressed="false" type="button">{copy.transition}</button>
+        </div>
+        <div class="journey-timeline" aria-live="polite">
+          {entriesWithContent.map(({ entry, Content, hasContent }) => (
+            <div class="journey-filter-item" data-entry-type={entry.data.type}>
+              <TimelineEntry date={entry.data.date} title={entry.data.title} type={entry.data.type} description={entry.data.description} skills={entry.data.skills} hasContent={hasContent} lang={lang}>
+                {hasContent && <Content />}
+              </TimelineEntry>
+            </div>
+          ))}
+        </div>
+      </section>
     ) : <p class="empty-state">{copy.empty}</p>}
   </main>
 
+  <script>
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const button = target.closest<HTMLButtonElement>('[data-journey-filter]');
+      if (!button) return;
+
+      const root = button.closest<HTMLElement>('[data-journey-root]');
+      if (!root) return;
+
+      const selectedType = button.dataset.journeyFilter ?? 'all';
+
+      root.querySelectorAll<HTMLButtonElement>('[data-journey-filter]').forEach((candidate) => {
+        const isActive = candidate === button;
+        candidate.classList.toggle('active', isActive);
+        candidate.setAttribute('aria-pressed', String(isActive));
+      });
+
+      root.querySelectorAll<HTMLElement>('[data-entry-type]').forEach((item) => {
+        item.hidden = selectedType !== 'all' && item.dataset.entryType !== selectedType;
+      });
+    });
+  </script>
   <style>
-    .journey-timeline {
-      margin-top: 2rem;
-    }
+    .journey-filters{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1.5rem}.journey-filters button{border:1px solid var(--color-border);background:var(--color-bg-secondary);color:var(--color-text-secondary);border-radius:999px;padding:.55rem .8rem;cursor:pointer;font:inherit;font-size:.78rem}.journey-filters button:hover,.journey-filters button.active{color:var(--color-text);border-color:var(--color-text-muted)}.journey-filters button.active{box-shadow:inset 0 0 0 1px var(--color-accent)}
+    .journey-interactive{margin-top:2rem}.journey-timeline { margin-top: 2rem; }
+    .journey-filter-item[hidden]{display:none}
   </style>
 </BaseLayout>

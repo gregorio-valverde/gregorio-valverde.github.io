@@ -1,0 +1,25 @@
+---
+interface Props { slug: string; techStack?: string[]; }
+const { slug, techStack = [] } = Astro.props;
+const isForecast = slug.includes('electricity') || techStack.some((t) => /machine learning|forecast|pandas|scikit/i.test(t));
+const nodes = techStack.slice(0,4);
+---
+<div class="project-visual" aria-hidden="true">
+  {isForecast ? (
+    <svg class="forecast" viewBox="0 0 420 120" preserveAspectRatio="none">
+      <path class="grid" d="M0 30H420M0 60H420M0 90H420" />
+      <path class="line line-history" d="M0 88 C35 74 55 82 82 62 S135 48 160 68 S205 84 230 49 S275 38 300 55" />
+      <path class="line line-forecast" d="M300 55 C330 42 345 65 365 45 S397 32 420 40" />
+      <circle class="pulse" cx="300" cy="55" r="4" />
+    </svg>
+  ) : (
+    <div class="mini-flow">
+      {(nodes.length ? nodes : ['Source','Airflow','dbt','BI']).map((node, index) => (
+        <><span class="mini-node">{node}</span>{index < (nodes.length ? nodes.length : 4)-1 && <i class="mini-link"><b></b></i>}</>
+      ))}
+    </div>
+  )}
+</div>
+<style>
+.project-visual{height:126px;margin:-1.5rem -1.75rem 1.2rem;border-bottom:1px solid var(--color-border);background:radial-gradient(circle at 20% 20%,var(--color-accent-muted),transparent 42%),var(--color-bg);overflow:hidden;border-radius:8px 8px 0 0}.forecast{width:100%;height:100%}.grid{stroke:var(--color-border);stroke-width:1;fill:none}.line{fill:none;stroke-width:3;vector-effect:non-scaling-stroke}.line-history{stroke:var(--color-text-muted)}.line-forecast{stroke:var(--color-accent);stroke-dasharray:8 8;animation:dash 7s linear infinite}.pulse{fill:var(--color-accent);animation:pulse 1.8s ease-in-out infinite}@keyframes dash{to{stroke-dashoffset:-64}}@keyframes pulse{50%{r:7;opacity:.35}}.mini-flow{height:100%;display:flex;align-items:center;justify-content:center;padding:1rem;gap:.45rem}.mini-node{min-width:52px;max-width:82px;padding:.48rem .55rem;border:1px solid var(--color-border);border-radius:8px;background:var(--color-bg-elevated);font-size:.62rem;color:var(--color-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}.mini-link{position:relative;width:26px;height:1px;background:var(--color-border)}.mini-link:after{content:'›';position:absolute;right:-3px;top:-9px;color:var(--color-text-muted)}.mini-link b{position:absolute;width:4px;height:4px;top:-2px;border-radius:50%;background:var(--color-accent);animation:miniFlow 1.8s linear infinite}@keyframes miniFlow{from{left:0}to{left:22px}}@media(max-width:640px){.project-visual{margin:-1.25rem -1.5rem 1rem}}@media(prefers-reduced-motion:reduce){.line-forecast,.pulse,.mini-link b{animation:none}.mini-link b{left:50%}}
+</style>

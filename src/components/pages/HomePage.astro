@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SEO from '../SEO.astro';
 import StructuredData from '../StructuredData.astro';
+import ProjectCard from '../ProjectCard.astro';
 import { getCollection } from 'astro:content';
 import { siteConfig } from '../../config';
 import { contentLang, contentSlug, localizePath, translateTemplate, ui, type Lang } from '../../i18n';
@@ -57,11 +58,7 @@ const homeDescription = lang === 'es'
       {featuredProjects.length > 0 ? (
         <div class="project-grid">
           {featuredProjects.map((project) => (
-            <a href={localizePath(`/projects/${contentSlug(project.id)}`, lang)} class="project-card">
-              <span class="project-role">{project.data.role}</span>
-              <h3>{project.data.title}</h3>
-              <p>{project.data.outcomeSummary}</p>
-            </a>
+            <ProjectCard title={project.data.title} slug={contentSlug(project.id)} outcomeSummary={project.data.outcomeSummary} role={project.data.role} year={project.data.year} techStack={project.data.techStack} featured={project.data.featured} status={project.data.status} lang={lang} />
           ))}
         </div>
       ) : (
@@ -94,9 +91,7 @@ const homeDescription = lang === 'es'
       margin-bottom: 3rem;
     }
 
-    .hero-simple {
-      max-width: 760px;
-    }
+    .hero-simple { max-width: 820px; }
 
     .eyebrow {
       font-size: 0.75rem;

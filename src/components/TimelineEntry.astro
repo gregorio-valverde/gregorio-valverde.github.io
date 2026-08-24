@@ -52,7 +52,7 @@ const entryId = `journey-${lang}-${date.getTime()}`;
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
-        <div id={entryId} class="timeline-body" aria-hidden="true">
+        <div id={entryId} class="timeline-body" aria-hidden="true" hidden>
           <div class="timeline-body-content prose"><slot /></div>
         </div>
       </>
@@ -61,20 +61,23 @@ const entryId = `journey-${lang}-${date.getTime()}`;
 </article>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
-    document.querySelectorAll('.expand-toggle').forEach((button) => {
-      if (button.getAttribute('data-ready') === 'true') return;
-      button.setAttribute('data-ready', 'true');
-      button.addEventListener('click', () => {
-        const controls = button.getAttribute('aria-controls');
-        if (!controls) return;
-        const body = document.getElementById(controls);
-        if (!body) return;
-        const expanded = button.getAttribute('aria-expanded') === 'true';
-        button.setAttribute('aria-expanded', String(!expanded));
-        body.setAttribute('aria-hidden', String(expanded));
-      });
-    });
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const button = target.closest<HTMLButtonElement>('.expand-toggle');
+    if (!button) return;
+
+    const controls = button.getAttribute('aria-controls');
+    if (!controls) return;
+
+    const body = document.getElementById(controls);
+    if (!body) return;
+
+    const willExpand = button.getAttribute('aria-expanded') !== 'true';
+    button.setAttribute('aria-expanded', String(willExpand));
+    body.setAttribute('aria-hidden', String(!willExpand));
+    body.hidden = !willExpand;
   });
 </script>
 
@@ -103,6 +106,6 @@ const entryId = `journey-${lang}-${date.getTime()}`;
   .expand-toggle:hover { color: var(--color-text); }
   .expand-icon { transition: transform 0.2s ease; }
   .expand-toggle[aria-expanded="true"] .expand-icon { transform: rotate(180deg); }
-  .timeline-body[aria-hidden="true"] { display: none; }
+  .timeline-body[hidden] { display: none; }
   .timeline-body { margin-top: 1rem; color: var(--color-text-secondary); }
 </style>
