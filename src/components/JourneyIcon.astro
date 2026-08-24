@@ -1,0 +1,80 @@
+---
+export type JourneyIconName = 'physics' | 'analytics' | 'briefcase' | 'building' | 'globe';
+
+interface Props {
+  name: JourneyIconName;
+  class?: string;
+}
+
+const { name, class: className = '' } = Astro.props;
+---
+
+<span class:list={['journey-icon', className]} aria-hidden="true">
+  {name === 'physics' && (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="1.6"></circle>
+      <ellipse cx="12" cy="12" rx="8" ry="3.7"></ellipse>
+      <ellipse cx="12" cy="12" rx="8" ry="3.7" transform="rotate(60 12 12)"></ellipse>
+      <ellipse cx="12" cy="12" rx="8" ry="3.7" transform="rotate(120 12 12)"></ellipse>
+    </svg>
+  )}
+
+  {name === 'analytics' && (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 19.5h16"></path>
+      <path d="M7 17v-5.5"></path>
+      <path d="M12 17V8"></path>
+      <path d="M17 17v-3.5"></path>
+      <path d="m6.5 8.5 3-3 2.7 2.2 4.3-4.2"></path>
+      <path d="M14.7 3.5h1.8v1.8"></path>
+    </svg>
+  )}
+
+  {name === 'briefcase' && (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="7.5" width="16" height="11" rx="2"></rect>
+      <path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"></path>
+      <path d="M4 12h16"></path>
+      <path d="M10 12v1.5h4V12"></path>
+    </svg>
+  )}
+
+  {name === 'building' && (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 20h16"></path>
+      <path d="M6 20V6.5A1.5 1.5 0 0 1 7.5 5h6A1.5 1.5 0 0 1 15 6.5V20"></path>
+      <path d="M15 10h2.5A1.5 1.5 0 0 1 19 11.5V20"></path>
+      <path d="M9 8.5h3"></path>
+      <path d="M9 11.5h3"></path>
+      <path d="M9 14.5h3"></path>
+      <path d="M10 20v-2.5h1V20"></path>
+    </svg>
+  )}
+
+  {name === 'globe' && (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="8"></circle>
+      <path d="M4 12h16"></path>
+      <path d="M12 4c2.2 2.1 3.3 4.8 3.3 8S14.2 17.9 12 20"></path>
+      <path d="M12 4c-2.2 2.1-3.3 4.8-3.3 8S9.8 17.9 12 20"></path>
+      <path d="M6.5 7.5h11"></path>
+      <path d="M6.5 16.5h11"></path>
+    </svg>
+  )}
+</span>
+
+<style>
+  .journey-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .journey-icon :global(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>

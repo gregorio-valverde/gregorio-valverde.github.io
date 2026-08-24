@@ -28,10 +28,14 @@ const entriesWithContent = await Promise.all(sortedJourneyEntries.map(async (ent
           <button data-journey-filter="learning" aria-pressed="false" type="button">{copy.learning}</button>
           <button data-journey-filter="experience" aria-pressed="false" type="button">{copy.experience}</button>
         </div>
-        <div class="journey-timeline" aria-live="polite">
+        <div class="journey-timeline" aria-live="polite" data-journey-timeline>
+          <div class="journey-rail" aria-hidden="true">
+            <span class="journey-rail-pulse"></span>
+            <span class="journey-rail-pulse journey-rail-pulse-secondary"></span>
+          </div>
           {entriesWithContent.map(({ entry, Content, hasContent }, index) => (
             <div class="journey-filter-item" data-entry-type={entry.data.type}>
-              <TimelineEntry date={entry.data.date} title={entry.data.title} type={entry.data.type} description={entry.data.description} skills={entry.data.skills} hasContent={hasContent} lang={lang} animationDelay={index * -0.55}>
+              <TimelineEntry date={entry.data.date} title={entry.data.title} type={entry.data.type} description={entry.data.description} icon={entry.data.icon} skills={entry.data.skills} hasContent={hasContent} lang={lang} animationDelay={index * -0.55}>
                 {hasContent && <Content />}
               </TimelineEntry>
             </div>
@@ -42,32 +46,211 @@ const entriesWithContent = await Promise.all(sortedJourneyEntries.map(async (ent
   </main>
 
   <script>
-    document.addEventListener('click', (event) => {
-      const target = event.target;
-      if (!(target instanceof Element)) return;
+    const JOURNEY_BOUND_KEY = 'journeyInteractionsBound';
 
-      const button = target.closest<HTMLButtonElement>('[data-journey-filter]');
-      if (!button) return;
+    function updateJourneyRail(root: HTMLElement) {
+      const timeline = root.querySelector<HTMLElement>('[data-journey-timeline]');
+      if (!timeline) return;
 
-      const root = button.closest<HTMLElement>('[data-journey-root]');
-      if (!root) return;
-
-      const selectedType = button.dataset.journeyFilter ?? 'all';
-
-      root.querySelectorAll<HTMLButtonElement>('[data-journey-filter]').forEach((candidate) => {
-        const isActive = candidate === button;
-        candidate.classList.toggle('active', isActive);
-        candidate.setAttribute('aria-pressed', String(isActive));
+      const visibleDots = Array.from(timeline.querySelectorAll<HTMLElement>('.timeline-dot')).filter((dot) => {
+        const item = dot.closest<HTMLElement>('[data-entry-type]');
+        return item !== null && !item.hidden;
       });
 
-      root.querySelectorAll<HTMLElement>('[data-entry-type]').forEach((item) => {
-        item.hidden = selectedType !== 'all' && item.dataset.entryType !== selectedType;
+      if (visibleDots.length < 2) {
+        timeline.style.setProperty('--rail-opacity', '0');
+        timeline.style.setProperty('--rail-height', '0px');
+        return;
+      }
+
+      const timelineRect = timeline.getBoundingClientRect();
+      const firstRect = visibleDots[0].getBoundingClientRect();
+      const lastRect = visibleDots[visibleDots.length - 1].getBoundingClientRect();
+
+      const start = firstRect.top - timelineRect.top + firstRect.height / 2;
+      const end = lastRect.top - timelineRect.top + lastRect.height / 2;
+
+      timeline.style.setProperty('--rail-top', `${Math.max(0, start)}px`);
+      timeline.style.setProperty('--rail-height', `${Math.max(0, end - start)}px`);
+      timeline.style.setProperty('--rail-opacity', '1');
+    }
+
+    function updateAllJourneyRails() {
+      document.querySelectorAll<HTMLElement>('[data-journey-root]').forEach(updateJourneyRail);
+    }
+
+    function scheduleRailUpdate(root?: HTMLElement | null) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (root) updateJourneyRail(root);
+          else updateAllJourneyRails();
+        });
       });
-    });
+    }
+
+    function bindJourneyInteractions() {
+      const html = document.documentElement;
+      if (html.dataset[JOURNEY_BOUND_KEY] === 'true') {
+        scheduleRailUpdate();
+        return;
+      }
+
+      html.dataset[JOURNEY_BOUND_KEY] = 'true';
+
+      document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+
+        const filterButton = target.closest<HTMLButtonElement>('[data-journey-filter]');
+        if (filterButton) {
+          const root = filterButton.closest<HTMLElement>('[data-journey-root]');
+          if (!root) return;
+
+          const selectedType = filterButton.dataset.journeyFilter ?? 'all';
+
+          root.querySelectorAll<HTMLButtonElement>('[data-journey-filter]').forEach((candidate) => {
+            const isActive = candidate === filterButton;
+            candidate.classList.toggle('active', isActive);
+            candidate.setAttribute('aria-pressed', String(isActive));
+          });
+
+          root.querySelectorAll<HTMLElement>('[data-entry-type]').forEach((item) => {
+            item.hidden = selectedType !== 'all' && item.dataset.entryType !== selectedType;
+          });
+
+          scheduleRailUpdate(root);
+          return;
+        }
+
+        const expandButton = target.closest<HTMLButtonElement>('.expand-toggle');
+        if (expandButton) {
+          const root = expandButton.closest<HTMLElement>('[data-journey-root]');
+          scheduleRailUpdate(root);
+        }
+      });
+
+      window.addEventListener('resize', () => scheduleRailUpdate());
+      scheduleRailUpdate();
+    }
+
+    bindJourneyInteractions();
+    document.addEventListener('astro:page-load', bindJourneyInteractions);
   </script>
   <style>
-    .journey-filters{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1.5rem}.journey-filters button{border:1px solid var(--color-border);background:var(--color-bg-secondary);color:var(--color-text-secondary);border-radius:999px;padding:.55rem .8rem;cursor:pointer;font:inherit;font-size:.78rem}.journey-filters button:hover,.journey-filters button.active{color:var(--color-text);border-color:var(--color-text-muted)}.journey-filters button.active{box-shadow:inset 0 0 0 1px var(--color-accent)}
-    .journey-interactive{margin-top:2rem}.journey-timeline { margin-top: 2rem; }
-    .journey-filter-item[hidden]{display:none}
+    .journey-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0 0 1.5rem;
+    }
+
+    .journey-filters button {
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-secondary);
+      color: var(--color-text-secondary);
+      border-radius: 999px;
+      padding: 0.55rem 0.8rem;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.78rem;
+      transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .journey-filters button:hover,
+    .journey-filters button.active {
+      color: var(--color-text);
+      border-color: var(--color-text-muted);
+    }
+
+    .journey-filters button.active {
+      box-shadow: inset 0 0 0 1px var(--color-accent);
+    }
+
+    .journey-interactive { margin-top: 2rem; }
+
+    .journey-timeline {
+      position: relative;
+      margin-top: 2rem;
+      --rail-top: 0px;
+      --rail-height: 0px;
+      --rail-opacity: 0;
+    }
+
+    .journey-rail {
+      position: absolute;
+      z-index: 1;
+      left: calc(1rem - 1.5px);
+      top: var(--rail-top);
+      width: 3px;
+      height: var(--rail-height);
+      opacity: var(--rail-opacity);
+      overflow: hidden;
+      pointer-events: none;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--color-border) 72%, transparent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-bg) 35%, transparent);
+      transition: top 0.28s ease, height 0.28s ease, opacity 0.2s ease;
+    }
+
+    .journey-rail::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, #69b9a0 35%, transparent),
+        color-mix(in srgb, var(--color-accent) 30%, transparent) 45%,
+        color-mix(in srgb, #d4b06a 35%, transparent)
+      );
+      opacity: 0.35;
+    }
+
+    .journey-rail-pulse {
+      position: absolute;
+      left: -2px;
+      top: -7rem;
+      width: 7px;
+      height: 7rem;
+      border-radius: 999px;
+      background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        color-mix(in srgb, var(--color-accent) 10%, transparent) 18%,
+        color-mix(in srgb, var(--color-accent) 72%, white 12%) 48%,
+        color-mix(in srgb, var(--color-accent) 12%, transparent) 78%,
+        transparent 100%
+      );
+      filter: blur(0.15px);
+      box-shadow: 0 0 10px color-mix(in srgb, var(--color-accent) 42%, transparent);
+      animation: journey-rail-travel 4.8s linear infinite;
+    }
+
+    .journey-rail-pulse-secondary {
+      animation-delay: -2.4s;
+      opacity: 0.5;
+    }
+
+    .journey-filter-item {
+      position: relative;
+      z-index: 2;
+    }
+
+    .journey-filter-item[hidden] { display: none; }
+
+    @keyframes journey-rail-travel {
+      0% { top: -7rem; opacity: 0; }
+      7% { opacity: 1; }
+      92% { opacity: 1; }
+      100% { top: calc(100% + 1rem); opacity: 0; }
+    }
+
+    @media (max-width: 640px) {
+      .journey-rail { left: calc(0.8rem - 1.5px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .journey-rail-pulse { animation: none; opacity: 0; }
+      .journey-rail { transition: none; }
+    }
   </style>
 </BaseLayout>

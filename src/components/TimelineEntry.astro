@@ -1,18 +1,20 @@
 ---
 import { localeCode, ui, type Lang } from '../i18n';
+import JourneyIcon, { type JourneyIconName } from './JourneyIcon.astro';
 
 interface Props {
   date: Date;
   title: string;
   type: 'milestone' | 'learning' | 'experience';
   description: string;
+  icon?: JourneyIconName;
   skills?: string[];
   hasContent?: boolean;
   lang?: Lang;
   animationDelay?: number;
 }
 
-const { date, title, type, description, skills, hasContent = false, lang = 'es', animationDelay = 0 } = Astro.props;
+const { date, title, type, description, icon, skills, hasContent = false, lang = 'es', animationDelay = 0 } = Astro.props;
 const copy = ui[lang].journey;
 const formattedDate = new Intl.DateTimeFormat(localeCode(lang), { year: 'numeric', month: 'long' }).format(date);
 const typeLabels = {
@@ -21,21 +23,55 @@ const typeLabels = {
   experience: copy.experience,
 };
 const entryId = `journey-${lang}-${date.getTime()}`;
+const fallbackIcons: Record<Props['type'], JourneyIconName> = {
+  milestone: 'physics',
+  learning: 'analytics',
+  experience: 'briefcase',
+};
+const entryIcon = icon ?? fallbackIcons[type];
 ---
 
-<article class="timeline-entry" style={`--timeline-delay: ${animationDelay}s`}>
+<article class="timeline-entry" data-type={type} style={`--timeline-delay: ${animationDelay}s`}>
   <div class="timeline-marker">
     <div class="timeline-dot" data-type={type}></div>
-    <div class="timeline-line"></div>
   </div>
 
   <div class="timeline-content">
     <div class="timeline-header">
       <time class="timeline-date" datetime={date.toISOString()}>{formattedDate}</time>
-      <span class="timeline-type" data-type={type}>{typeLabels[type]}</span>
+      <span class="timeline-type" data-type={type}>
+        <span class="timeline-type-icon" aria-hidden="true">
+          {type === 'milestone' && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 8.5 12 4l9 4.5-9 4.5L3 8.5Z"></path>
+              <path d="M7 10.5V14c0 1.8 2.2 3 5 3s5-1.2 5-3v-3.5"></path>
+            </svg>
+          )}
+          {type === 'learning' && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 6.5C4 5.7 4.7 5 5.5 5H11v14H5.5A1.5 1.5 0 0 1 4 17.5v-11Z"></path>
+              <path d="M20 6.5c0-.8-.7-1.5-1.5-1.5H13v14h5.5c.8 0 1.5-.7 1.5-1.5v-11Z"></path>
+            </svg>
+          )}
+          {type === 'experience' && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="7" width="16" height="11" rx="2"></rect>
+              <path d="M9 7V5.8C9 4.8 9.8 4 10.8 4h2.4C14.2 4 15 4.8 15 5.8V7"></path>
+              <path d="M4 11.5h16"></path>
+            </svg>
+          )}
+        </span>
+        {typeLabels[type]}
+      </span>
     </div>
 
-    <h3 class="timeline-title">{title}</h3>
+    <div class="timeline-title-row">
+      <span class="timeline-entry-icon" aria-hidden="true">
+        <JourneyIcon name={entryIcon} />
+      </span>
+      <h3 class="timeline-title">{title}</h3>
+    </div>
+
     <p class="timeline-description">{description}</p>
 
     {skills && skills.length > 0 && (
@@ -66,8 +102,8 @@ const entryId = `journey-${lang}-${date.getTime()}`;
     const target = event.target;
     if (!(target instanceof Element)) return;
 
-    const button = target.closest<HTMLButtonElement>('.expand-toggle');
-    if (!button) return;
+    const button = target.closest('.expand-toggle');
+    if (!button || !(button instanceof HTMLButtonElement)) return;
 
     const controls = button.getAttribute('aria-controls');
     if (!controls) return;
@@ -83,79 +119,196 @@ const entryId = `journey-${lang}-${date.getTime()}`;
 </script>
 
 <style>
-  .timeline-entry { display: grid; grid-template-columns: 2rem 1fr; gap: 1.5rem; position: relative; }
-  .timeline-entry:last-child .timeline-line { display: none; }
-  .timeline-marker { display: flex; flex-direction: column; align-items: center; position: relative; }
+  .timeline-entry {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 1.5rem;
+    position: relative;
+    --type-color: var(--color-accent);
+    --type-soft: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+
+  .timeline-entry[data-type="learning"] {
+    --type-color: #69b9a0;
+    --type-soft: color-mix(in srgb, #69b9a0 22%, transparent);
+  }
+
+  .timeline-entry[data-type="experience"] {
+    --type-color: #d4b06a;
+    --type-soft: color-mix(in srgb, #d4b06a 24%, transparent);
+  }
+
+  .timeline-marker {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    z-index: 3;
+  }
+
   .timeline-dot {
     width: 1rem;
     height: 1rem;
     border-radius: 50%;
-    background: var(--color-accent);
+    background: var(--type-color);
     border: 3px solid var(--color-bg);
     position: relative;
-    z-index: 2;
+    z-index: 4;
     flex-shrink: 0;
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 30%, transparent);
+    box-shadow: 0 0 0 0 var(--type-soft);
     animation: timeline-node-pulse 3.2s ease-in-out infinite;
   }
-  .timeline-dot[data-type="learning"] { background: #69b9a0; }
-  .timeline-dot[data-type="experience"] { background: #d4b06a; }
-  .timeline-line {
-    width: 3px;
-    flex-grow: 1;
-    min-height: 4.5rem;
-    margin-top: 0.45rem;
-    position: relative;
-    overflow: hidden;
-    border-radius: 999px;
-    background: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--color-border) 82%, transparent) 0%,
-      color-mix(in srgb, var(--color-border) 82%, transparent) 28%,
-      color-mix(in srgb, var(--color-accent) 92%, white 8%) 46%,
-      color-mix(in srgb, var(--color-accent) 58%, var(--color-border)) 52%,
-      color-mix(in srgb, var(--color-border) 82%, transparent) 68%,
-      color-mix(in srgb, var(--color-border) 82%, transparent) 100%
-    );
-    background-size: 100% 220%;
-    background-position: 0 -120%;
-    box-shadow: 0 0 6px color-mix(in srgb, var(--color-accent) 12%, transparent);
-    animation: timeline-line-flow 2.35s linear infinite;
-    animation-delay: var(--timeline-delay, 0s);
+
+  .timeline-content {
+    padding-bottom: 3.25rem;
+    min-width: 0;
   }
-  .timeline-content { padding-bottom: 3rem; }
-  .timeline-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
-  .timeline-date { font-size: 0.875rem; color: var(--color-text-secondary); font-weight: 500; }
-  .timeline-type { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.25rem 0.5rem; border-radius: 0.25rem; background: var(--color-bg-secondary); border: 1px solid var(--color-border); }
-  .timeline-type[data-type="milestone"] { color: var(--color-accent); border-color: var(--color-accent); }
-  .timeline-type[data-type="learning"] { color: #8bcbb8; border-color: #69b9a0; }
-  .timeline-type[data-type="experience"] { color: #dfc48d; border-color: #d4b06a; }
-  .timeline-title { font-size: 1.25rem; margin-bottom: 0.5rem; }
-  .timeline-description { color: var(--color-text-secondary); line-height: 1.65; margin-bottom: 0.75rem; }
-  .timeline-skills { display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem; }
-  .skills-label { font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600; }
-  .skills-list { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; padding: 0; margin: 0; }
-  .skill-tag { font-size: 0.75rem; padding: 0.2rem 0.5rem; border: 1px solid var(--color-border); border-radius: 4px; color: var(--color-text-secondary); }
-  .expand-toggle { margin-top: 1rem; display: inline-flex; align-items: center; gap: 0.4rem; background: none; border: 0; padding: 0; color: var(--color-text-muted); cursor: pointer; font: inherit; font-size: 0.875rem; }
+
+  .timeline-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.65rem;
+    flex-wrap: wrap;
+  }
+
+  .timeline-date {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+  }
+
+  .timeline-type {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.55rem;
+    border-radius: 0.35rem;
+    background: var(--color-bg-secondary);
+    border: 1px solid color-mix(in srgb, var(--type-color) 70%, var(--color-border));
+    color: color-mix(in srgb, var(--type-color) 82%, white 12%);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .timeline-type-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.88;
+  }
+
+  .timeline-type-icon :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .timeline-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .timeline-entry-icon {
+    width: 2rem;
+    height: 2rem;
+    flex: 0 0 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in srgb, var(--type-color) 34%, var(--color-border));
+    border-radius: 0.6rem;
+    background: color-mix(in srgb, var(--type-color) 7%, var(--color-bg-secondary));
+    box-shadow: inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
+    color: color-mix(in srgb, var(--type-color) 82%, var(--color-text));
+  }
+
+  .timeline-entry-icon :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    opacity: 0.92;
+  }
+
+  .timeline-title {
+    font-size: 1.25rem;
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .timeline-description {
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+    margin-bottom: 0.75rem;
+  }
+
+  .timeline-skills {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+  }
+
+  .skills-label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .skill-tag {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-text-secondary);
+  }
+
+  .expand-toggle {
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.875rem;
+  }
+
   .expand-toggle:hover { color: var(--color-text); }
   .expand-icon { transition: transform 0.2s ease; }
   .expand-toggle[aria-expanded="true"] .expand-icon { transform: rotate(180deg); }
   .timeline-body[hidden] { display: none; }
   .timeline-body { margin-top: 1rem; color: var(--color-text-secondary); }
 
-  @keyframes timeline-line-flow {
-    0% { background-position: 0 -120%; }
-    100% { background-position: 0 120%; }
+  @keyframes timeline-node-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--type-soft); }
+    50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--type-color) 0%, transparent); }
   }
 
-  @keyframes timeline-node-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 26%, transparent); }
-    50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--color-accent) 0%, transparent); }
+  @media (max-width: 640px) {
+    .timeline-entry { grid-template-columns: 1.6rem 1fr; gap: 1rem; }
+    .timeline-entry-icon { width: 1.8rem; height: 1.8rem; flex-basis: 1.8rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .timeline-dot,
-    .timeline-line { animation: none; }
-    .timeline-line { background-position: 0 50%; }
+    .timeline-dot { animation: none; }
   }
 </style>

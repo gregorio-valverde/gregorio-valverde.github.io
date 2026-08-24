@@ -184,6 +184,9 @@ const journeyCollection = defineCollection({
     
     /** Brief description */
     description: z.string(),
+
+    /** Small visual icon key used in the timeline */
+    icon: z.enum(['physics', 'analytics', 'briefcase', 'building', 'globe']).optional(),
     
     /** Skills or technologies associated with this entry */
     skills: z.array(z.string()).optional(),
