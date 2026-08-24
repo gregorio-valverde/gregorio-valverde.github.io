@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SEO from '../SEO.astro';
+import ProjectCard from '../ProjectCard.astro';
+import PageStats from '../PageStats.astro';
+import { getCollection } from 'astro:content';
+import { contentLang, contentSlug, ui, type Lang } from '../../i18n';
+
+interface Props { lang?: Lang; }
+const { lang = 'es' } = Astro.props;
+const copy = ui[lang].projects;
+const allProjects = (await getCollection('projects')).filter((project) => contentLang(project.id) === lang);
+const sortedProjects = allProjects.sort((a, b) => {
+  if (a.data.order !== undefined && b.data.order !== undefined) return a.data.order - b.data.order;
+  if (a.data.order !== undefined) return -1;
+  if (b.data.order !== undefined) return 1;
+  return b.data.year - a.data.year;
+});
+const totalProjects = sortedProjects.length;
+const featuredCount = sortedProjects.filter(p => p.data.featured).length;
+---
+
+<BaseLayout lang={lang}>
+  <SEO slot="head" title={copy.title} description={copy.description} type="website" />
+  <main class="page-container">
+    <header class="page-header">
+      <h1 class="page-title">{copy.heading}</h1>
+      <p class="page-intro">{copy.intro}</p>
+      <PageStats text={copy.stats(totalProjects, featuredCount)} />
+    </header>
+    {sortedProjects.length > 0 ? (
+      <div class="card-list">
+        {sortedProjects.map((project) => (
+          <ProjectCard title={project.data.title} slug={contentSlug(project.id)} outcomeSummary={project.data.outcomeSummary} role={project.data.role} year={project.data.year} techStack={project.data.techStack} featured={project.data.featured} status={project.data.status} lang={lang} />
+        ))}
+      </div>
+    ) : <p class="empty-state">{copy.empty}</p>}
+  </main>
+</BaseLayout>

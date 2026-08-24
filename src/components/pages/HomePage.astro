@@ -1,0 +1,388 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SEO from '../SEO.astro';
+import StructuredData from '../StructuredData.astro';
+import { getCollection } from 'astro:content';
+import { siteConfig } from '../../config';
+import { contentLang, contentSlug, localizePath, translateTemplate, ui, type Lang } from '../../i18n';
+
+interface Props { lang?: Lang; }
+const { lang = 'es' } = Astro.props;
+const copy = ui[lang];
+const allProjects = (await getCollection('projects')).filter((project) => contentLang(project.id) === lang);
+const featuredProjects = allProjects
+  .filter(project => project.data.featured === true)
+  .sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
+  .slice(0, 2);
+
+const homeDescription = lang === 'es'
+  ? 'Portfolio profesional de Gregorio Valverde centrado en Business Intelligence, Data Engineering y Analytics aplicados a operaciones de negocio y transformación digital.'
+  : siteConfig.description;
+---
+
+<BaseLayout lang={lang}>
+  <SEO slot="head" title={`${siteConfig.author.name} - ${siteConfig.author.title}`} description={homeDescription} type="website" noSuffix />
+  <StructuredData type="WebSite" lang={lang} data={{ description: homeDescription }} />
+  <StructuredData type="Person" lang={lang} data={{ description: lang === 'es' ? 'Ingeniero de datos y analítica con formación en Física y experiencia construyendo pipelines, modelos analíticos y cuadros de mando.' : siteConfig.author.bio }} />
+
+  <main class="home-page">
+    <section class="hero">
+      <div class="hero-simple">
+        <p class="eyebrow">{copy.home.eyebrow}</p>
+        <h1 class="hero-title">{copy.home.title}</h1>
+        <p class="hero-sub">{copy.home.subtitle}</p>
+        <p class="hero-meta">{siteConfig.author.name} · {siteConfig.author.title}</p>
+        <div class="hero-tags">
+          <span>Business Intelligence</span><span>Data Engineering</span><span>Analytics</span><span>Power BI</span><span>Airflow</span><span>dbt</span><span>SQL Server</span><span>Python</span>
+        </div>
+        <div class="hero-cta">
+          <a href={localizePath('/projects', lang)} class="btn-primary">{copy.home.viewProjects}</a>
+          <a href={localizePath('/contact', lang)} class="btn-secondary">{copy.home.contact}</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="intro-section">
+      <p>{translateTemplate(copy.home.intro1, { name: siteConfig.author.name, title: siteConfig.author.title })}</p>
+      <p>{copy.home.intro2}</p>
+      <a href={localizePath('/journey', lang)} class="text-link">{copy.home.journeyLink}</a>
+    </section>
+
+    <section class="featured-projects">
+      <div class="section-header">
+        <div><p class="eyebrow">{copy.home.selectedWork}</p><h2>{copy.home.featuredProjects}</h2></div>
+        <a href={localizePath('/projects', lang)} class="section-link">{copy.home.viewAll}</a>
+      </div>
+
+      {featuredProjects.length > 0 ? (
+        <div class="project-grid">
+          {featuredProjects.map((project) => (
+            <a href={localizePath(`/projects/${contentSlug(project.id)}`, lang)} class="project-card">
+              <span class="project-role">{project.data.role}</span>
+              <h3>{project.data.title}</h3>
+              <p>{project.data.outcomeSummary}</p>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="project-grid">
+          <a href={localizePath('/projects', lang)} class="project-card"><span class="project-role">{copy.home.fallbackDataEngineering}</span><h3>{copy.home.fallbackProject1}</h3><p>{copy.home.fallbackProject1Description}</p></a>
+          <a href={localizePath('/projects', lang)} class="project-card"><span class="project-role">{copy.home.fallbackBI}</span><h3>{copy.home.fallbackProject2}</h3><p>{copy.home.fallbackProject2Description}</p></a>
+        </div>
+      )}
+    </section>
+
+    <section class="cta">
+      <h2>{copy.home.ctaTitle}</h2>
+      <div class="cta-buttons">
+        <a href={localizePath('/projects', lang)} class="btn-primary">{copy.home.viewMyWork}</a>
+        <a href={localizePath('/contact', lang)} class="btn-secondary">{copy.home.getInTouch}</a>
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .home-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    .hero {
+      padding: 4rem 0 3.5rem;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: 3rem;
+    }
+
+    .hero-simple {
+      max-width: 760px;
+    }
+
+    .eyebrow {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      max-width: 720px;
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      line-height: 1.05;
+      font-weight: 700;
+      letter-spacing: -0.055em;
+      margin-bottom: 1.25rem;
+      color: var(--color-text);
+    }
+
+    .hero-sub {
+      max-width: 620px;
+      font-size: 1.1rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 1rem;
+      line-height: 1.65;
+    }
+
+    .hero-meta {
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+      max-width: 680px;
+    }
+
+    .hero-tags span {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.45rem 0.8rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: 999px;
+    }
+
+    .hero-cta,
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: opacity 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--color-text);
+      color: var(--color-bg);
+      font-weight: 700;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--color-text);
+      font-weight: 600;
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.86;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--color-text-secondary);
+    }
+
+    .intro-section {
+      max-width: 720px;
+      margin-bottom: 4rem;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+    }
+
+    .intro-section p {
+      margin-bottom: 1rem;
+    }
+
+    .intro-section p:first-child {
+      color: var(--color-text);
+    }
+
+    .text-link {
+      display: inline-block;
+      margin-top: 0.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--color-border);
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .text-link:hover {
+      border-color: var(--color-text);
+    }
+
+    .featured-projects {
+      margin-bottom: 4rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--color-text);
+    }
+
+    .section-link {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .section-link:hover {
+      color: var(--color-text);
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .project-card {
+      display: block;
+      padding: 1.4rem;
+      min-height: 170px;
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      text-decoration: none;
+      transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--color-text-muted);
+      background: var(--color-bg-elevated);
+    }
+
+    .project-role {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .project-card h3 {
+      font-size: 1.2rem;
+      line-height: 1.25;
+      color: var(--color-text);
+      margin-bottom: 0.75rem;
+    }
+
+    .project-card p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--color-text-secondary);
+    }
+
+    .work-section {
+      margin-bottom: 4rem;
+    }
+
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .work-grid div {
+      padding: 1.25rem;
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      background: var(--color-bg-secondary);
+    }
+
+    .work-grid h3 {
+      font-size: 1rem;
+      color: var(--color-text);
+      margin-bottom: 0.5rem;
+    }
+
+    .work-grid p {
+      font-size: 0.92rem;
+      line-height: 1.55;
+      color: var(--color-text-secondary);
+    }
+
+    .cta {
+      padding: 3rem 0 0;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .cta h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.025em;
+    }
+
+    .cta p {
+      font-size: 1rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 1.5rem;
+      max-width: 560px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .home-page {
+        padding: 0 1rem 3rem;
+      }
+
+      .hero {
+        padding: 3rem 0 2.5rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .hero-title {
+        font-size: 2.3rem;
+      }
+
+      .hero-cta,
+      .cta-buttons {
+        flex-direction: column;
+      }
+
+      .btn-primary,
+      .btn-secondary {
+        text-align: center;
+        width: 100%;
+      }
+
+      .project-grid,
+      .work-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</BaseLayout>

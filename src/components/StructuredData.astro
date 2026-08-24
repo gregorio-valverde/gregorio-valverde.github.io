@@ -10,13 +10,15 @@
  * @param data - Data object containing the structured data fields
  */
 import { siteConfig } from '../config';
+import { getLangFromUrl, type Lang } from '../i18n';
 
 interface Props {
   type: 'WebSite' | 'Project' | 'Article' | 'Person' | 'BreadcrumbList';
   data?: Record<string, any>;
+  lang?: Lang;
 }
 
-const { type, data = {} } = Astro.props;
+const { type, data = {}, lang = getLangFromUrl(Astro.url) } = Astro.props;
 
 // Get site URL from config
 const siteURL = siteConfig.url.endsWith('/') ? siteConfig.url.slice(0, -1) : siteConfig.url;
@@ -38,7 +40,7 @@ function generateStructuredData(type: string, data: Record<string, any>) {
         name: data.name || siteConfig.title,
         description: data.description || siteConfig.description,
         url: data.url || siteURL,
-        inLanguage: siteConfig.language,
+        inLanguage: lang,
         author: {
           '@type': 'Person',
           name: siteConfig.author.name,
@@ -95,7 +97,7 @@ function generateStructuredData(type: string, data: Record<string, any>) {
           '@id': data.url || Astro.url.href,
         },
         keywords: data.tags?.join(', '),
-        inLanguage: siteConfig.language,
+        inLanguage: lang,
       };
     
     case 'Person':

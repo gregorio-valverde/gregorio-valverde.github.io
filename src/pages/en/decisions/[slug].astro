@@ -1,0 +1,26 @@
+---
+import DecisionDetailPage from '../../../components/pages/DecisionDetailPage.astro';
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import { contentLang, contentSlug, localizePath } from '../../../i18n';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const decisions = await getCollection('decisions');
+  const enDecisions = decisions.filter((decision) => contentLang(decision.id) === 'en');
+  const esSlugs = new Set(decisions.filter((decision) => contentLang(decision.id) === 'es').map((decision) => contentSlug(decision.id)));
+
+  return enDecisions.map((decision) => {
+    const slug = contentSlug(decision.id);
+    return {
+      params: { slug },
+      props: {
+        decision,
+        alternatePath: esSlugs.has(slug) ? localizePath(`/decisions/${slug}`, 'es') : localizePath('/decisions', 'es'),
+      },
+    };
+  });
+};
+
+const { decision, alternatePath } = Astro.props;
+---
+<DecisionDetailPage decision={decision} lang="en" alternatePath={alternatePath} />

@@ -56,7 +56,7 @@ export const siteConfig = {
    * Two-letter language code for HTML lang attribute and SEO.
    * Examples: 'en', 'id', 'es', 'fr'
    */
-  language: getEnv('SITE_LANGUAGE', 'en'),
+  language: getEnv('SITE_LANGUAGE', 'es'),
   
   /**
    * Site title
@@ -94,7 +94,7 @@ export const siteConfig = {
       'Physics graduate specialized in Business Intelligence, Data Engineering, and Analytics. I build data pipelines, analytical models, and dashboards that help business teams make better decisions.'
     ),
     /** Contact email address */
-    email: getEnv('SITE_AUTHOR_EMAIL', 'gregoriovalverde8@gmail.com'),
+    email: getEnv('SITE_AUTHOR_EMAIL', 'gregorio.valna@gmail.com'),
     
     /** Location (optional, empty string to hide) */
     location: getEnv('SITE_AUTHOR_LOCATION', 'Spain'),
@@ -130,13 +130,13 @@ export const siteConfig = {
    * Add or remove items to customize navigation.
    */
   nav: [
-    { label: 'Projects', href: '/projects' },
-    { label: 'Decisions', href: '/decisions' },
-    { label: 'Journey', href: '/journey' },
-    /**{ label: 'Writing', href: '/writing' }, */
-    /** { label: 'Speaking', href: '/speaking' }, */
-    /** { label: 'Uses', href: '/uses' }, */
-    { label: 'Contact', href: '/contact' },
+    { key: 'projects', href: '/projects' },
+    { key: 'decisions', href: '/decisions' },
+    { key: 'journey', href: '/journey' },
+    /** { key: 'writing', href: '/writing' }, */
+    /** { key: 'speaking', href: '/speaking' }, */
+    /** { key: 'uses', href: '/uses' }, */
+    { key: 'contact', href: '/contact' },
   ],
 } as const;
 

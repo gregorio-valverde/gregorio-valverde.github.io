@@ -1,0 +1,112 @@
+---
+title: "Predicción de demanda eléctrica con Machine Learning"
+role: "Data Scientist / Machine Learning"
+year: 2024
+duration: "Trabajo Fin de Máster"
+teamSize: 1
+outcomeSummary: "Comparación de modelos estadísticos y de machine learning para predecir la demanda eléctrica utilizando series temporales, datos meteorológicos y variables exógenas."
+overview: "Este proyecto analiza el uso de machine learning y modelos estadísticos tradicionales para predecir la demanda eléctrica. El objetivo fue comparar distintos enfoques, evaluar su rendimiento y estudiar cómo variables externas como la temperatura y los festivos influyen en el consumo energético."
+problem: "La demanda eléctrica es muy variable y la electricidad es difícil de almacenar de forma eficiente a gran escala, por lo que una predicción precisa es relevante para la planificación, la optimización y la reducción de ineficiencias económicas."
+constraints:
+  - "El proyecto se desarrolló como Trabajo Fin de Máster."
+  - "Los datos disponibles tenían granularidad diaria, lo que limitaba el modelado de variaciones de demanda a corto plazo."
+  - "Los distintos modelos debían compararse mediante un flujo de preprocesamiento y evaluación consistente."
+approach: "Construí un flujo completo que cubría extracción de datos, preprocesamiento, análisis exploratorio, entrenamiento y comparación de modelos. El proyecto incluyó ARIMAX como modelo tradicional de series temporales, modelos supervisados como Decision Tree, Random Forest y XGBoost, y un enfoque de red neuronal LSTM."
+keyDecisions:
+  - decision: "Comparar enfoques estadísticos, de machine learning y deep learning"
+    reasoning: "La predicción de demanda eléctrica puede abordarse desde perspectivas distintas. Comparar ARIMAX, modelos basados en árboles y LSTM permitió evaluar compromisos entre interpretabilidad, precisión, complejidad y coste computacional."
+    alternatives:
+      - "Utilizar únicamente modelos tradicionales de series temporales"
+      - "Utilizar únicamente modelos de machine learning"
+      - "Centrarse únicamente en deep learning"
+  - decision: "Incluir variables exógenas como meteorología y festivos"
+    reasoning: "La demanda eléctrica depende de factores externos. Incluir variables como temperatura y festivos permitió mejorar la capacidad explicativa de los modelos."
+    alternatives:
+      - "Utilizar únicamente la demanda histórica"
+      - "Utilizar únicamente variables de calendario"
+  - decision: "Utilizar XGBoost como referencia sólida para series temporales tabulares"
+    reasoning: "Los modelos de gradient boosting suelen funcionar bien con datos estructurados y pueden capturar relaciones no lineales con un coste computacional razonable."
+    alternatives:
+      - "Random Forest"
+      - "Decision Tree"
+      - "LSTM"
+techStack:
+  - "Python"
+  - "Pandas"
+  - "NumPy"
+  - "Scikit-learn"
+  - "XGBoost"
+  - "Keras"
+  - "Skforecast"
+  - "Matplotlib"
+  - "Jupyter Notebook"
+impact:
+  metrics:
+    - label: "Modelos comparados"
+      value: "ARIMAX, Decision Tree, Random Forest, XGBoost, LSTM"
+    - label: "Mejor modelo práctico"
+      value: "XGBoost"
+    - label: "Flujo de trabajo"
+      value: "Extracción, preprocesamiento, EDA, modelado y evaluación"
+  qualitative: "El proyecto me permitió comprender cómo estructurar un flujo completo de machine learning para predicción de series temporales, desde la extracción de datos brutos hasta la comparación de modelos y las conclusiones finales."
+learnings:
+  - "El rendimiento de un modelo no depende únicamente del algoritmo, sino también de la calidad de los datos, la ingeniería de variables y la granularidad temporal."
+  - "Las variables exógenas pueden mejorar la predicción cuando son relevantes y se procesan correctamente."
+  - "Los modelos complejos como LSTM no siempre son la mejor opción práctica cuando el coste computacional y la granularidad de los datos son limitantes."
+featured: true
+status: completed
+order: 3
+---
+
+## Contexto
+
+Este proyecto se desarrolló como mi Trabajo Fin de Máster en Big Data y Data Science.
+
+El objetivo era analizar si las técnicas de machine learning podían mejorar la predicción de demanda eléctrica frente a enfoques más tradicionales de series temporales.
+
+La predicción de demanda eléctrica es un problema relevante porque la demanda es variable, la electricidad es difícil de almacenar a gran escala y los errores de previsión pueden generar ineficiencias operativas y económicas.
+
+## Flujo del proyecto
+
+El proyecto siguió un flujo completo de machine learning:
+
+1. Extracción de datos de demanda eléctrica y fuentes meteorológicas.
+2. Limpieza y preprocesamiento.
+3. Análisis exploratorio de datos.
+4. Ingeniería de variables utilizando demanda, meteorología y calendario.
+5. Entrenamiento y comparación de modelos.
+6. Análisis de resultados y limitaciones.
+
+## Modelos implementados
+
+El proyecto comparó varios tipos de modelos:
+
+- ARIMAX como modelo estadístico tradicional de series temporales.
+- Decision Tree, Random Forest y XGBoost como modelos supervisados de machine learning.
+- LSTM como modelo de deep learning para datos secuenciales.
+
+Esta comparación permitió evaluar distintos compromisos entre precisión, interpretabilidad, coste computacional y complejidad.
+
+## Resultados
+
+XGBoost mostró el mejor equilibrio práctico entre rendimiento predictivo y coste computacional.
+
+El modelo LSTM mostró potencial, pero sus resultados estuvieron limitados por el tiempo de procesamiento y la granularidad diaria de los datos.
+
+El proyecto también mostró que variables exógenas, especialmente la temperatura y los festivos, eran relevantes para mejorar las predicciones. Otras variables, como la humedad, introducían más ruido y resultaban menos útiles.
+
+## Qué aprendí
+
+Este proyecto me ayudó a consolidar varias competencias:
+
+- Trabajo con series temporales.
+- Construcción de flujos de aprendizaje supervisado.
+- Comparación de enfoques estadísticos, de machine learning y deep learning.
+- Evaluación del rendimiento más allá de una única métrica de precisión.
+- Importancia de la ingeniería de variables en problemas de predicción.
+
+## Repositorio
+
+El código fuente, notebooks, estructura de datos y memoria del proyecto están disponibles en GitHub:
+
+[Ver proyecto en GitHub](https://github.com/gregorio-valverde/electricity-demand-forecasting-ml)

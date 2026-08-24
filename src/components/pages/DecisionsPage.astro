@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SEO from '../SEO.astro';
+import DecisionCard from '../DecisionCard.astro';
+import PageStats from '../PageStats.astro';
+import { getCollection } from 'astro:content';
+import { contentLang, contentSlug, ui, type Lang } from '../../i18n';
+
+interface Props { lang?: Lang; }
+const { lang = 'es' } = Astro.props;
+const copy = ui[lang].decisions;
+const allDecisions = (await getCollection('decisions')).filter((decision) => contentLang(decision.id) === lang);
+const sortedDecisions = allDecisions.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout lang={lang}>
+  <SEO slot="head" title={copy.title} description={copy.description} type="website" />
+  <main class="page-container">
+    <header class="page-header">
+      <h1 class="page-title">{copy.heading}</h1>
+      <p class="page-intro">{copy.intro}</p>
+      <PageStats text={copy.stats(sortedDecisions.length)} />
+    </header>
+    {sortedDecisions.length > 0 ? (
+      <div class="card-list card-list--compact">
+        {sortedDecisions.map((decision) => (
+          <DecisionCard title={decision.data.title} slug={contentSlug(decision.id)} context={decision.data.context} date={decision.data.date} tags={decision.data.tags} lang={lang} />
+        ))}
+      </div>
+    ) : <p class="empty-state">{copy.empty}</p>}
+  </main>
+</BaseLayout>

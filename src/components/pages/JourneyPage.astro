@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SEO from '../SEO.astro';
+import TimelineEntry from '../TimelineEntry.astro';
+import { getCollection, render } from 'astro:content';
+import { contentLang, ui, type Lang } from '../../i18n';
+
+interface Props { lang?: Lang; }
+const { lang = 'es' } = Astro.props;
+const copy = ui[lang].journey;
+const allJourneyEntries = (await getCollection('journey')).filter((entry) => contentLang(entry.id) === lang);
+const sortedJourneyEntries = allJourneyEntries.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const entriesWithContent = await Promise.all(sortedJourneyEntries.map(async (entry) => {
+  const { Content } = await render(entry);
+  return { entry, Content, hasContent: Boolean(entry.body && entry.body.trim().length > 0) };
+}));
+---
+
+<BaseLayout lang={lang}>
+  <SEO slot="head" title={copy.title} description={copy.description} type="website" />
+  <main class="page-container">
+    <header class="page-header"><h1 class="page-title">{copy.heading}</h1><p class="page-intro">{copy.intro}</p></header>
+    {entriesWithContent.length > 0 ? (
+      <div class="journey-timeline">
+        {entriesWithContent.map(({ entry, Content, hasContent }) => (
+          <TimelineEntry date={entry.data.date} title={entry.data.title} type={entry.data.type} description={entry.data.description} skills={entry.data.skills} hasContent={hasContent} lang={lang}>
+            {hasContent && <Content />}
+          </TimelineEntry>
+        ))}
+      </div>
+    ) : <p class="empty-state">{copy.empty}</p>}
+  </main>
+
+  <style>
+    .journey-timeline {
+      margin-top: 2rem;
+    }
+  </style>
+</BaseLayout>

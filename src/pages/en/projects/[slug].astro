@@ -1,0 +1,26 @@
+---
+import ProjectDetailPage from '../../../components/pages/ProjectDetailPage.astro';
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import { contentLang, contentSlug, localizePath } from '../../../i18n';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const projects = await getCollection('projects');
+  const enProjects = projects.filter((project) => contentLang(project.id) === 'en');
+  const esSlugs = new Set(projects.filter((project) => contentLang(project.id) === 'es').map((project) => contentSlug(project.id)));
+
+  return enProjects.map((project) => {
+    const slug = contentSlug(project.id);
+    return {
+      params: { slug },
+      props: {
+        project,
+        alternatePath: esSlugs.has(slug) ? localizePath(`/projects/${slug}`, 'es') : localizePath('/projects', 'es'),
+      },
+    };
+  });
+};
+
+const { project, alternatePath } = Astro.props;
+---
+<ProjectDetailPage project={project} lang="en" alternatePath={alternatePath} />
