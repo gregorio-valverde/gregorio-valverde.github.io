@@ -1,0 +1,390 @@
+---
+interface Props {
+  lang?: 'es' | 'en';
+}
+
+const { lang = 'es' } = Astro.props as Props;
+
+const copy = {
+  es: {
+    kicker: 'El reto de la transición',
+    title: 'La tecnología puede avanzar más rápido que la cultura del dato',
+    technical: 'Capa técnica',
+    technicalItems: ['Pipelines', 'Orquestación', 'Modelado', 'Calidad', 'DataOps'],
+    bridge: 'Adopción',
+    bridgeItems: ['Comunicar', 'Generar confianza', 'Acompañar el cambio'],
+    business: 'Organización',
+    businessItems: ['Uso real', 'Decisiones', 'Ownership', 'Cultura del dato', 'Valor de negocio'],
+    footer: 'Construir la plataforma es una parte del problema. Conseguir que la organización confíe en ella es la otra.',
+  },
+  en: {
+    kicker: 'The transition challenge',
+    title: 'Technology can move faster than the data culture',
+    technical: 'Technical layer',
+    technicalItems: ['Pipelines', 'Orchestration', 'Modelling', 'Quality', 'DataOps'],
+    bridge: 'Adoption',
+    bridgeItems: ['Communicate', 'Build trust', 'Support change'],
+    business: 'Organisation',
+    businessItems: ['Real usage', 'Decisions', 'Ownership', 'Data culture', 'Business value'],
+    footer: 'Building the platform is one part of the problem. Getting the organisation to trust it is the other.',
+  },
+}[lang];
+---
+
+<section class="culture-bridge" aria-labelledby={`culture-bridge-title-${lang}`}>
+  <header>
+    <span>{copy.kicker}</span>
+    <h2 id={`culture-bridge-title-${lang}`}>{copy.title}</h2>
+  </header>
+
+  <div class="bridge-visual">
+    <article class="side-panel technical-panel">
+      <div class="side-title">
+        <span class="side-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5"/><path d="M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>
+          </svg>
+        </span>
+        <h3>{copy.technical}</h3>
+      </div>
+      <ul>
+        {copy.technicalItems.map((item, index) => (
+          <li>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </article>
+
+    <div class="bridge-center" aria-label={copy.bridge}>
+      <div class="bridge-rail" aria-hidden="true">
+        <span class="rail-left"></span>
+        <span class="rail-center"></span>
+        <span class="rail-right"></span>
+        <i class="moving-dot dot-a"></i>
+        <i class="moving-dot dot-b"></i>
+      </div>
+
+      <div class="bridge-badge">
+        <span class="bridge-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 6h14v9H9l-4 3V6Z"/><path d="M9 10h6"/><path d="M9 13h4"/>
+          </svg>
+        </span>
+        <strong>{copy.bridge}</strong>
+      </div>
+
+      <div class="bridge-steps">
+        {copy.bridgeItems.map((item, index) => (
+          <div>
+            <span>{index + 1}</span>
+            <p>{item}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <article class="side-panel business-panel">
+      <div class="side-title">
+        <span class="side-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="9" r="3"/><circle cx="16" cy="8" r="2.5"/><path d="M3 20c.4-4 2.2-6 5-6s4.6 2 5 6"/><path d="M13 14c1-.8 2.1-1.2 3.3-1.2 2.7 0 4.2 1.9 4.7 5.2"/>
+          </svg>
+        </span>
+        <h3>{copy.business}</h3>
+      </div>
+      <ul>
+        {copy.businessItems.map((item, index) => (
+          <li>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </article>
+  </div>
+
+  <p class="bridge-footer">{copy.footer}</p>
+</section>
+
+<style>
+  .culture-bridge {
+    margin: 2.4rem 0 3rem;
+  }
+
+  .culture-bridge > header {
+    margin-bottom: 1.15rem;
+  }
+
+  .culture-bridge > header > span {
+    display: block;
+    margin-bottom: .35rem;
+    color: var(--color-text-muted);
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .culture-bridge > header h2 {
+    margin: 0;
+    max-width: 680px;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    line-height: 1.18;
+    letter-spacing: -.03em;
+  }
+
+  .bridge-visual {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(180px, .72fr) minmax(0, 1fr);
+    gap: .8rem;
+    align-items: stretch;
+  }
+
+  .side-panel {
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background: var(--gradient-card);
+  }
+
+  .side-title {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    margin-bottom: .8rem;
+  }
+
+  .side-icon,
+  .bridge-icon {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border: 1px solid var(--color-border);
+    border-radius: 11px;
+    background: var(--color-accent-muted);
+    color: var(--color-accent);
+  }
+
+  .side-icon svg,
+  .bridge-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .side-title h3 {
+    margin: 0;
+    font-size: .98rem;
+  }
+
+  .side-panel ul {
+    display: grid;
+    gap: .45rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .side-panel li {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    padding: .52rem .6rem;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 9px;
+    color: var(--color-text-secondary);
+    background: color-mix(in srgb, var(--color-bg-elevated) 70%, transparent);
+    font-size: .78rem;
+  }
+
+  .side-panel li span {
+    color: var(--color-text-muted);
+    font-size: .62rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+  }
+
+  .bridge-center {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    padding: 1rem .45rem;
+  }
+
+  .bridge-rail {
+    position: absolute;
+    top: 27%;
+    right: -1rem;
+    left: -1rem;
+    height: 84px;
+    pointer-events: none;
+  }
+
+  .bridge-rail::before,
+  .bridge-rail::after,
+  .rail-center {
+    content: '';
+    position: absolute;
+    border-top: 2px solid var(--color-accent);
+    opacity: .58;
+  }
+
+  .bridge-rail::before {
+    top: 29px;
+    left: 0;
+    width: 42%;
+    transform: rotate(-8deg);
+    transform-origin: right center;
+  }
+
+  .bridge-rail::after {
+    top: 29px;
+    right: 0;
+    width: 42%;
+    transform: rotate(8deg);
+    transform-origin: left center;
+  }
+
+  .rail-center {
+    top: 35px;
+    left: 38%;
+    width: 24%;
+  }
+
+  .rail-left,
+  .rail-right {
+    position: absolute;
+    top: 12px;
+    width: 2px;
+    height: 52px;
+    background: var(--color-accent);
+    opacity: .35;
+  }
+
+  .rail-left { left: 34%; }
+  .rail-right { right: 34%; }
+
+  .moving-dot {
+    position: absolute;
+    top: 28px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 12px var(--color-accent-glow);
+    animation: bridgeMove 4.8s linear infinite;
+  }
+
+  .dot-b {
+    animation-delay: -2.4s;
+  }
+
+  .bridge-badge {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .45rem;
+    margin-bottom: .95rem;
+    text-align: center;
+  }
+
+  .bridge-badge strong {
+    font-size: .92rem;
+  }
+
+  .bridge-steps {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: .45rem;
+    width: 100%;
+  }
+
+  .bridge-steps div {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .48rem .55rem;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--color-bg-secondary) 93%, transparent);
+  }
+
+  .bridge-steps span {
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--color-accent-muted);
+    color: var(--color-accent);
+    font-size: .63rem;
+    font-weight: 800;
+  }
+
+  .bridge-steps p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: .7rem;
+    line-height: 1.35;
+  }
+
+  .bridge-footer {
+    margin: .85rem 0 0;
+    padding: .85rem 1rem;
+    border-left: 3px solid var(--color-accent);
+    border-radius: 0 10px 10px 0;
+    background: var(--color-accent-muted);
+    color: var(--color-text-secondary);
+    font-size: .82rem;
+    line-height: 1.6;
+  }
+
+  @keyframes bridgeMove {
+    0% { left: 5%; opacity: 0; transform: translateY(0); }
+    12% { opacity: 1; }
+    50% { transform: translateY(7px); }
+    88% { opacity: 1; }
+    100% { left: 92%; opacity: 0; transform: translateY(0); }
+  }
+
+  @media (max-width: 720px) {
+    .bridge-visual {
+      grid-template-columns: 1fr;
+    }
+
+    .bridge-center {
+      min-height: 180px;
+      padding: .7rem 0;
+    }
+
+    .bridge-rail {
+      display: none;
+    }
+
+    .bridge-steps {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .bridge-steps {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .moving-dot {
+      display: none;
+    }
+  }
+</style>

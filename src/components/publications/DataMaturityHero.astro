@@ -1,0 +1,51 @@
+---
+import maturityHero from '../../assets/publications/data-maturity/data-maturity-hero.svg';
+
+interface Props {
+  lang?: 'es' | 'en';
+}
+
+const { lang = 'es' } = Astro.props as Props;
+
+const copy = {
+  es: {
+    alt: 'Ilustración de la evolución desde fuentes de datos dispersas hacia pipelines profesionales y finalmente datos utilizados como producto',
+    caption: 'La madurez no consiste únicamente en añadir tecnología: cambia la arquitectura, la forma de trabajar y el papel del dato dentro de la organización.',
+  },
+  en: {
+    alt: 'Illustration of the evolution from scattered data sources to professional pipelines and finally data being used as a product',
+    caption: 'Maturity is not only about adding technology: the architecture, ways of working and the role of data inside the organisation all change.',
+  },
+}[lang];
+---
+
+<figure class="maturity-hero">
+  <img
+    src={maturityHero.src}
+    width={maturityHero.width}
+    height={maturityHero.height}
+    alt={copy.alt}
+    loading="eager"
+  />
+  <figcaption>{copy.caption}</figcaption>
+</figure>
+
+<style>
+  .maturity-hero {
+    margin: 1.8rem 0 2.5rem;
+  }
+
+  .maturity-hero img {
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .maturity-hero figcaption {
+    margin-top: .65rem;
+    color: var(--color-text-muted);
+    font-size: .75rem;
+    line-height: 1.55;
+  }
+</style>

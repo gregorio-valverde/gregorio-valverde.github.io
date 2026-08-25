@@ -1,0 +1,71 @@
+---
+title: "De construir datos a liderar con ellos: tecnología, madurez y cultura"
+description: "Una reflexión a partir de Fundamentals of Data Engineering sobre las etapas de madurez del dato y el reto de hacer avanzar la cultura de una organización al mismo ritmo que su tecnología."
+date: 2026-08-25
+type: article
+tags: [Data Engineering, Data Culture, Airflow, dbt, DataOps, Arquitectura]
+featured: true
+draft: false
+---
+
+import DataMaturityHero from '../../../components/publications/DataMaturityHero.astro';
+import DataMaturityExplorer from '../../../components/publications/DataMaturityExplorer.astro';
+import TechnologyCultureBridge from '../../../components/publications/TechnologyCultureBridge.astro';
+
+Hace poco terminé **_Fundamentals of Data Engineering_**, de Joe Reis y Matt Housley. Entre todas las ideas del libro, hubo una que me hizo pensar especialmente: las **tres etapas de madurez del dato** por las que puede pasar una organización.
+
+Me parece una forma muy acertada de representar algo que ocurre continuamente en la práctica. La relación de una compañía con sus datos no cambia únicamente porque incorpore nuevas herramientas. Cambian también sus necesidades, sus prioridades y la forma en la que espera utilizar esa información.
+
+<DataMaturityHero lang="es" />
+
+<DataMaturityExplorer lang="es" />
+
+## Del “hacer que funcione” a construir una base sólida
+
+En una primera etapa, **Starting with data**, el objetivo suele ser muy directo: comenzar a utilizar los datos y demostrar que pueden generar valor.
+
+Los equipos son pequeños, existen muchas necesidades diferentes y todavía hay bastante incertidumbre sobre qué construir. En ese contexto es lógico priorizar soluciones que funcionen y permitan avanzar rápido.
+
+El problema aparece cuando esas primeras soluciones empiezan a crecer.
+
+Ahí comienza, para mí, una de las transiciones más interesantes: pasar de **Starting with data** a **Scaling with data**.
+
+Ya no basta con conseguir que un proceso funcione. Empiezan a importar cuestiones como la mantenibilidad, la automatización, la calidad, la trazabilidad o la capacidad de incorporar nuevas fuentes sin convertir cada integración en un desarrollo completamente independiente.
+
+Es en este punto donde empiezan a tener sentido **pipelines orquestados, modelos de datos más consistentes, prácticas de DataOps y una infraestructura capaz de crecer**. Herramientas como Airflow o dbt, junto con plataformas de almacenamiento relacional o en la nube, pueden convertirse en piezas importantes de esa profesionalización.
+
+Pero construir la parte técnica es solamente una parte del camino.
+
+## Cuando la tecnología avanza más rápido que la organización
+
+Una organización puede mejorar mucho su infraestructura de datos sin que su cultura evolucione a la misma velocidad.
+
+Podemos automatizar pipelines, mejorar el modelado, incorporar tests o centralizar información. Sin embargo, si las personas que deben utilizar esos datos no entienden de dónde vienen, no confían en ellos o continúan trabajando exactamente de la misma forma que antes, el impacto de toda esa evolución técnica será limitado.
+
+<TechnologyCultureBridge lang="es" />
+
+Esta tensión me parece especialmente relevante porque cambia también el papel del Data Engineer.
+
+Nuestro trabajo no consiste únicamente en mover información de un sistema a otro o en construir una arquitectura técnicamente correcta. Conforme aumenta la madurez, también tenemos que ayudar a **generar confianza, reducir incertidumbre y conseguir que el dato pueda integrarse realmente en los procesos de la organización**.
+
+Eso implica comunicar.
+
+Implica explicar por qué un nuevo modelo es más fiable, por qué determinados indicadores deben calcularse de una forma concreta o por qué automatizar un proceso puede cambiar la forma en la que trabaja un área.
+
+La plataforma puede estar preparada antes que la organización. Y ese desfase es uno de los retos más complejos de resolver.
+
+## Leading with data: el cambio realmente importante
+
+La tercera etapa, **Leading with data**, representa algo diferente.
+
+Aquí el dato deja de ser únicamente una herramienta de soporte. Empieza a tratarse como un producto, existe mayor ownership y la información forma parte de la manera en la que la compañía toma decisiones y construye sus procesos.
+
+Llegar hasta ahí requiere tecnología, por supuesto, pero también confianza y adopción.
+
+Por eso creo que la madurez del dato no debería medirse únicamente por el stack tecnológico de una empresa. Tener más herramientas, más pipelines o una arquitectura más sofisticada no convierte automáticamente a una organización en data-driven.
+
+La verdadera evolución aparece cuando **la capacidad técnica y la mentalidad de la compañía empiezan a avanzar juntas**.
+
+> La evolución técnica es apasionante, pero la transformación mental es la que realmente marca la diferencia.
+
+Para mí, ahí está una de las partes más interesantes del Data Engineering: construir sistemas capaces de escalar, pero también conseguir que esos sistemas terminen siendo comprendidos, utilizados y valorados por el negocio.
