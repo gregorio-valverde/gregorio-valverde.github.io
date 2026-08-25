@@ -9,7 +9,7 @@ import HomePublicationsCarousel from '../HomePublicationsCarousel.astro';
 import SiteIcon from '../icons/SiteIcon.astro';
 import profileImage from '../../assets/profile/gregorio-valverde.jpg';
 import { siteConfig } from '../../config';
-import { buildGmailComposeUrl } from '../../utils/contact';
+import { buildMailtoUrl } from '../../utils/contact';
 import {
   contentLang,
   contentSlug,
@@ -39,7 +39,7 @@ const homeDescription = lang === 'es'
 
 const extra = lang === 'es'
   ? {
-      emailDirect: 'Escribirme por Gmail',
+      emailDirect: 'Enviar email',
       emailSubject: 'Contacto desde tu portfolio',
       contactPage: 'Ver todas las opciones de contacto',
       location: 'Murcia, España',
@@ -51,7 +51,7 @@ const extra = lang === 'es'
       finalText: 'Puedes escribirme directamente por correo para hablar sobre oportunidades, proyectos o colaboración técnica.',
     }
   : {
-      emailDirect: 'Email me via Gmail',
+      emailDirect: 'Send email',
       emailSubject: 'Contact from your portfolio',
       contactPage: 'View all contact options',
       location: 'Murcia, Spain',
@@ -63,7 +63,7 @@ const extra = lang === 'es'
       finalText: 'You can email me directly to discuss opportunities, projects, or technical collaboration.',
     };
 
-const gmailUrl = buildGmailComposeUrl(siteConfig.author.email, extra.emailSubject);
+const emailUrl = buildMailtoUrl(siteConfig.author.email, extra.emailSubject);
 ---
 
 <BaseLayout lang={lang}>
@@ -110,7 +110,7 @@ const gmailUrl = buildGmailComposeUrl(siteConfig.author.email, extra.emailSubjec
             <SiteIcon name="arrow-right" size={17} />
           </a>
 
-          <a href={gmailUrl} class="button button-secondary" target="_blank" rel="noopener noreferrer">
+          <a href={emailUrl} class="button button-secondary">
             <SiteIcon name="mail" size={17} />
             {extra.emailDirect}
           </a>
@@ -210,7 +210,7 @@ const gmailUrl = buildGmailComposeUrl(siteConfig.author.email, extra.emailSubjec
       </div>
 
       <div class="cta-buttons">
-        <a href={gmailUrl} class="button button-primary" target="_blank" rel="noopener noreferrer">
+        <a href={emailUrl} class="button button-primary">
           <SiteIcon name="mail" size={17} />
           {extra.emailDirect}
         </a>
@@ -245,7 +245,7 @@ const gmailUrl = buildGmailComposeUrl(siteConfig.author.email, extra.emailSubjec
 
     .eyebrow {
       margin: 0 0 0.9rem;
-      color: var(--color-text-muted);
+      color: var(--color-blue);
       font-size: 0.72rem;
       font-weight: 750;
       letter-spacing: 0.12em;
@@ -320,8 +320,8 @@ const gmailUrl = buildGmailComposeUrl(siteConfig.author.email, extra.emailSubjec
     }
 
     .button-primary {
-      background: var(--color-text);
-      color: var(--color-bg);
+      background: var(--gradient-blue);
+      color: #ffffff;
     }
 
     .button-secondary {

@@ -1,0 +1,45 @@
+<svg width="1200" height="620" viewBox="0 0 1200 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="80" y1="40" x2="1100" y2="590" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#172235"/>
+      <stop offset="1" stop-color="#0F1726"/>
+    </linearGradient>
+    <linearGradient id="line" x1="170" y1="300" x2="1040" y2="300" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6E8FC0"/>
+      <stop offset="0.5" stop-color="#88A9DC"/>
+      <stop offset="1" stop-color="#B8CAE6"/>
+    </linearGradient>
+  </defs>
+  <rect x="1" y="1" width="1198" height="618" rx="34" fill="url(#bg)" stroke="#2B3E58" stroke-width="2"/>
+  <circle cx="1005" cy="116" r="210" fill="#345B91" fill-opacity="0.09"/>
+  <circle cx="170" cy="525" r="190" fill="#22456E" fill-opacity="0.08"/>
+  <path d="M210 314H992" stroke="url(#line)" stroke-width="4" stroke-linecap="round"/>
+  <path d="M965 292L993 314L965 336" stroke="#B8CAE6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="96" y="178" width="220" height="274" rx="26" fill="#18263B" stroke="#34506F"/>
+  <circle cx="206" cy="246" r="44" stroke="#7CA0D6" stroke-width="3"/>
+  <path d="M206 205V287M165 246H247" stroke="#9AB8E4" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="206" cy="246" r="12" fill="#9AB8E4"/>
+  <text x="206" y="350" text-anchor="middle" fill="#F3F6FA" font-family="Arial, sans-serif" font-size="28" font-weight="700">Airflow</text>
+  <text x="206" y="382" text-anchor="middle" fill="#9FB1C7" font-family="Arial, sans-serif" font-size="17">Orchestration</text>
+  <rect x="390" y="128" width="300" height="374" rx="30" fill="#1C2D45" stroke="#5078A8" stroke-width="2"/>
+  <path d="M540 196C513 196 491 218 491 245C491 270 509 290 534 294L523 326L556 300C578 294 594 273 594 248C594 219 570 196 540 196Z" fill="#E6784A"/>
+  <circle cx="529" cy="244" r="5" fill="#1C2D45"/>
+  <circle cx="551" cy="244" r="5" fill="#1C2D45"/>
+  <text x="540" y="356" text-anchor="middle" fill="#F6F7FB" font-family="Arial, sans-serif" font-size="42" font-weight="700">dbt</text>
+  <text x="540" y="390" text-anchor="middle" fill="#ADC0D8" font-family="Arial, sans-serif" font-size="18">Transformation layer</text>
+  <rect x="438" y="420" width="204" height="44" rx="22" fill="#29415F" stroke="#4C6E98"/>
+  <text x="540" y="448" text-anchor="middle" fill="#DCE8F7" font-family="Arial, sans-serif" font-size="16">models · tests · docs</text>
+  <rect x="762" y="178" width="244" height="274" rx="26" fill="#18263B" stroke="#34506F"/>
+  <ellipse cx="884" cy="238" rx="54" ry="20" stroke="#9AB8E4" stroke-width="3"/>
+  <path d="M830 238V324C830 337 854 347 884 347C914 347 938 337 938 324V238" stroke="#9AB8E4" stroke-width="3"/>
+  <path d="M830 278C830 291 854 301 884 301C914 301 938 291 938 278" stroke="#5E7FA8" stroke-width="2"/>
+  <text x="884" y="385" text-anchor="middle" fill="#F3F6FA" font-family="Arial, sans-serif" font-size="28" font-weight="700">SQL Server</text>
+  <text x="884" y="417" text-anchor="middle" fill="#9FB1C7" font-family="Arial, sans-serif" font-size="17">Data Warehouse</text>
+  <rect x="1030" y="224" width="92" height="176" rx="18" fill="#15243A" stroke="#3C5878"/>
+  <rect x="1051" y="270" width="12" height="74" rx="6" fill="#6E8FC0"/>
+  <rect x="1073" y="246" width="12" height="98" rx="6" fill="#8DABE0"/>
+  <rect x="1095" y="302" width="12" height="42" rx="6" fill="#B8CAE6"/>
+  <text x="1076" y="430" text-anchor="middle" fill="#B9C9DC" font-family="Arial, sans-serif" font-size="15">BI</text>
+  <text x="102" y="92" fill="#AEC1DA" font-family="Arial, sans-serif" font-size="18" letter-spacing="2">DATA ARCHITECTURE</text>
+  <text x="102" y="128" fill="#F4F7FA" font-family="Arial, sans-serif" font-size="34" font-weight="700">Orchestration → Transformation → Consumption</text>
+</svg>

@@ -1,0 +1,82 @@
+---
+title: "dbt, la herramienta que consiguió aclararme cómo construir mi primera arquitectura de datos"
+description: "Cómo dbt terminó siendo la pieza que me faltaba para separar orquestación, transformación, calidad y consumo al diseñar un Data Warehouse corporativo desde cero."
+date: 2026-03-01
+type: article
+tags: [dbt, Data Engineering, Airflow, SQL Server, Data Warehouse, Arquitectura]
+featured: true
+draft: false
+---
+
+import DbtArchitectureJourney from '../../../components/publications/DbtArchitectureJourney.astro';
+
+Durante mi carrera he tenido que diseñar varias bases de datos analíticas, principalmente **Data Warehouses sobre bases de datos relacionales**. Sin embargo, mi forma de entender una arquitectura de datos cambió cuando tuve la oportunidad de diseñar un **DW corporativo desde cero**.
+
+No se trataba únicamente de modelar tablas. Tenía que pensar desde los cimientos de la ETL hasta la observabilidad, el testing, la calidad del dato y, finalmente, el consumo mediante cuadros de mando y automatizaciones de negocio.
+
+Básicamente tenía **un lienzo en blanco** sobre el que intentar construir un sistema robusto, mantenible y preparado para crecer.
+
+El contexto, además, imponía ciertas limitaciones. No disponía de una plataforma cloud como en otros proyectos ni podía apoyarme en un ecosistema amplio de herramientas gestionadas. Tenía un servidor corporativo, tecnologías ya disponibles dentro de la organización y el reto de sacarles el máximo partido.
+
+## Construir con las piezas que ya tenía
+
+Para centralizar el Data Warehouse decidí utilizar **SQL Server**.
+
+No porque fuese necesariamente la mejor base de datos posible para analítica, sino porque era una decisión pragmática: el entorno ya disponía de licencias y reutilizarlas permitía reducir costes y complejidad operativa.
+
+Para la orquestación tenía **Apache Airflow**. Y ahí sí tenía mucha libertad.
+
+Python me permitía construir prácticamente cualquier lógica de extracción, automatización o control que necesitase.
+
+Pero conforme la arquitectura crecía apareció un problema.
+
+Con únicamente Python, parte de la lógica de transformación, testing, documentación y calidad del dato empezaba a traducirse en una cantidad creciente de código.
+
+Era posible hacerlo, pero cada nueva responsabilidad hacía más difícil mantener una separación clara entre **extraer datos, transformarlos y preparar modelos para analítica**.
+
+Entonces descubrí **dbt**.
+
+<DbtArchitectureJourney lang="es" />
+
+## La última pieza del rompecabezas
+
+Lo que más me convenció de dbt no fue únicamente que estuviese basado en SQL.
+
+Fue que encajaba de forma natural con el problema que estaba intentando resolver.
+
+Era una herramienta exportable, versionable e instalable sobre distintos motores de bases de datos. Me permitía mantener Airflow centrado en la **orquestación y extracción**, mientras dbt asumía la **transformación y modelado analítico**.
+
+A partir de ahí, muchas responsabilidades empezaron a quedar mucho más claras:
+
+- **Airflow** para ejecutar y coordinar procesos.
+- **SQL Server** como motor y almacenamiento central del Data Warehouse.
+- **dbt** para modelos, reglas de negocio, tests y documentación.
+- **Power BI y otras soluciones** como capa de consumo.
+
+La diferencia parecía sencilla, pero cambió bastante mi forma de diseñar la solución.
+
+Los modelos podían organizarse en un repositorio coherente, reutilizar transformaciones, versionar cambios y documentar dependencias.
+
+Además, el testing dejaba de depender únicamente de lógica desarrollada a medida y podía integrarse directamente dentro del propio ciclo de transformación.
+
+## Separar responsabilidades para poder crecer
+
+Para mí, esa fue la aportación principal de dbt:
+
+**hacer explícita la separación entre la parte técnica de ingestión y la capa analítica del dato.**
+
+No eliminó la complejidad. Tampoco convirtió automáticamente la arquitectura en un sistema perfecto.
+
+Pero sí me ayudó a estructurarla de una forma mucho más comprensible.
+
+Y cuando una arquitectura empieza a crecer, esa claridad importa.
+
+Permite que una transformación no dependa de conocer todo el código de una ETL. Permite reutilizar modelos, documentarlos y comprobar su calidad.
+
+Y, sobre todo, facilita que el conocimiento deje de estar únicamente en la cabeza de quien desarrolló el primer pipeline.
+
+Ese diseño terminó siendo la base para desarrollar nuevos modelos, cuadros de mando y automatizaciones útiles para distintas áreas de la compañía.
+
+A día de hoy sigo viendo dbt de la misma manera: no como una herramienta que sustituye al resto del stack, sino como **la pieza que ayuda a ordenar dónde debe vivir cada responsabilidad dentro de una arquitectura de datos**.
+
+Si quieres profundizar en este enfoque, puedes revisar mis proyectos del portfolio, donde documento patrones de arquitectura, modelado y automatización que he ido utilizando en sistemas de datos reales.

@@ -5,7 +5,7 @@ import SEO from '../SEO.astro';
 import SiteIcon from '../icons/SiteIcon.astro';
 import profileImage from '../../assets/profile/gregorio-valverde.jpg';
 import { siteConfig } from '../../config';
-import { buildGmailComposeUrl, buildMailtoUrl } from '../../utils/contact';
+import { buildMailtoUrl } from '../../utils/contact';
 import { type Lang } from '../../i18n';
 
 interface Props {
@@ -24,8 +24,7 @@ const copy = lang === 'es'
       availability: 'Normalmente respondo en pocos días.',
       location: 'Murcia, España',
       role: 'Data & Analytics Engineer',
-      gmail: 'Abrir Gmail',
-      emailClient: 'Usar mi aplicación de correo',
+      sendEmail: 'Enviar email',
       copyEmail: 'Copiar correo',
       copied: 'Correo copiado',
       directLabel: 'Correo directo',
@@ -48,8 +47,7 @@ const copy = lang === 'es'
       availability: 'I usually reply within a few days.',
       location: 'Murcia, Spain',
       role: 'Data & Analytics Engineer',
-      gmail: 'Open Gmail',
-      emailClient: 'Use my email app',
+      sendEmail: 'Send email',
       copyEmail: 'Copy email',
       copied: 'Email copied',
       directLabel: 'Direct email',
@@ -64,11 +62,6 @@ const copy = lang === 'es'
       privacy: 'No forms or intermediaries: the message is sent from your own email account.',
     };
 
-const gmailUrl = buildGmailComposeUrl(
-  siteConfig.author.email,
-  copy.emailSubject,
-  copy.emailBody,
-);
 const mailtoUrl = buildMailtoUrl(
   siteConfig.author.email,
   copy.emailSubject,
@@ -151,20 +144,9 @@ const socialCards = [
       </div>
 
       <div class="email-actions">
-        <a
-          href={gmailUrl}
-          class="action-button action-primary"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href={mailtoUrl} class="action-button action-primary">
           <SiteIcon name="mail" size={17} />
-          {copy.gmail}
-          <SiteIcon name="external" size={14} />
-        </a>
-
-        <a href={mailtoUrl} class="action-button action-secondary">
-          <SiteIcon name="arrow-right" size={17} />
-          {copy.emailClient}
+          {copy.sendEmail}
         </a>
 
         <button
@@ -488,8 +470,8 @@ const socialCards = [
 
     .action-primary {
       border: 1px solid var(--color-text);
-      background: var(--color-text);
-      color: var(--color-bg);
+      background: var(--gradient-blue);
+      color: #ffffff;
     }
 
     .action-primary:hover {

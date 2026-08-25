@@ -123,30 +123,44 @@ const copy = lang === 'es'
       window.addEventListener('resize', updateState, { passive: true });
 
       let pointerActive = false;
+      let pointerId: number | null = null;
       let pointerStart = 0;
       let scrollStart = 0;
       let dragged = false;
+      const dragThreshold = 12;
 
       rail.addEventListener('pointerdown', (event) => {
         if (event.pointerType === 'mouse' && event.button !== 0) return;
         pointerActive = true;
+        pointerId = event.pointerId;
         dragged = false;
         pointerStart = event.clientX;
         scrollStart = rail.scrollLeft;
-        rail.classList.add('is-dragging');
-        rail.setPointerCapture(event.pointerId);
       });
 
       rail.addEventListener('pointermove', (event) => {
         if (!pointerActive) return;
         const delta = event.clientX - pointerStart;
-        if (Math.abs(delta) > 5) dragged = true;
-        rail.scrollLeft = scrollStart - delta;
+
+        if (!dragged && Math.abs(delta) >= dragThreshold) {
+          dragged = true;
+          rail.classList.add('is-dragging');
+          if (pointerId !== null && !rail.hasPointerCapture(pointerId)) {
+            rail.setPointerCapture(pointerId);
+          }
+        }
+
+        if (dragged) {
+          event.preventDefault();
+          rail.scrollLeft = scrollStart - delta;
+        }
       });
 
       const finishPointer = () => {
         pointerActive = false;
+        pointerId = null;
         rail.classList.remove('is-dragging');
+        requestAnimationFrame(() => { dragged = false; });
       };
 
       rail.addEventListener('pointerup', finishPointer);
@@ -159,7 +173,6 @@ const copy = lang === 'es'
           if (!dragged) return;
           event.preventDefault();
           event.stopPropagation();
-          dragged = false;
         },
         true,
       );
@@ -290,7 +303,7 @@ const copy = lang === 'es'
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
     cursor: grab;
-    touch-action: pan-y;
+    touch-action: pan-y pinch-zoom;
   }
 
   .publication-rail::-webkit-scrollbar {

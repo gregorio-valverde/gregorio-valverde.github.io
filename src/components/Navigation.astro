@@ -1,6 +1,6 @@
 ---
 import { siteConfig } from '../config';
-import { buildGmailComposeUrl } from '../utils/contact';
+import { buildMailtoUrl } from '../utils/contact';
 import ThemeToggle from './ThemeToggle.astro';
 import SiteIcon from './icons/SiteIcon.astro';
 import {
@@ -46,9 +46,9 @@ const isActive = (href: string) => {
 
 const enPath = lang === 'en' ? currentPath : alternatePath;
 const esPath = lang === 'es' ? currentPath : alternatePath;
-const emailLabel = lang === 'es' ? 'Escribirme por Gmail' : 'Email me via Gmail';
+const emailLabel = lang === 'es' ? `Enviar email a ${siteConfig.author.email}` : `Send email to ${siteConfig.author.email}`;
 const emailSubject = lang === 'es' ? 'Contacto desde tu portfolio' : 'Contact from your portfolio';
-const gmailUrl = buildGmailComposeUrl(siteConfig.author.email, emailSubject);
+const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
 ---
 
 <nav class="site-nav" aria-label={lang === 'es' ? 'Navegación principal' : 'Main navigation'}>
@@ -70,10 +70,8 @@ const gmailUrl = buildGmailComposeUrl(siteConfig.author.email, emailSubject);
 
   <div class="nav-end">
     <a
-      href={gmailUrl}
+      href={emailUrl}
       class="email-shortcut"
-      target="_blank"
-      rel="noopener noreferrer"
       aria-label={emailLabel}
       title={emailLabel}
     >
@@ -184,7 +182,7 @@ const gmailUrl = buildGmailComposeUrl(siteConfig.author.email, emailSubject);
     bottom: 1px;
     left: 0;
     height: 1px;
-    background: var(--color-text);
+    background: var(--color-blue);
     transform: scaleX(0);
     transform-origin: right;
     transition: transform var(--transition-base);

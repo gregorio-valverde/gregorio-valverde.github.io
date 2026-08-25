@@ -7,11 +7,7 @@ interface Props {
   speakerImage: ImageMetadata;
 }
 
-const {
-  lang = 'es',
-  roomImage,
-  speakerImage,
-} = Astro.props as Props;
+const { lang = 'es', roomImage, speakerImage } = Astro.props as Props;
 
 const content = {
   es: {
@@ -22,24 +18,9 @@ const content = {
     roomCaption: 'Primer Congreso Profesional de Grupo Hozono Global',
     speakerCaption: 'Transformación digital, analítica y comunicación',
     flow: [
-      {
-        number: '01',
-        title: 'Complejidad técnica',
-        text: 'Datos, procesos, reglas de negocio, sistemas e incertidumbre forman parte del trabajo diario.',
-        icon: 'code',
-      },
-      {
-        number: '02',
-        title: 'Comunicación',
-        text: 'El reto está en traducir esa complejidad a un mensaje sencillo para la persona que tenemos delante.',
-        icon: 'communication',
-      },
-      {
-        number: '03',
-        title: 'Impacto',
-        text: 'Lo relevante no es únicamente la tecnología, sino cómo ayuda a ahorrar tiempo, reducir errores o tomar mejores decisiones.',
-        icon: 'impact',
-      },
+      ['01', 'Complejidad técnica', 'Datos, procesos, reglas de negocio, sistemas e incertidumbre forman parte del trabajo diario.', 'code'],
+      ['02', 'Comunicación', 'El reto está en traducir esa complejidad a un mensaje sencillo para la persona que tenemos delante.', 'communication'],
+      ['03', 'Impacto', 'Lo relevante no es únicamente la tecnología, sino cómo ayuda a ahorrar tiempo, reducir errores o tomar mejores decisiones.', 'impact'],
     ],
     quote: 'La solución técnica puede ser la misma. La forma de comunicarla no debería serlo.',
   },
@@ -51,47 +32,18 @@ const content = {
     roomCaption: 'First Grupo Hozono Global Professional Congress',
     speakerCaption: 'Digital transformation, analytics and communication',
     flow: [
-      {
-        number: '01',
-        title: 'Technical complexity',
-        text: 'Data, processes, business rules, systems and uncertainty are part of our daily work.',
-        icon: 'code',
-      },
-      {
-        number: '02',
-        title: 'Communication',
-        text: 'The challenge is translating that complexity into a simple message for the person in front of us.',
-        icon: 'communication',
-      },
-      {
-        number: '03',
-        title: 'Impact',
-        text: 'What matters is not only the technology, but how it helps save time, reduce errors or improve decision-making.',
-        icon: 'impact',
-      },
+      ['01', 'Technical complexity', 'Data, processes, business rules, systems and uncertainty are part of our daily work.', 'code'],
+      ['02', 'Communication', 'The challenge is translating that complexity into a simple message for the person in front of us.', 'communication'],
+      ['03', 'Impact', 'What matters is not only the technology, but how it helps save time, reduce errors or improve decision-making.', 'impact'],
     ],
     quote: 'The technical solution may be the same. The way we communicate it should not be.',
   },
 }[lang];
 
-const iconPaths = {
-  code: `
-    <path d="M8.5 8.5 4 13l4.5 4.5"/>
-    <path d="m15.5 8.5 4.5 4.5-4.5 4.5"/>
-    <path d="m14 5-4 16"/>
-  `,
-  communication: `
-    <path d="M4 5.5h16v11H9l-5 4v-15Z"/>
-    <path d="M8 10h8"/>
-    <path d="M8 13.5h5"/>
-  `,
-  impact: `
-    <path d="M5 19V9"/>
-    <path d="M10 19V5"/>
-    <path d="M15 19v-7"/>
-    <path d="M20 19V3"/>
-    <path d="m5 7 5-3 5 5 5-7"/>
-  `,
+const icons: Record<string, string> = {
+  code: '<path d="M8.5 8.5 4 13l4.5 4.5"/><path d="m15.5 8.5 4.5 4.5-4.5 4.5"/><path d="m14 5-4 16"/>',
+  communication: '<path d="M4 5.5h16v11H9l-5 4v-15Z"/><path d="M8 10h8"/><path d="M8 13.5h5"/>',
+  impact: '<path d="M5 19V9"/><path d="M10 19V5"/><path d="M15 19v-7"/><path d="M20 19V3"/><path d="m5 7 5-3 5 5 5-7"/>',
 };
 ---
 
@@ -103,24 +55,11 @@ const iconPaths = {
 
   <div class="photo-layout">
     <figure class="photo photo-main">
-      <img
-        src={roomImage.src}
-        width={roomImage.width}
-        height={roomImage.height}
-        alt={content.roomAlt}
-        loading="lazy"
-      />
+      <img src={roomImage.src} width={roomImage.width} height={roomImage.height} alt={content.roomAlt} loading="lazy" />
       <figcaption>{content.roomCaption}</figcaption>
     </figure>
-
     <figure class="photo photo-secondary">
-      <img
-        src={speakerImage.src}
-        width={speakerImage.width}
-        height={speakerImage.height}
-        alt={content.speakerAlt}
-        loading="lazy"
-      />
+      <img src={speakerImage.src} width={speakerImage.width} height={speakerImage.height} alt={content.speakerAlt} loading="lazy" />
       <figcaption>{content.speakerCaption}</figcaption>
     </figure>
   </div>
@@ -130,276 +69,93 @@ const iconPaths = {
       <>
         <article class="flow-card">
           <div class="flow-card-top">
-            <span class="flow-number">{item.number}</span>
+            <span class="flow-number">{item[0]}</span>
             <span class="flow-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={iconPaths[item.icon as keyof typeof iconPaths]} />
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={icons[item[3]]} />
             </span>
           </div>
-          <h3>{item.title}</h3>
-          <p>{item.text}</p>
+          <h3>{item[1]}</h3>
+          <p>{item[2]}</p>
         </article>
-
         {index < content.flow.length - 1 && (
           <div class="flow-arrow" aria-hidden="true">
-            <svg viewBox="0 0 32 20" fill="none">
-              <path d="M2 10h25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              <path d="m22 5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <svg viewBox="0 0 32 20" fill="none"><path d="M2 10h25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="m22 5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
         )}
       </>
     ))}
   </div>
 
-  <blockquote class="closing-quote">
-    <span aria-hidden="true">“</span>
-    {content.quote}
-  </blockquote>
+  <blockquote class="closing-quote"><span aria-hidden="true">“</span>{content.quote}</blockquote>
 </section>
 
 <style>
   .communication-visual {
-    --surface: color-mix(in srgb, var(--color-background, #111) 94%, white 6%);
-    --surface-strong: color-mix(in srgb, var(--color-background, #111) 88%, white 12%);
+    --visual-surface: var(--color-bg-secondary);
+    --visual-surface-strong: var(--color-bg-elevated);
+    --visual-border: var(--color-border);
+    --visual-accent: var(--color-blue);
+    --visual-accent-muted: var(--color-blue-muted);
     margin: 2.25rem 0 3rem;
   }
 
-  .visual-heading {
-    margin-bottom: 1.25rem;
-  }
+  .visual-heading { margin-bottom: 1.25rem; }
+  .visual-kicker { display: block; margin-bottom: .4rem; color: var(--visual-accent); font-size: .72rem; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
+  .visual-heading h2 { max-width: 650px; margin: 0; color: var(--color-text); font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: -.025em; line-height: 1.2; }
 
-  .visual-kicker {
-    display: block;
-    margin-bottom: .4rem;
-    color: var(--color-text-muted);
-    font-size: .72rem;
-    font-weight: 700;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-  }
+  .photo-layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(230px, .85fr); gap: .9rem; margin-bottom: 2rem; }
+  .photo { position: relative; margin: 0; overflow: hidden; border: 1px solid var(--visual-border); border-radius: 16px; background: var(--visual-surface); box-shadow: var(--shadow-sm); }
+  .photo img { display: block; width: 100%; height: 100%; min-height: 310px; object-fit: cover; transition: transform .55s cubic-bezier(.2,.7,.2,1); }
+  .photo-main img { aspect-ratio: 16/9; }
+  .photo-secondary img { aspect-ratio: 4/3; }
+  .photo figcaption { position: absolute; right: .8rem; bottom: .8rem; left: .8rem; padding: .6rem .75rem; border: 1px solid rgba(255,255,255,.18); border-radius: 10px; background: rgba(16,30,44,.76); backdrop-filter: blur(8px); color: #f5f8fb; font-size: .72rem; line-height: 1.4; }
 
-  .visual-heading h2 {
-    margin: 0;
-    max-width: 650px;
-    font-size: clamp(1.35rem, 3vw, 2rem);
-    letter-spacing: -.025em;
-    line-height: 1.2;
-  }
+  .flow { display: grid; grid-template-columns: 1fr 44px 1fr 44px 1fr; align-items: stretch; gap: .25rem; }
+  .flow-card { min-width: 0; padding: 1rem; border: 1px solid var(--visual-border); border-radius: 14px; background: linear-gradient(145deg, var(--visual-accent-muted), transparent 48%), var(--visual-surface); box-shadow: var(--shadow-sm); transition: transform .25s ease, border-color .25s ease, background .25s ease; }
+  .flow-card-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .85rem; }
+  .flow-number { color: var(--visual-accent); font-size: .7rem; font-weight: 800; letter-spacing: .1em; }
+  .flow-icon { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--color-blue-border); border-radius: 10px; color: var(--visual-accent); background: var(--visual-surface-strong); }
+  .flow-icon svg { width: 18px; height: 18px; }
+  .flow-card h3 { margin: 0 0 .55rem; color: var(--color-text); font-size: .98rem; letter-spacing: -.015em; }
+  .flow-card p { margin: 0; color: var(--color-text-secondary); font-size: .86rem; line-height: 1.65; }
+  .flow-arrow { display: grid; place-items: center; color: var(--visual-accent); opacity: .72; }
+  .flow-arrow svg { width: 30px; height: 20px; }
 
-  .photo-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(230px, .85fr);
-    gap: .9rem;
-    margin-bottom: 2rem;
-  }
-
-  .photo {
-    position: relative;
-    margin: 0;
-    overflow: hidden;
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    background: var(--surface);
-  }
-
-  .photo img {
-    width: 100%;
-    height: 100%;
-    min-height: 310px;
-    display: block;
-    object-fit: cover;
-    transition: transform .55s cubic-bezier(.2,.7,.2,1);
-  }
-
-  .photo-main img {
-    aspect-ratio: 16 / 9;
-  }
-
-  .photo-secondary img {
-    aspect-ratio: 4 / 3;
-  }
-
-  .photo figcaption {
-    position: absolute;
-    right: .8rem;
-    bottom: .8rem;
-    left: .8rem;
-    padding: .6rem .75rem;
-    border: 1px solid rgba(255,255,255,.16);
-    border-radius: 10px;
-    background: rgba(12,12,12,.66);
-    backdrop-filter: blur(8px);
-    color: rgba(255,255,255,.9);
-    font-size: .72rem;
-    line-height: 1.4;
-  }
+  .closing-quote { position: relative; margin: 1.5rem 0 0; padding: 1.2rem 1.3rem 1.2rem 2.7rem; border: 1px solid var(--color-blue-border); border-left: 3px solid var(--visual-accent); border-radius: 0 12px 12px 0; background: linear-gradient(90deg, var(--visual-accent-muted), transparent 68%), var(--visual-surface); color: var(--color-text); font-size: 1rem; font-weight: 600; line-height: 1.6; }
+  .closing-quote > span { position: absolute; top: .62rem; left: .9rem; color: var(--visual-accent); font-size: 2rem; line-height: 1; }
 
   @media (hover:hover) and (pointer:fine) {
-    .photo:hover img {
-      transform: scale(1.025);
-    }
-  }
-
-  .flow {
-    display: grid;
-    grid-template-columns: 1fr 44px 1fr 44px 1fr;
-    align-items: stretch;
-    gap: .25rem;
-  }
-
-  .flow-card {
-    min-width: 0;
-    padding: 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: 14px;
-    background: var(--surface);
-    transition:
-      transform .25s ease,
-      border-color .25s ease,
-      background .25s ease;
-  }
-
-  .flow-card-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: .85rem;
-  }
-
-  .flow-number {
-    color: var(--color-text-muted);
-    font-size: .7rem;
-    font-weight: 700;
-    letter-spacing: .1em;
-  }
-
-  .flow-icon {
-    width: 34px;
-    height: 34px;
-    display: grid;
-    place-items: center;
-    border: 1px solid var(--color-border);
-    border-radius: 10px;
-    color: var(--color-text-secondary);
-    background: var(--surface-strong);
-  }
-
-  .flow-icon svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .flow-card h3 {
-    margin: 0 0 .55rem;
-    font-size: .98rem;
-    letter-spacing: -.015em;
-  }
-
-  .flow-card p {
-    margin: 0;
-    color: var(--color-text-secondary);
-    font-size: .86rem;
-    line-height: 1.65;
-  }
-
-  .flow-arrow {
-    display: grid;
-    place-items: center;
-    color: var(--color-text-muted);
-    opacity: .72;
-  }
-
-  .flow-arrow svg {
-    width: 30px;
-    height: 20px;
-  }
-
-  .closing-quote {
-    position: relative;
-    margin: 1.5rem 0 0;
-    padding: 1.2rem 1.3rem 1.2rem 2.7rem;
-    border-left: 3px solid var(--color-text-secondary);
-    border-radius: 0 12px 12px 0;
-    background: var(--surface);
-    color: var(--color-text-secondary);
-    font-size: 1rem;
-    font-weight: 550;
-    line-height: 1.6;
-  }
-
-  .closing-quote > span {
-    position: absolute;
-    top: .62rem;
-    left: .9rem;
-    color: var(--color-text-muted);
-    font-size: 2rem;
-    line-height: 1;
-  }
-
-  @media (hover:hover) and (pointer:fine) {
-    .flow-card:hover {
-      transform: translateY(-3px);
-      background: var(--surface-strong);
-    }
+    .photo:hover img { transform: scale(1.025); }
+    .flow-card:hover { transform: translateY(-3px); border-color: var(--color-blue-border); background: linear-gradient(145deg, var(--visual-accent-muted), transparent 60%), var(--visual-surface-strong); }
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .flow-card {
-      opacity: .45;
-      transform: translateY(8px);
-    }
-
-    .flow.is-visible .flow-card {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .flow-card { opacity: .62; transform: translateY(8px); }
+    .flow.is-visible .flow-card { opacity: 1; transform: translateY(0); }
   }
 
   @media (max-width: 760px) {
-    .photo-layout {
-      grid-template-columns: 1fr;
-    }
-
-    .photo img {
-      min-height: 0;
-    }
-
-    .flow {
-      grid-template-columns: 1fr;
-      gap: .7rem;
-    }
-
-    .flow-arrow {
-      height: 26px;
-      transform: rotate(90deg);
-    }
+    .photo-layout { grid-template-columns: 1fr; }
+    .photo img { min-height: 0; }
+    .flow { grid-template-columns: 1fr; gap: .7rem; }
+    .flow-arrow { height: 26px; transform: rotate(90deg); }
   }
 </style>
 
 <script>
-  const flows = document.querySelectorAll('[data-communication-flow]');
-
-  flows.forEach((flow) => {
-    if (!(flow instanceof HTMLElement)) return;
-
-    if (!('IntersectionObserver' in window)) {
-      flow.classList.add('is-visible');
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            flow.classList.add('is-visible');
-            observer.unobserve(flow);
-          }
-        }
-      },
-      { threshold: 0.25 }
-    );
-
-    observer.observe(flow);
-  });
+  function initCommunicationFlows() {
+    document.querySelectorAll('[data-communication-flow]').forEach((flow) => {
+      if (!(flow instanceof HTMLElement) || flow.dataset.ready === 'true') return;
+      flow.dataset.ready = 'true';
+      if (!('IntersectionObserver' in window)) { flow.classList.add('is-visible'); return; }
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) { flow.classList.add('is-visible'); observer.unobserve(flow); }
+        });
+      }, { threshold: .2 });
+      observer.observe(flow);
+    });
+  }
+  document.addEventListener('astro:page-load', initCommunicationFlows);
+  initCommunicationFlows();
 </script>

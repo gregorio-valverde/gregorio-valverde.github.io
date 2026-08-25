@@ -1,0 +1,84 @@
+---
+title: "dbt, the tool that made my first data architecture finally make sense"
+description: "How dbt became the missing piece that helped me separate orchestration, transformation, data quality and consumption while designing a corporate Data Warehouse from scratch."
+date: 2026-03-01
+type: article
+tags: [dbt, Data Engineering, Airflow, SQL Server, Data Warehouse, Architecture]
+featured: true
+draft: false
+---
+
+import DbtArchitectureJourney from '../../../components/publications/DbtArchitectureJourney.astro';
+
+Throughout my career, I have designed several analytical databases, mainly **Data Warehouses built on relational databases**.
+
+However, the way I understood data architecture changed when I had the opportunity to design a **corporate DW from scratch**.
+
+It was not just about modelling tables. I had to think about everything from the foundations of the ETL to observability, testing, data quality and, finally, consumption through business dashboards and automations.
+
+I basically had **a blank canvas** on which I needed to build a robust, maintainable system that could grow over time.
+
+The context also came with limitations. I did not have access to a cloud platform like in other projects, nor could I rely on a wide ecosystem of managed tools. I had a corporate server, technologies already available inside the organisation, and the challenge of getting the most out of them.
+
+## Building with the pieces I already had
+
+I chose **SQL Server** to centralise the Data Warehouse.
+
+Not because it was necessarily the best possible analytical database, but because it was a pragmatic decision: the organisation already had licences available, so reusing them reduced both cost and operational complexity.
+
+For orchestration I had **Apache Airflow**. That gave me a lot of freedom.
+
+Python allowed me to build almost any extraction, automation or control logic I needed.
+
+But as the architecture grew, one problem became increasingly clear.
+
+With Python alone, part of the transformation, testing, documentation and data-quality logic started turning into a growing amount of code.
+
+It was possible to do everything, but each new responsibility made it harder to maintain a clean separation between **extracting data, transforming it and preparing analytical models**.
+
+That was when I discovered **dbt**.
+
+<DbtArchitectureJourney lang="en" />
+
+## The final piece of the puzzle
+
+What convinced me about dbt was not only that it was SQL-based.
+
+It was that it fitted naturally with the problem I was trying to solve.
+
+It was portable, versionable and could run on different database engines. It allowed me to keep Airflow focused on **orchestration and extraction**, while dbt became responsible for **transformation and analytical modelling**.
+
+From that point on, responsibilities became much clearer:
+
+- **Airflow** to execute and coordinate processes.
+- **SQL Server** as the central engine and storage layer of the Data Warehouse.
+- **dbt** for models, business rules, tests and documentation.
+- **Power BI and other solutions** as the consumption layer.
+
+The difference sounds simple, but it changed the way I approached the architecture.
+
+Models could live in a coherent repository, transformations could be reused, changes could be versioned and dependencies documented.
+
+Testing also stopped depending only on custom logic and could become part of the transformation workflow itself.
+
+## Separating responsibilities so the platform can grow
+
+For me, that was dbt's main contribution:
+
+**making the separation between technical ingestion and the analytical data layer explicit.**
+
+It did not remove complexity. It did not automatically turn the architecture into a perfect system either.
+
+But it helped me structure it in a way that was much easier to understand and maintain.
+
+And once a data architecture starts growing, that clarity matters.
+
+A transformation no longer needs to depend on understanding every line of an ETL. Models can be reused, documented and tested.
+
+Most importantly, knowledge no longer has to live only in the head of the person who built the first pipeline.
+
+That design became the foundation for new models, dashboards and automations used across different areas of the company.
+
+I still think about dbt in the same way today: not as a tool that replaces the rest of the stack, but as **the piece that helps define where each responsibility should live inside a data architecture**.
+
+If you want to go deeper into this approach, you can explore the projects in my portfolio, where I document architecture, modelling and automation patterns that I have used in real data systems.

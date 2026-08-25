@@ -1,14 +1,14 @@
 ---
 import { siteConfig } from '../config';
-import { buildGmailComposeUrl } from '../utils/contact';
+import { buildMailtoUrl } from '../utils/contact';
 import { getLangFromUrl } from '../i18n';
 import SiteIcon from './icons/SiteIcon.astro';
 
 const lang = getLangFromUrl(Astro.url);
 const currentYear = new Date().getFullYear();
-const gmailLabel = lang === 'es' ? 'Escribirme por correo' : 'Email me';
-const gmailSubject = lang === 'es' ? 'Contacto desde tu portfolio' : 'Contact from your portfolio';
-const gmailUrl = buildGmailComposeUrl(siteConfig.author.email, gmailSubject);
+const emailLabel = lang === 'es' ? 'Enviar email' : 'Send email';
+const emailSubject = lang === 'es' ? 'Contacto desde tu portfolio' : 'Contact from your portfolio';
+const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
 
 const platformLabels: Record<string, string> = {
   github: 'GitHub',
@@ -37,13 +37,11 @@ const socialLinks = Object.entries(siteConfig.social)
 
     <div class="footer-actions">
       <a
-        href={gmailUrl}
+        href={emailUrl}
         class="footer-email"
-        target="_blank"
-        rel="noopener noreferrer"
       >
         <SiteIcon name="mail" size={15} />
-        {gmailLabel}
+        {emailLabel}
       </a>
 
       {socialLinks.length > 0 && (

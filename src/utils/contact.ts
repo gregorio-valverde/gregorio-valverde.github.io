@@ -1,20 +1,4 @@
-export function buildGmailComposeUrl(
-  email: string,
-  subject = '',
-  body = '',
-): string {
-  const params = new URLSearchParams({
-    view: 'cm',
-    fs: '1',
-    to: email,
-  });
-
-  if (subject) params.set('su', subject);
-  if (body) params.set('body', body);
-
-  return `https://mail.google.com/mail/?${params.toString()}`;
-}
-
+/** Build a generic mailto link so the device opens its configured email application. */
 export function buildMailtoUrl(
   email: string,
   subject = '',
