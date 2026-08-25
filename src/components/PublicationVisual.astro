@@ -1,0 +1,102 @@
+---
+import { Image } from 'astro:assets';
+import { getPublicationMedia } from '../data/publicationMedia';
+import type { Lang } from '../i18n';
+
+interface Props {
+  slug: string;
+  lang?: Lang;
+  priority?: boolean;
+  variant?: 'card' | 'featured' | 'detail';
+}
+
+const {
+  slug,
+  lang = 'es',
+  priority = false,
+  variant = 'card',
+} = Astro.props as Props;
+
+const media = getPublicationMedia(slug, lang);
+---
+
+<div
+  class:list={[
+    'publication-visual',
+    `publication-visual--${variant}`,
+    `publication-visual--${media.mode}`,
+  ]}
+  style={`--publication-image-position: ${media.position};`}
+>
+  <Image
+    src={media.image}
+    alt={media.alt}
+    loading={priority ? 'eager' : 'lazy'}
+    decoding="async"
+  />
+  <div class="visual-shade" aria-hidden="true"></div>
+</div>
+
+<style>
+  .publication-visual {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+      radial-gradient(circle at 80% 20%, var(--color-accent-muted), transparent 42%),
+      var(--color-bg-secondary);
+  }
+
+  .publication-visual--detail {
+    aspect-ratio: 16 / 8.5;
+    min-height: clamp(260px, 48vw, 560px);
+    border: 1px solid var(--color-border);
+    border-radius: 24px;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .publication-visual :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--publication-image-position, center);
+    transition: transform 480ms cubic-bezier(0.2, 0.75, 0.25, 1), filter 300ms ease;
+  }
+
+  .publication-visual--contain :global(img) {
+    object-fit: contain;
+    padding: clamp(0.7rem, 2vw, 1.25rem);
+  }
+
+  .publication-visual--detail.publication-visual--contain :global(img) {
+    padding: clamp(1rem, 3vw, 2rem);
+  }
+
+  .visual-shade {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, transparent 52%, rgba(17, 24, 32, 0.28) 100%),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035), transparent 34%);
+  }
+
+  :global(.publication-card:hover) .publication-visual :global(img) {
+    transform: scale(1.035);
+    filter: saturate(1.05) contrast(1.015);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .publication-visual :global(img) {
+      transition: none;
+    }
+
+    :global(.publication-card:hover) .publication-visual :global(img) {
+      transform: none;
+    }
+  }
+</style>

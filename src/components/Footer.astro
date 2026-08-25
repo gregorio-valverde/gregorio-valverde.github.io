@@ -1,112 +1,181 @@
 ---
-/**
- * Footer Component
- * 
- * Site-wide footer displaying copyright information and social media links.
- * Automatically filters and displays only configured social links from site config.
- * Responsive layout that stacks vertically on mobile devices.
- * 
- * Social links are pulled from siteConfig.social and only displayed if they have
- * a URL value configured. Links open in new tabs with proper security attributes.
- * 
- * @component
- * 
- * @example
- * ```astro
- * <Footer />
- * ```
- */
 import { siteConfig } from '../config';
+import { buildGmailComposeUrl } from '../utils/contact';
+import { getLangFromUrl } from '../i18n';
+import SiteIcon from './icons/SiteIcon.astro';
 
-/**
- * Gets the current year for copyright display
- */
+const lang = getLangFromUrl(Astro.url);
 const currentYear = new Date().getFullYear();
+const gmailLabel = lang === 'es' ? 'Escribirme por correo' : 'Email me';
+const gmailSubject = lang === 'es' ? 'Contacto desde tu portfolio' : 'Contact from your portfolio';
+const gmailUrl = buildGmailComposeUrl(siteConfig.author.email, gmailSubject);
 
-/**
- * Filters and formats social links from site configuration
- * 
- * Only includes platforms that have a URL configured (non-empty values).
- * Capitalizes platform names for display (e.g., "github" becomes "Github").
- * 
- * @returns Array of social link objects with platform name and URL
- */
+const platformLabels: Record<string, string> = {
+  github: 'GitHub',
+  linkedin: 'LinkedIn',
+  twitter: 'X / Twitter',
+  mastodon: 'Mastodon',
+  bluesky: 'Bluesky',
+};
+
 const socialLinks = Object.entries(siteConfig.social)
-  .filter(([_, url]) => url)
+  .filter(([, url]) => Boolean(url))
   .map(([platform, url]) => ({
-    platform: platform.charAt(0).toUpperCase() + platform.slice(1),
-    url
+    platform: platformLabels[platform] || platform,
+    url,
   }));
 ---
 
 <footer class="site-footer">
   <div class="footer-container">
-    <span class="copyright">© {currentYear} {siteConfig.author.name}</span>
-    
-    {socialLinks.length > 0 && (
-      <div class="footer-social">
-        {socialLinks.map((link, index) => (
-          <>
+    <div class="footer-identity">
+      <span class="copyright">
+        © <span data-current-year>{currentYear}</span> {siteConfig.author.name}
+      </span>
+      <span class="footer-role">{siteConfig.author.title}</span>
+    </div>
+
+    <div class="footer-actions">
+      <a
+        href={gmailUrl}
+        class="footer-email"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <SiteIcon name="mail" size={15} />
+        {gmailLabel}
+      </a>
+
+      {socialLinks.length > 0 && (
+        <div class="footer-social" aria-label={lang === 'es' ? 'Redes profesionales' : 'Professional profiles'}>
+          {socialLinks.map((link) => (
             <a href={link.url} target="_blank" rel="noopener noreferrer">
               {link.platform}
             </a>
-            {index < socialLinks.length - 1 && <span class="separator">·</span>}
-          </>
-        ))}
-      </div>
-    )}
+          ))}
+        </div>
+      )}
+    </div>
   </div>
 </footer>
 
+<script>
+  function updateCurrentYear() {
+    const year = String(new Date().getFullYear());
+    document.querySelectorAll<HTMLElement>('[data-current-year]').forEach((element) => {
+      element.textContent = year;
+    });
+  }
+
+  document.addEventListener('astro:page-load', updateCurrentYear);
+  updateCurrentYear();
+</script>
+
 <style>
   .site-footer {
-    border-top: 1px solid var(--color-border);
-    padding: 2rem 1.5rem;
     margin-top: auto;
+    padding: 2rem 1.5rem;
+    border-top: 1px solid var(--color-border);
+    background: color-mix(in srgb, var(--color-bg) 94%, transparent);
   }
 
   .footer-container {
-    max-width: 1100px;
-    margin: 0 auto;
     display: flex;
-    justify-content: space-between;
+    gap: 1.5rem;
     align-items: center;
-    gap: 1rem;
+    justify-content: space-between;
+    width: min(100%, 1100px);
+    margin: 0 auto;
+  }
+
+  .footer-identity {
+    display: grid;
+    gap: 0.18rem;
   }
 
   .copyright {
-    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .footer-role {
     color: var(--color-text-muted);
+    font-size: 0.68rem;
+  }
+
+  .footer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem 1rem;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .footer-email {
+    display: inline-flex;
+    gap: 0.42rem;
+    align-items: center;
+    padding: 0.46rem 0.64rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-secondary);
+    font-size: 0.72rem;
+    font-weight: 650;
+    text-decoration: none;
+    transition: color var(--transition-base), border-color var(--transition-base), transform var(--transition-base);
+  }
+
+  .footer-email:hover {
+    border-color: var(--color-text-muted);
+    color: var(--color-text);
+    transform: translateY(-1px);
   }
 
   .footer-social {
     display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
     align-items: center;
-    gap: 0.5rem;
   }
 
   .footer-social a {
-    font-size: 0.8125rem;
     color: var(--color-text-muted);
+    font-size: 0.74rem;
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color var(--transition-base);
   }
 
   .footer-social a:hover {
     color: var(--color-text);
   }
 
-  .separator {
-    color: var(--color-text-muted);
-    opacity: 0.5;
-    user-select: none;
+  @media (max-width: 680px) {
+    .site-footer {
+      padding-right: 1rem;
+      padding-left: 1rem;
+    }
+
+    .footer-container,
+    .footer-actions {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .footer-actions {
+      width: 100%;
+    }
   }
 
-  @media (max-width: 480px) {
-    .footer-container {
-      flex-direction: column;
-      gap: 0.75rem;
-      text-align: center;
+  @media (prefers-reduced-motion: reduce) {
+    .footer-email,
+    .footer-social a {
+      transition: none;
+    }
+
+    .footer-email:hover {
+      transform: none;
     }
   }
 </style>

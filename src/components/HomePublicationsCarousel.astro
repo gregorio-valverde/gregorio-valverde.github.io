@@ -1,0 +1,377 @@
+---
+import { getCollection } from 'astro:content';
+import PublicationCard from './PublicationCard.astro';
+import SiteIcon from './icons/SiteIcon.astro';
+import { contentLang, localizePath, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'es' } = Astro.props as Props;
+const publications = (await getCollection('publications'))
+  .filter((entry) => contentLang(entry.id) === lang && !entry.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 6);
+
+const copy = lang === 'es'
+  ? {
+      eyebrow: 'Ideas y aprendizaje',
+      title: 'Publicaciones recientes',
+      description: 'Reflexiones sobre ingeniería de datos, transformación digital y la conexión entre tecnología y negocio.',
+      viewAll: 'Ver todas las publicaciones',
+      previous: 'Publicaciones anteriores',
+      next: 'Publicaciones siguientes',
+      progress: 'Progreso del carrusel de publicaciones',
+    }
+  : {
+      eyebrow: 'Ideas and learning',
+      title: 'Recent publications',
+      description: 'Thoughts on data engineering, digital transformation, and the connection between technology and business.',
+      viewAll: 'View all publications',
+      previous: 'Previous publications',
+      next: 'Next publications',
+      progress: 'Publication carousel progress',
+    };
+---
+
+{publications.length > 0 && (
+  <section class="home-publications" data-publication-carousel aria-labelledby={`home-publications-title-${lang}`}>
+    <div class="section-heading">
+      <div class="heading-copy">
+        <p class="eyebrow">{copy.eyebrow}</p>
+        <h2 id={`home-publications-title-${lang}`}>{copy.title}</h2>
+        <p>{copy.description}</p>
+      </div>
+
+      <div class="heading-actions">
+        <a href={localizePath('/publications', lang)} class="all-publications-link">
+          {copy.viewAll}
+          <SiteIcon name="arrow-right" size={16} />
+        </a>
+
+        <div class="carousel-controls" aria-label={lang === 'es' ? 'Controles del carrusel' : 'Carousel controls'}>
+          <button type="button" data-carousel-prev aria-label={copy.previous} disabled>
+            <SiteIcon name="arrow-left" size={18} />
+          </button>
+          <button type="button" data-carousel-next aria-label={copy.next}>
+            <SiteIcon name="arrow-right" size={18} />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-window">
+      <div class="publication-rail" data-publication-rail tabindex="0">
+        {publications.map((entry) => (
+          <div class="rail-item">
+            <PublicationCard entry={entry} lang={lang} variant="rail" headingLevel="h3" />
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="carousel-progress" role="progressbar" aria-label={copy.progress} aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <span data-carousel-progress></span>
+    </div>
+  </section>
+)}
+
+<script>
+  function initPublicationCarousels() {
+    document.querySelectorAll('[data-publication-carousel]').forEach((section) => {
+      if (!(section instanceof HTMLElement) || section.dataset.ready === 'true') return;
+
+      const rail = section.querySelector('[data-publication-rail]');
+      const previousButton = section.querySelector('[data-carousel-prev]');
+      const nextButton = section.querySelector('[data-carousel-next]');
+      const progressBar = section.querySelector('[data-carousel-progress]');
+      const progressRoot = section.querySelector('.carousel-progress');
+
+      if (!(rail instanceof HTMLElement)) return;
+      if (!(previousButton instanceof HTMLButtonElement)) return;
+      if (!(nextButton instanceof HTMLButtonElement)) return;
+      if (!(progressBar instanceof HTMLElement)) return;
+
+      section.dataset.ready = 'true';
+
+      const getStep = () => Math.max(280, Math.min(rail.clientWidth * 0.82, 520));
+
+      const updateState = () => {
+        const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth);
+        const ratio = maxScroll === 0 ? 1 : Math.min(1, Math.max(0, rail.scrollLeft / maxScroll));
+        const percent = Math.round(ratio * 100);
+
+        previousButton.disabled = rail.scrollLeft <= 4;
+        nextButton.disabled = rail.scrollLeft >= maxScroll - 4;
+        progressBar.style.transform = `scaleX(${maxScroll === 0 ? 1 : Math.max(0.08, ratio)})`;
+
+        if (progressRoot instanceof HTMLElement) {
+          progressRoot.setAttribute('aria-valuenow', String(percent));
+        }
+      };
+
+      previousButton.addEventListener('click', () => {
+        rail.scrollBy({ left: -getStep(), behavior: 'smooth' });
+      });
+
+      nextButton.addEventListener('click', () => {
+        rail.scrollBy({ left: getStep(), behavior: 'smooth' });
+      });
+
+      rail.addEventListener('scroll', updateState, { passive: true });
+      window.addEventListener('resize', updateState, { passive: true });
+
+      let pointerActive = false;
+      let pointerStart = 0;
+      let scrollStart = 0;
+      let dragged = false;
+
+      rail.addEventListener('pointerdown', (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        pointerActive = true;
+        dragged = false;
+        pointerStart = event.clientX;
+        scrollStart = rail.scrollLeft;
+        rail.classList.add('is-dragging');
+        rail.setPointerCapture(event.pointerId);
+      });
+
+      rail.addEventListener('pointermove', (event) => {
+        if (!pointerActive) return;
+        const delta = event.clientX - pointerStart;
+        if (Math.abs(delta) > 5) dragged = true;
+        rail.scrollLeft = scrollStart - delta;
+      });
+
+      const finishPointer = () => {
+        pointerActive = false;
+        rail.classList.remove('is-dragging');
+      };
+
+      rail.addEventListener('pointerup', finishPointer);
+      rail.addEventListener('pointercancel', finishPointer);
+      rail.addEventListener('lostpointercapture', finishPointer);
+
+      rail.addEventListener(
+        'click',
+        (event) => {
+          if (!dragged) return;
+          event.preventDefault();
+          event.stopPropagation();
+          dragged = false;
+        },
+        true,
+      );
+
+      requestAnimationFrame(updateState);
+    });
+  }
+
+  document.addEventListener('astro:page-load', initPublicationCarousels);
+  initPublicationCarousels();
+</script>
+
+<style>
+  .home-publications {
+    margin: 0 0 4.5rem;
+    padding: 2.25rem 0 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .heading-copy {
+    max-width: 650px;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.65rem;
+    color: var(--color-text-muted);
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .heading-copy h2 {
+    margin: 0 0 0.7rem;
+    color: var(--color-text);
+    font-size: clamp(1.55rem, 3vw, 2.1rem);
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+  }
+
+  .heading-copy > p:last-child {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.96rem;
+    line-height: 1.65;
+  }
+
+  .heading-actions {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .all-publications-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-text-secondary);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .all-publications-link:hover {
+    color: var(--color-text);
+  }
+
+  .carousel-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .carousel-controls button {
+    display: inline-grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: var(--color-bg-secondary);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: border-color 180ms ease, background 180ms ease, opacity 180ms ease, transform 180ms ease;
+  }
+
+  .carousel-controls button:hover:not(:disabled) {
+    border-color: var(--color-text-muted);
+    background: var(--color-bg-elevated);
+    transform: translateY(-1px);
+  }
+
+  .carousel-controls button:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+  }
+
+  .carousel-window {
+    position: relative;
+  }
+
+  .carousel-window::after {
+    position: absolute;
+    z-index: 4;
+    top: 0;
+    right: -1px;
+    bottom: 0;
+    width: clamp(30px, 6vw, 82px);
+    background: linear-gradient(90deg, transparent, var(--color-bg));
+    content: '';
+    pointer-events: none;
+  }
+
+  .publication-rail {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 0.15rem clamp(2.5rem, 7vw, 6rem) 1.2rem 0.15rem;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    cursor: grab;
+    touch-action: pan-y;
+  }
+
+  .publication-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .publication-rail.is-dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+    user-select: none;
+  }
+
+  .rail-item {
+    flex: 0 0 clamp(300px, 43vw, 430px);
+    scroll-snap-align: start;
+  }
+
+  .carousel-progress {
+    width: min(280px, 56vw);
+    height: 2px;
+    overflow: hidden;
+    margin-top: 0.2rem;
+    border-radius: 999px;
+    background: var(--color-border);
+  }
+
+  .carousel-progress span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-accent);
+    transform: scaleX(0.08);
+    transform-origin: left;
+    transition: transform 120ms linear;
+  }
+
+  @media (max-width: 780px) {
+    .section-heading {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .heading-actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .rail-item {
+      flex-basis: min(86vw, 370px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .home-publications {
+      margin-bottom: 3.5rem;
+    }
+
+    .all-publications-link {
+      max-width: 180px;
+    }
+
+    .publication-rail {
+      gap: 0.8rem;
+      padding-right: 2rem;
+    }
+
+    .carousel-window::after {
+      width: 28px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .publication-rail {
+      scroll-behavior: auto;
+    }
+
+    .carousel-controls button,
+    .carousel-progress span {
+      transition: none;
+    }
+  }
+</style>

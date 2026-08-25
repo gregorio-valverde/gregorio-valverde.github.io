@@ -1,6 +1,8 @@
 ---
 import { siteConfig } from '../config';
+import { buildGmailComposeUrl } from '../utils/contact';
 import ThemeToggle from './ThemeToggle.astro';
+import SiteIcon from './icons/SiteIcon.astro';
 import {
   getLangFromUrl,
   localizePath,
@@ -29,8 +31,12 @@ const navItems = [
 }));
 
 const isActive = (href: string) => {
-  const normalizedCurrent = currentPath.endsWith('/') && currentPath !== '/' ? currentPath.slice(0, -1) : currentPath;
-  const normalizedHref = href.endsWith('/') && href !== '/' ? href.slice(0, -1) : href;
+  const normalizedCurrent = currentPath.endsWith('/') && currentPath !== '/'
+    ? currentPath.slice(0, -1)
+    : currentPath;
+  const normalizedHref = href.endsWith('/') && href !== '/'
+    ? href.slice(0, -1)
+    : href;
 
   if (normalizedHref === '/' || normalizedHref === '/en') {
     return normalizedCurrent === normalizedHref;
@@ -40,6 +46,9 @@ const isActive = (href: string) => {
 
 const enPath = lang === 'en' ? currentPath : alternatePath;
 const esPath = lang === 'es' ? currentPath : alternatePath;
+const emailLabel = lang === 'es' ? 'Escribirme por Gmail' : 'Email me via Gmail';
+const emailSubject = lang === 'es' ? 'Contacto desde tu portfolio' : 'Contact from your portfolio';
+const gmailUrl = buildGmailComposeUrl(siteConfig.author.email, emailSubject);
 ---
 
 <nav class="site-nav" aria-label={lang === 'es' ? 'Navegación principal' : 'Main navigation'}>
@@ -60,11 +69,26 @@ const esPath = lang === 'es' ? currentPath : alternatePath;
   </div>
 
   <div class="nav-end">
+    <a
+      href={gmailUrl}
+      class="email-shortcut"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={emailLabel}
+      title={emailLabel}
+    >
+      <SiteIcon name="mail" size={17} />
+      <span class="email-shortcut-label">{lang === 'es' ? 'Email' : 'Email'}</span>
+    </a>
+
+    <span class="nav-divider" aria-hidden="true"></span>
+
     <div class="language-switcher" aria-label={lang === 'es' ? 'Cambiar idioma' : 'Change language'}>
       <a href={enPath} class:list={['language-link', { active: lang === 'en' }]} lang="en">EN</a>
       <span class="language-separator">/</span>
       <a href={esPath} class:list={['language-link', { active: lang === 'es' }]} lang="es">ES</a>
     </div>
+
     <ThemeToggle />
   </div>
 </nav>
@@ -72,7 +96,7 @@ const esPath = lang === 'es' ? currentPath : alternatePath;
 <script>
   function updateActiveNav() {
     const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
-    const navLinks = document.querySelectorAll('.nav-link');
+    const navLinks = document.querySelectorAll<HTMLAnchorElement>('.nav-link');
 
     navLinks.forEach((link) => {
       const rawHref = link.getAttribute('href');
@@ -93,20 +117,24 @@ const esPath = lang === 'es' ? currentPath : alternatePath;
   }
 
   document.addEventListener('astro:page-load', updateActiveNav);
+  updateActiveNav();
 </script>
 
 <style>
   .site-nav {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid var(--color-border);
-    background: var(--color-bg);
-    padding: var(--space-md) 0;
-    margin-bottom: var(--space-md);
+    min-height: 64px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 82%, transparent);
+    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(16px) saturate(125%);
+    -webkit-backdrop-filter: blur(16px) saturate(125%);
   }
 
   .nav-scroll {
     flex: 1;
+    min-width: 0;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
@@ -114,63 +142,129 @@ const esPath = lang === 'es' ? currentPath : alternatePath;
     -ms-overflow-style: none;
   }
 
-  .nav-scroll::-webkit-scrollbar { display: none; }
+  .nav-scroll::-webkit-scrollbar {
+    display: none;
+  }
 
   .nav-list {
     display: flex;
     flex-wrap: nowrap;
     justify-content: center;
-    gap: 2rem;
-    list-style: none;
-    margin: 0;
-    padding: 0.5rem 1.5rem;
+    gap: clamp(1.15rem, 2.8vw, 2rem);
     min-width: max-content;
+    margin: 0;
+    padding: 0.7rem 1.5rem;
+    list-style: none;
   }
 
-  .nav-item { margin: 0; flex-shrink: 0; }
+  .nav-item {
+    flex-shrink: 0;
+    margin: 0;
+  }
 
   .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
     color: var(--color-text-secondary);
-    font-size: 0.8125rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: 0.76rem;
+    font-weight: 650;
+    letter-spacing: 0.055em;
     text-decoration: none;
-    transition: color 0.2s ease;
+    text-transform: uppercase;
     white-space: nowrap;
+    transition: color var(--transition-base);
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 1px;
+    left: 0;
+    height: 1px;
+    background: var(--color-text);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--transition-base);
   }
 
   .nav-link:hover,
-  .nav-link--active { color: var(--color-text); }
+  .nav-link--active {
+    color: var(--color-text);
+  }
+
+  .nav-link:hover::after,
+  .nav-link--active::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
 
   .nav-end {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0 0.75rem;
-    border-left: 1px solid var(--color-border);
-    background: var(--color-bg);
     position: relative;
+    z-index: 2;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.65rem;
+    min-height: 64px;
+    padding: 0 0.9rem 0 1rem;
+    border-left: 1px solid var(--color-border);
+    background: color-mix(in srgb, var(--color-bg) 94%, transparent);
   }
 
   .nav-end::before {
     content: '';
     position: absolute;
-    left: -24px;
     top: 0;
     bottom: 0;
-    width: 24px;
+    left: -30px;
+    width: 30px;
     background: linear-gradient(to right, transparent, var(--color-bg));
     pointer-events: none;
+  }
+
+  .email-shortcut {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 36px;
+    padding: 0.48rem 0.68rem;
+    border: 1px solid var(--color-border);
+    border-radius: 9px;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-secondary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color var(--transition-base), border-color var(--transition-base), background var(--transition-base), transform var(--transition-base);
+  }
+
+  .email-shortcut:hover {
+    border-color: var(--color-text-muted);
+    color: var(--color-text);
+    background: var(--color-bg-elevated);
+    transform: translateY(-1px);
+  }
+
+  .email-shortcut-label {
+    line-height: 1;
+  }
+
+  .nav-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--color-border);
   }
 
   .language-switcher {
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-    font-size: 0.72rem;
-    font-weight: 700;
+    gap: 0.28rem;
+    font-size: 0.7rem;
+    font-weight: 750;
     letter-spacing: 0.05em;
   }
 
@@ -180,18 +274,80 @@ const esPath = lang === 'es' ? currentPath : alternatePath;
   }
 
   .language-link:hover,
-  .language-link.active { color: var(--color-text); }
+  .language-link.active {
+    color: var(--color-text);
+  }
 
-  .language-separator { color: var(--color-border); }
+  .language-separator {
+    color: var(--color-border);
+  }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     .nav-list {
       justify-content: flex-start;
-      gap: 1.5rem;
-      padding: 0.5rem 1rem;
+      gap: 1.35rem;
+      padding-right: 1rem;
+      padding-left: 1rem;
     }
-    .nav-link { font-size: 0.75rem; }
-    .nav-end { padding: 0 0.5rem; gap: 0.5rem; }
-    .nav-end::before { left: -16px; width: 16px; }
+
+    .nav-end {
+      padding-right: 0.6rem;
+      padding-left: 0.7rem;
+    }
+
+    .email-shortcut-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .email-shortcut {
+      width: 36px;
+      padding: 0;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .site-nav,
+    .nav-end {
+      min-height: 58px;
+    }
+
+    .nav-link {
+      min-height: 32px;
+      font-size: 0.7rem;
+    }
+
+    .nav-list {
+      gap: 1.15rem;
+      padding-top: 0.55rem;
+      padding-bottom: 0.55rem;
+    }
+
+    .nav-divider {
+      display: none;
+    }
+
+    .language-switcher {
+      font-size: 0.66rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-link,
+    .nav-link::after,
+    .email-shortcut {
+      transition: none;
+    }
+
+    .email-shortcut:hover {
+      transform: none;
+    }
   }
 </style>

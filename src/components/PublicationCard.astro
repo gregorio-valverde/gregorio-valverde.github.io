@@ -1,0 +1,304 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PublicationVisual from './PublicationVisual.astro';
+import SiteIcon from './icons/SiteIcon.astro';
+import {
+  contentSlug,
+  localizePath,
+  localeCode,
+  ui,
+  type Lang,
+} from '../i18n';
+
+interface Props {
+  entry: CollectionEntry<'publications'>;
+  lang?: Lang;
+  variant?: 'grid' | 'rail' | 'featured';
+  headingLevel?: 'h2' | 'h3';
+}
+
+const {
+  entry,
+  lang = 'es',
+  variant = 'grid',
+  headingLevel = 'h3',
+} = Astro.props as Props;
+
+const slug = contentSlug(entry.id);
+const copy = ui[lang].publications;
+const date = new Intl.DateTimeFormat(localeCode(lang), {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+}).format(entry.data.date);
+
+const featuredLabel = lang === 'es' ? 'Destacada' : 'Featured';
+---
+
+<a
+  class:list={['publication-card', `publication-card--${variant}`]}
+  href={localizePath(`/publications/${slug}`, lang)}
+  aria-label={`${entry.data.title}. ${copy.read}`}
+>
+  <div class="publication-media">
+    <PublicationVisual
+      slug={slug}
+      lang={lang}
+      variant={variant === 'featured' ? 'featured' : 'card'}
+      priority={variant === 'featured'}
+    />
+
+    <div class="media-badges">
+      <span class:list={['type-badge', `type-${entry.data.type}`]}>
+        {copy.types[entry.data.type]}
+      </span>
+      {entry.data.featured && <span class="featured-badge">{featuredLabel}</span>}
+    </div>
+  </div>
+
+  <div class="publication-content">
+    <div class="publication-meta">
+      <time datetime={entry.data.date.toISOString()}>{date}</time>
+      <span aria-hidden="true">·</span>
+      <span>{entry.data.tags[0] ?? 'Data'}</span>
+    </div>
+
+    {headingLevel === 'h2' ? (
+      <h2 class="publication-title">{entry.data.title}</h2>
+    ) : (
+      <h3 class="publication-title">{entry.data.title}</h3>
+    )}
+
+    <p class="publication-description">{entry.data.description}</p>
+
+    <div class="publication-footer">
+      <div class="tags" aria-label={lang === 'es' ? 'Etiquetas' : 'Tags'}>
+        {entry.data.tags.slice(0, 3).map((tag) => <span>{tag}</span>)}
+      </div>
+
+      <span class="read-link">
+        {copy.read}
+        <SiteIcon name="arrow-right" size={16} />
+      </span>
+    </div>
+  </div>
+</a>
+
+<style>
+  .publication-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    color: inherit;
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    background: var(--gradient-card), var(--color-bg-secondary);
+    box-shadow: var(--shadow-sm);
+    transition:
+      transform 220ms ease,
+      border-color 220ms ease,
+      box-shadow 220ms ease,
+      background 220ms ease;
+  }
+
+  .publication-card:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-border));
+    background: var(--color-bg-elevated);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .publication-card:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .publication-media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .media-badges {
+    position: absolute;
+    z-index: 3;
+    top: 0.85rem;
+    left: 0.85rem;
+    right: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    pointer-events: none;
+  }
+
+  .type-badge,
+  .featured-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 27px;
+    padding: 0.32rem 0.58rem;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 999px;
+    background: rgba(25, 31, 39, 0.7);
+    color: #f5f7f9;
+    font-size: 0.64rem;
+    font-weight: 750;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+  }
+
+  .featured-badge {
+    background: color-mix(in srgb, var(--color-accent) 30%, rgba(25, 31, 39, 0.78));
+  }
+
+  .publication-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 1.25rem;
+  }
+
+  .publication-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.42rem;
+    margin-bottom: 0.8rem;
+    color: var(--color-text-muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+  }
+
+  .publication-title {
+    margin: 0 0 0.7rem;
+    color: var(--color-text);
+    font-size: clamp(1.08rem, 2vw, 1.32rem);
+    line-height: 1.28;
+    letter-spacing: -0.025em;
+  }
+
+  .publication-description {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.91rem;
+    line-height: 1.6;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .publication-footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1.2rem;
+  }
+
+  .tags {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 0.38rem;
+  }
+
+  .tags span {
+    max-width: 130px;
+    overflow: hidden;
+    padding: 0.28rem 0.48rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-text-muted);
+    font-size: 0.64rem;
+    line-height: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .read-link {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-text);
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .read-link :global(svg) {
+    transition: transform 180ms ease;
+  }
+
+  .publication-card:hover .read-link :global(svg) {
+    transform: translateX(3px);
+  }
+
+  .publication-card--rail {
+    min-height: 100%;
+  }
+
+  .publication-card--featured {
+    min-height: 340px;
+  }
+
+  @media (min-width: 780px) {
+    .publication-card--featured {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    }
+
+    .publication-card--featured .publication-media {
+      min-height: 340px;
+      aspect-ratio: auto;
+      border-right: 1px solid var(--color-border-subtle);
+      border-bottom: 0;
+    }
+
+    .publication-card--featured .publication-content {
+      padding: clamp(1.5rem, 3vw, 2.3rem);
+    }
+
+    .publication-card--featured .publication-title {
+      font-size: clamp(1.45rem, 3vw, 2rem);
+    }
+
+    .publication-card--featured .publication-description {
+      font-size: 0.98rem;
+      -webkit-line-clamp: 5;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .publication-content {
+      padding: 1rem;
+    }
+
+    .publication-footer {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .publication-card,
+    .read-link :global(svg) {
+      transition: none;
+    }
+
+    .publication-card:hover,
+    .publication-card:hover .read-link :global(svg) {
+      transform: none;
+    }
+  }
+</style>
