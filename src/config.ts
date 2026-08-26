@@ -108,7 +108,7 @@ export const siteConfig = {
    */
   social: {
     /** GitHub profile URL */
-    github: getEnv('SOCIAL_GITHUB', 'https://github.com/gregorio-valverde/gregorio-valverde'),
+    github: getEnv('SOCIAL_GITHUB', 'https://github.com/gregorio-valverde'),
     
     /** LinkedIn profile URL */
     linkedin: getEnv('SOCIAL_LINKEDIN', 'https://www.linkedin.com/in/gregorio-valverde-navarro-0b324515b/'),
