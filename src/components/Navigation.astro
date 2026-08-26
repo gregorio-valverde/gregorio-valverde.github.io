@@ -1,7 +1,6 @@
 ---
 import { siteConfig } from '../config';
 import { buildMailtoUrl } from '../utils/contact';
-import ThemeToggle from './ThemeToggle.astro';
 import SiteIcon from './icons/SiteIcon.astro';
 import {
   getLangFromUrl,
@@ -46,9 +45,28 @@ const isActive = (href: string) => {
 
 const enPath = lang === 'en' ? currentPath : alternatePath;
 const esPath = lang === 'es' ? currentPath : alternatePath;
-const emailLabel = lang === 'es' ? `Enviar email a ${siteConfig.author.email}` : `Send email to ${siteConfig.author.email}`;
 const emailSubject = lang === 'es' ? 'Contacto desde tu portfolio' : 'Contact from your portfolio';
 const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
+
+const emailCopy = lang === 'es'
+  ? {
+      button: 'Email',
+      menu: 'Opciones de email',
+      copy: 'Copiar',
+      copied: 'Copiado',
+      send: 'Enviar',
+      copyAria: `Copiar ${siteConfig.author.email} al portapapeles`,
+      sendAria: `Enviar un email a ${siteConfig.author.email}`,
+    }
+  : {
+      button: 'Email',
+      menu: 'Email options',
+      copy: 'Copy',
+      copied: 'Copied',
+      send: 'Send',
+      copyAria: `Copy ${siteConfig.author.email} to clipboard`,
+      sendAria: `Send an email to ${siteConfig.author.email}`,
+    };
 ---
 
 <nav class="site-nav" aria-label={lang === 'es' ? 'Navegación principal' : 'Main navigation'}>
@@ -69,15 +87,61 @@ const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
   </div>
 
   <div class="nav-end">
-    <a
-      href={emailUrl}
-      class="email-shortcut"
-      aria-label={emailLabel}
-      title={emailLabel}
+    <div
+      class="email-menu"
+      data-email-menu
+      data-email={siteConfig.author.email}
     >
-      <SiteIcon name="mail" size={17} />
-      <span class="email-shortcut-label">{lang === 'es' ? 'Email' : 'Email'}</span>
-    </a>
+      <button
+        type="button"
+        class="email-shortcut"
+        data-email-trigger
+        aria-haspopup="menu"
+        aria-expanded="false"
+        aria-label={emailCopy.menu}
+        title={emailCopy.menu}
+      >
+        <SiteIcon name="mail" size={17} />
+        <span class="email-shortcut-label">{emailCopy.button}</span>
+        <span class="email-chevron" aria-hidden="true">⌄</span>
+      </button>
+
+      <div
+        class="email-popover"
+        data-email-popover
+        role="menu"
+        aria-label={emailCopy.menu}
+        hidden
+      >
+        <div class="email-popover-address">{siteConfig.author.email}</div>
+
+        <div class="email-popover-actions">
+          <button
+            type="button"
+            class="email-option"
+            data-email-copy
+            data-default-label={emailCopy.copy}
+            data-success-label={emailCopy.copied}
+            role="menuitem"
+            aria-label={emailCopy.copyAria}
+          >
+            <span data-email-copy-icon><SiteIcon name="copy" size={16} /></span>
+            <span data-email-copy-success-icon hidden><SiteIcon name="check" size={16} /></span>
+            <span data-email-copy-label>{emailCopy.copy}</span>
+          </button>
+
+          <a
+            href={emailUrl}
+            class="email-option email-option--send"
+            role="menuitem"
+            aria-label={emailCopy.sendAria}
+          >
+            <SiteIcon name="mail" size={16} />
+            <span>{emailCopy.send}</span>
+          </a>
+        </div>
+      </div>
+    </div>
 
     <span class="nav-divider" aria-hidden="true"></span>
 
@@ -86,8 +150,6 @@ const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
       <span class="language-separator">/</span>
       <a href={esPath} class:list={['language-link', { active: lang === 'es' }]} lang="es">ES</a>
     </div>
-
-    <ThemeToggle />
   </div>
 </nav>
 
@@ -114,8 +176,101 @@ const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
     });
   }
 
-  document.addEventListener('astro:page-load', updateActiveNav);
-  updateActiveNav();
+  function fallbackCopy(value: string) {
+    const textArea = document.createElement('textarea');
+    textArea.value = value;
+    textArea.setAttribute('readonly', '');
+    textArea.style.position = 'fixed';
+    textArea.style.opacity = '0';
+    textArea.style.pointerEvents = 'none';
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    textArea.remove();
+  }
+
+  function initEmailMenus() {
+    document.querySelectorAll<HTMLElement>('[data-email-menu]').forEach((root) => {
+      if (root.dataset.ready === 'true') return;
+      root.dataset.ready = 'true';
+
+      const trigger = root.querySelector<HTMLButtonElement>('[data-email-trigger]');
+      const popover = root.querySelector<HTMLElement>('[data-email-popover]');
+      const copyButton = root.querySelector<HTMLButtonElement>('[data-email-copy]');
+      const copyLabel = root.querySelector<HTMLElement>('[data-email-copy-label]');
+      const copyIcon = root.querySelector<HTMLElement>('[data-email-copy-icon]');
+      const successIcon = root.querySelector<HTMLElement>('[data-email-copy-success-icon]');
+      const email = root.dataset.email ?? '';
+
+      if (!trigger || !popover) return;
+
+      let resetTimer: number | undefined;
+
+      const setOpen = (open: boolean) => {
+        popover.hidden = !open;
+        trigger.setAttribute('aria-expanded', String(open));
+        root.classList.toggle('is-open', open);
+      };
+
+      trigger.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const open = trigger.getAttribute('aria-expanded') !== 'true';
+
+        document.querySelectorAll<HTMLElement>('[data-email-menu].is-open').forEach((otherRoot) => {
+          if (otherRoot === root) return;
+          otherRoot.classList.remove('is-open');
+          const otherTrigger = otherRoot.querySelector<HTMLElement>('[data-email-trigger]');
+          const otherPopover = otherRoot.querySelector<HTMLElement>('[data-email-popover]');
+          otherTrigger?.setAttribute('aria-expanded', 'false');
+          if (otherPopover) otherPopover.hidden = true;
+        });
+
+        setOpen(open);
+      });
+
+      copyButton?.addEventListener('click', async () => {
+        if (!email || !copyLabel) return;
+
+        try {
+          if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(email);
+          else fallbackCopy(email);
+        } catch {
+          fallbackCopy(email);
+        }
+
+        copyLabel.textContent = copyButton.dataset.successLabel ?? 'Copied';
+        copyButton.dataset.copied = 'true';
+        if (copyIcon) copyIcon.hidden = true;
+        if (successIcon) successIcon.hidden = false;
+
+        window.clearTimeout(resetTimer);
+        resetTimer = window.setTimeout(() => {
+          copyLabel.textContent = copyButton.dataset.defaultLabel ?? 'Copy';
+          copyButton.dataset.copied = 'false';
+          if (copyIcon) copyIcon.hidden = false;
+          if (successIcon) successIcon.hidden = true;
+        }, 1800);
+      });
+
+      document.addEventListener('click', (event) => {
+        if (event.target instanceof Node && !root.contains(event.target)) setOpen(false);
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || trigger.getAttribute('aria-expanded') !== 'true') return;
+        setOpen(false);
+        trigger.focus();
+      });
+    });
+  }
+
+  function initNavigation() {
+    updateActiveNav();
+    initEmailMenus();
+  }
+
+  document.addEventListener('astro:page-load', initNavigation);
+  initNavigation();
 </script>
 
 <style>
@@ -123,9 +278,10 @@ const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
     display: flex;
     align-items: center;
     min-height: 64px;
-    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 82%, transparent);
-    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-blue-border) 54%, var(--color-border));
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--color-navy) 18%, var(--color-bg)), color-mix(in srgb, var(--color-bg) 94%, transparent));
+    box-shadow: 0 8px 28px rgba(4, 15, 25, 0.15);
     backdrop-filter: blur(16px) saturate(125%);
     -webkit-backdrop-filter: blur(16px) saturate(125%);
   }
@@ -140,9 +296,7 @@ const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
     -ms-overflow-style: none;
   }
 
-  .nav-scroll::-webkit-scrollbar {
-    display: none;
-  }
+  .nav-scroll::-webkit-scrollbar { display: none; }
 
   .nav-list {
     display: flex;
@@ -181,17 +335,17 @@ const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
     right: 0;
     bottom: 1px;
     left: 0;
-    height: 1px;
-    background: var(--color-blue);
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--color-blue-deep), var(--color-blue));
+    box-shadow: 0 0 12px var(--color-blue-glow);
     transform: scaleX(0);
     transform-origin: right;
     transition: transform var(--transition-base);
   }
 
   .nav-link:hover,
-  .nav-link--active {
-    color: var(--color-text);
-  }
+  .nav-link--active { color: var(--color-text); }
 
   .nav-link:hover::after,
   .nav-link--active::after {
@@ -201,7 +355,7 @@ const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
 
   .nav-end {
     position: relative;
-    z-index: 2;
+    z-index: 20;
     display: flex;
     flex-shrink: 0;
     align-items: center;
@@ -209,7 +363,7 @@ const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
     min-height: 64px;
     padding: 0 0.9rem 0 1rem;
     border-left: 1px solid var(--color-border);
-    background: color-mix(in srgb, var(--color-bg) 94%, transparent);
+    background: color-mix(in srgb, var(--color-bg) 94%, var(--color-navy) 6%);
   }
 
   .nav-end::before {
@@ -223,32 +377,116 @@ const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
     pointer-events: none;
   }
 
+  .email-menu { position: relative; }
+
   .email-shortcut {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.45rem;
+    gap: 0.42rem;
     min-height: 36px;
     padding: 0.48rem 0.68rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-blue-border);
     border-radius: 9px;
     color: var(--color-text-secondary);
-    background: var(--color-bg-secondary);
+    background: linear-gradient(145deg, var(--color-navy-surface), var(--color-bg-secondary));
+    font: inherit;
     font-size: 0.72rem;
     font-weight: 700;
-    text-decoration: none;
-    transition: color var(--transition-base), border-color var(--transition-base), background var(--transition-base), transform var(--transition-base);
+    cursor: pointer;
+    transition: color var(--transition-base), border-color var(--transition-base), background var(--transition-base), transform var(--transition-base), box-shadow var(--transition-base);
   }
 
-  .email-shortcut:hover {
-    border-color: var(--color-text-muted);
+  .email-shortcut:hover,
+  .email-menu.is-open .email-shortcut {
+    border-color: var(--color-blue);
     color: var(--color-text);
-    background: var(--color-bg-elevated);
+    background: color-mix(in srgb, var(--color-navy) 46%, var(--color-bg-elevated));
+    box-shadow: 0 8px 22px rgba(5, 22, 36, 0.20);
     transform: translateY(-1px);
   }
 
-  .email-shortcut-label {
-    line-height: 1;
+  .email-shortcut-label { line-height: 1; }
+
+  .email-chevron {
+    display: inline-block;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    line-height: 0.8;
+    transform: translateY(-1px);
+    transition: transform var(--transition-base);
+  }
+
+  .email-menu.is-open .email-chevron { transform: rotate(180deg) translateY(1px); }
+
+  .email-popover {
+    position: absolute;
+    z-index: 100;
+    top: calc(100% + 0.65rem);
+    right: 0;
+    width: min(238px, calc(100vw - 1rem));
+    padding: 0.65rem;
+    border: 1px solid var(--color-blue-border);
+    border-radius: 14px;
+    background:
+      radial-gradient(circle at 100% 0%, var(--color-blue-muted), transparent 45%),
+      color-mix(in srgb, var(--color-bg-secondary) 92%, var(--color-navy) 8%);
+    box-shadow: 0 18px 38px rgba(2, 12, 21, 0.42);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .email-popover-address {
+    overflow: hidden;
+    padding: 0.45rem 0.5rem 0.65rem;
+    color: var(--color-text-muted);
+    font-size: 0.68rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .email-popover-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .email-option {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.42rem;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid var(--color-border);
+    border-radius: 9px;
+    background: var(--color-bg-elevated);
+    color: var(--color-text-secondary);
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 720;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
+  }
+
+  .email-option:hover {
+    border-color: var(--color-blue-border);
+    background: color-mix(in srgb, var(--color-navy) 35%, var(--color-bg-elevated));
+    color: var(--color-text);
+  }
+
+  .email-option--send {
+    border-color: var(--color-blue-border);
+    background: var(--gradient-blue);
+    color: #fff;
+  }
+
+  .email-option--send:hover { color: #fff; }
+
+  .email-option[data-copied='true'] {
+    border-color: var(--color-blue);
+    color: var(--color-accent-hover);
   }
 
   .nav-divider {
@@ -272,13 +510,11 @@ const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
   }
 
   .language-link:hover,
-  .language-link.active {
-    color: var(--color-text);
-  }
+  .language-link.active { color: var(--color-text); }
 
-  .language-separator {
-    color: var(--color-border);
-  }
+  .language-link.active { text-shadow: 0 0 18px var(--color-blue-glow); }
+
+  .language-separator { color: var(--color-border); }
 
   @media (max-width: 900px) {
     .nav-list {
@@ -306,16 +542,16 @@ const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
     }
 
     .email-shortcut {
-      width: 36px;
+      width: 38px;
       padding: 0;
     }
+
+    .email-chevron { display: none; }
   }
 
   @media (max-width: 520px) {
     .site-nav,
-    .nav-end {
-      min-height: 58px;
-    }
+    .nav-end { min-height: 58px; }
 
     .nav-link {
       min-height: 32px;
@@ -328,24 +564,24 @@ const emailUrl = buildMailtoUrl(siteConfig.author.email, emailSubject);
       padding-bottom: 0.55rem;
     }
 
-    .nav-divider {
-      display: none;
-    }
+    .nav-divider { display: none; }
+    .language-switcher { font-size: 0.66rem; }
 
-    .language-switcher {
-      font-size: 0.66rem;
+    .email-popover {
+      position: fixed;
+      top: 64px;
+      right: 0.5rem;
+      width: min(260px, calc(100vw - 1rem));
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .nav-link,
     .nav-link::after,
-    .email-shortcut {
-      transition: none;
-    }
+    .email-shortcut,
+    .email-chevron,
+    .email-option { transition: none; }
 
-    .email-shortcut:hover {
-      transform: none;
-    }
+    .email-shortcut:hover { transform: none; }
   }
 </style>

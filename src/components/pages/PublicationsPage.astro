@@ -82,11 +82,11 @@ const labels = lang === 'es'
         <button type="button" class="filter" data-filter="decision" aria-pressed="false">
           {copy.decision}<span>{publications.filter((entry) => entry.data.type === 'decision').length}</span>
         </button>
+        <button type="button" class="filter" data-filter="reflection" aria-pressed="false">
+          {copy.reflection}<span>{publications.filter((entry) => entry.data.type === 'reflection').length}</span>
+        </button>
         <button type="button" class="filter" data-filter="article" aria-pressed="false">
           {copy.article}<span>{publications.filter((entry) => entry.data.type === 'article').length}</span>
-        </button>
-        <button type="button" class="filter" data-filter="note" aria-pressed="false">
-          {copy.note}<span>{publications.filter((entry) => entry.data.type === 'note').length}</span>
         </button>
       </div>
 
@@ -165,7 +165,7 @@ const labels = lang === 'es'
     .eyebrow,
     .section-label {
       margin: 0 0 0.7rem;
-      color: var(--color-text-muted);
+      color: var(--color-blue);
       font-size: 0.7rem;
       font-weight: 750;
       letter-spacing: 0.12em;
@@ -187,13 +187,11 @@ const labels = lang === 'es'
       line-height: 1.75;
     }
 
-    .lead-publication {
-      margin-bottom: 4rem;
-    }
+    .lead-publication { margin-bottom: 4rem; }
 
     .publication-index {
       padding-top: 2.4rem;
-      border-top: 1px solid var(--color-border);
+      border-top: 1px solid color-mix(in srgb, var(--color-blue-border) 42%, var(--color-border));
     }
 
     .index-heading {
@@ -235,7 +233,7 @@ const labels = lang === 'es'
       padding: 0.58rem 0.85rem;
       border: 1px solid var(--color-border);
       border-radius: 999px;
-      background: var(--color-bg-secondary);
+      background: var(--gradient-card), var(--color-bg-secondary);
       color: var(--color-text-secondary);
       cursor: pointer;
       font: inherit;
@@ -250,24 +248,27 @@ const labels = lang === 'es'
       height: 20px;
       place-items: center;
       border-radius: 999px;
-      background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+      background: var(--color-navy-surface);
       color: var(--color-text-muted);
       font-size: 0.64rem;
     }
 
     .filter:hover,
     .filter.active {
-      border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-border));
-      background: var(--color-bg-elevated);
+      border-color: var(--color-blue-border);
+      background: color-mix(in srgb, var(--color-navy) 32%, var(--color-bg-elevated));
       color: var(--color-text);
     }
 
-    .filter:hover {
-      transform: translateY(-1px);
-    }
+    .filter:hover { transform: translateY(-1px); }
 
     .filter.active {
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 35%, transparent);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-blue) 30%, transparent), 0 7px 18px rgba(6, 24, 39, 0.12);
+    }
+
+    .filter.active span {
+      background: var(--color-blue-deep);
+      color: #fff;
     }
 
     .publication-grid {
@@ -281,28 +282,21 @@ const labels = lang === 'es'
       animation: publication-enter 320ms ease both;
     }
 
-    .publication-filter-item[hidden] {
-      display: none;
-    }
+    .publication-filter-item[hidden] { display: none; }
 
     .filter-empty {
       margin: 2rem 0 0;
       padding: 1.5rem;
-      border: 1px dashed var(--color-border);
+      border: 1px dashed var(--color-blue-border);
       border-radius: 16px;
+      background: var(--color-navy-surface);
       color: var(--color-text-muted);
       text-align: center;
     }
 
     @keyframes publication-enter {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 760px) {
@@ -311,29 +305,35 @@ const labels = lang === 'es'
         padding-left: 1rem;
       }
 
-      .publication-grid {
-        grid-template-columns: 1fr;
-      }
+      .publication-grid { grid-template-columns: 1fr; }
 
       .index-heading {
         align-items: flex-start;
         flex-direction: column;
         gap: 0.75rem;
       }
+
+      .publication-controls {
+        flex-wrap: nowrap;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 0.25rem;
+        scrollbar-width: none;
+      }
+
+      .publication-controls::-webkit-scrollbar { display: none; }
+      .filter { flex: 0 0 auto; }
+    }
+
+    @media (max-width: 480px) {
+      .publications-page { padding-top: 2.5rem; }
+      .lead-publication { margin-bottom: 3rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .publication-filter-item {
-        animation: none;
-      }
-
-      .filter {
-        transition: none;
-      }
-
-      .filter:hover {
-        transform: none;
-      }
+      .publication-filter-item { animation: none; }
+      .filter { transition: none; }
+      .filter:hover { transform: none; }
     }
   </style>
 </BaseLayout>

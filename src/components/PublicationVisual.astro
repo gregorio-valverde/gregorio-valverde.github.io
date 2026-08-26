@@ -46,14 +46,14 @@ const media = getPublicationMedia(slug, lang);
     overflow: hidden;
     isolation: isolate;
     background:
-      radial-gradient(circle at 80% 20%, var(--color-accent-muted), transparent 42%),
-      var(--color-bg-secondary);
+      radial-gradient(circle at 80% 20%, var(--color-blue-muted), transparent 42%),
+      color-mix(in srgb, var(--color-navy) 18%, var(--color-bg-secondary));
   }
 
   .publication-visual--detail {
     aspect-ratio: 16 / 8.5;
     min-height: clamp(260px, 48vw, 560px);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-blue-border);
     border-radius: 24px;
     box-shadow: var(--shadow-lg);
   }
@@ -68,6 +68,7 @@ const media = getPublicationMedia(slug, lang);
 
   .publication-visual--contain :global(img) {
     object-fit: contain;
+    object-position: center;
     padding: clamp(0.7rem, 2vw, 1.25rem);
   }
 
@@ -81,8 +82,8 @@ const media = getPublicationMedia(slug, lang);
     z-index: 1;
     pointer-events: none;
     background:
-      linear-gradient(180deg, transparent 52%, rgba(17, 24, 32, 0.28) 100%),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.035), transparent 34%);
+      linear-gradient(180deg, transparent 52%, rgba(10, 27, 42, 0.32) 100%),
+      linear-gradient(90deg, rgba(122, 169, 213, 0.045), transparent 34%);
   }
 
   :global(.publication-card:hover) .publication-visual :global(img) {
@@ -90,10 +91,21 @@ const media = getPublicationMedia(slug, lang);
     filter: saturate(1.05) contrast(1.015);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .publication-visual :global(img) {
-      transition: none;
+  @media (max-width: 560px) {
+    .publication-visual--detail {
+      aspect-ratio: 4 / 3;
+      min-height: 0;
+      border-radius: 17px;
     }
+
+    .publication-visual--detail.publication-visual--contain :global(img) {
+      object-position: center;
+      padding: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .publication-visual :global(img) { transition: none; }
 
     :global(.publication-card:hover) .publication-visual :global(img) {
       transform: none;

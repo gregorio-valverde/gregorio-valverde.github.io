@@ -17,16 +17,16 @@ const { lang = 'es' } = Astro.props as Props;
 const copy = lang === 'es'
   ? {
       title: 'Contacto - Gregorio Valverde',
-      description: 'Contacta con Gregorio Valverde para hablar sobre Data Engineering, Business Intelligence, Analytics, Transformación Digital u oportunidades profesionales.',
+      description: 'Contacta con Gregorio Valverde para hablar sobre datos, tecnología, negocio, proyectos o ideas.',
       eyebrow: 'Contacto',
       heading: 'Hablemos de datos, tecnología y negocio.',
-      intro: 'Estoy abierto a conversar sobre oportunidades profesionales, proyectos de datos, colaboración técnica y retos de transformación digital.',
+      intro: 'Si te interesa mi trabajo o quieres comentar un proyecto, una idea o un reto relacionado con datos, tecnología o negocio, puedes contactarme por estas vías.',
       availability: 'Normalmente respondo en pocos días.',
       location: 'Murcia, España',
       role: 'Data & Analytics Engineer',
-      sendEmail: 'Enviar email',
-      copyEmail: 'Copiar correo',
-      copied: 'Correo copiado',
+      sendEmail: 'Enviar',
+      copyEmail: 'Copiar',
+      copied: 'Copiado',
       directLabel: 'Correo directo',
       socialLabel: 'También puedes encontrarme aquí',
       topicsLabel: 'Temas sobre los que podemos hablar',
@@ -40,16 +40,16 @@ const copy = lang === 'es'
     }
   : {
       title: 'Contact - Gregorio Valverde',
-      description: 'Contact Gregorio Valverde to discuss Data Engineering, Business Intelligence, Analytics, Digital Transformation, or professional opportunities.',
+      description: 'Contact Gregorio Valverde to discuss data, technology, business, projects, or ideas.',
       eyebrow: 'Contact',
       heading: 'Let’s talk about data, technology, and business.',
-      intro: 'I am open to conversations about professional opportunities, data projects, technical collaboration, and digital transformation challenges.',
+      intro: 'If my work interests you or you want to discuss a project, an idea, or a challenge related to data, technology, or business, you can contact me through these channels.',
       availability: 'I usually reply within a few days.',
       location: 'Murcia, Spain',
       role: 'Data & Analytics Engineer',
-      sendEmail: 'Send email',
-      copyEmail: 'Copy email',
-      copied: 'Email copied',
+      sendEmail: 'Send',
+      copyEmail: 'Copy',
+      copied: 'Copied',
       directLabel: 'Direct email',
       socialLabel: 'You can also find me here',
       topicsLabel: 'Topics we can discuss',
@@ -144,11 +144,6 @@ const socialCards = [
       </div>
 
       <div class="email-actions">
-        <a href={mailtoUrl} class="action-button action-primary">
-          <SiteIcon name="mail" size={17} />
-          {copy.sendEmail}
-        </a>
-
         <button
           type="button"
           class="action-button action-secondary copy-button"
@@ -160,6 +155,11 @@ const socialCards = [
           <span class="copy-success-icon" aria-hidden="true"><SiteIcon name="check" size={17} /></span>
           <span data-copy-label>{copy.copyEmail}</span>
         </button>
+
+        <a href={mailtoUrl} class="action-button action-primary">
+          <SiteIcon name="mail" size={17} />
+          {copy.sendEmail}
+        </a>
       </div>
 
       <p class="privacy-note">
@@ -244,7 +244,7 @@ const socialCards = [
             window.clearTimeout(resetTimer);
             resetTimer = window.setTimeout(() => {
               button.dataset.copied = 'false';
-              label.textContent = button.dataset.defaultLabel || 'Copy email';
+              label.textContent = button.dataset.defaultLabel || 'Copy';
             }, 2200);
           } catch {
             fallbackCopy(email);
@@ -277,16 +277,14 @@ const socialCards = [
     .eyebrow,
     .panel-label {
       margin: 0;
-      color: var(--color-text-muted);
+      color: var(--color-blue);
       font-size: 0.7rem;
       font-weight: 750;
       letter-spacing: 0.11em;
       text-transform: uppercase;
     }
 
-    .contact-copy > .eyebrow {
-      margin-bottom: 1rem;
-    }
+    .contact-copy > .eyebrow { margin-bottom: 1rem; }
 
     .contact-copy h1 {
       max-width: 730px;
@@ -323,36 +321,38 @@ const socialCards = [
       font-size: 0.82rem;
     }
 
+    .profile-meta :global(svg) { color: var(--color-blue); }
+
     .availability-note {
       width: fit-content;
       padding: 0.48rem 0.7rem;
-      border: 1px solid var(--color-border);
+      border: 1px solid var(--color-blue-border);
       border-radius: 999px;
-      background: var(--color-bg-secondary);
+      background: linear-gradient(145deg, var(--color-navy-surface), var(--color-bg-secondary));
     }
 
     .status-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #34d399;
-      box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.12);
+      background: var(--color-blue);
+      box-shadow: 0 0 0 4px var(--color-blue-muted);
     }
 
     .portrait-card {
       justify-self: end;
       width: min(100%, 310px);
       overflow: hidden;
-      border: 1px solid var(--color-border);
+      border: 1px solid var(--color-blue-border);
       border-radius: 24px;
-      background: var(--color-bg-secondary);
+      background: var(--gradient-card), var(--color-bg-secondary);
       box-shadow: var(--shadow-lg);
       transform: rotate(1.2deg);
       transition: transform var(--transition-slow), border-color var(--transition-slow);
     }
 
     .portrait-card:hover {
-      border-color: var(--color-text-muted);
+      border-color: var(--color-blue);
       transform: rotate(0deg) translateY(-3px);
     }
 
@@ -389,11 +389,11 @@ const socialCards = [
       position: relative;
       overflow: hidden;
       padding: clamp(1.35rem, 4vw, 2.25rem);
-      border: 1px solid var(--color-border);
+      border: 1px solid var(--color-blue-border);
       border-radius: 24px;
       background:
-        radial-gradient(circle at 92% 0%, var(--color-accent-muted), transparent 38%),
-        linear-gradient(145deg, var(--color-bg-secondary), var(--color-bg-elevated));
+        radial-gradient(circle at 92% 0%, var(--color-blue-muted), transparent 38%),
+        linear-gradient(145deg, color-mix(in srgb, var(--color-navy) 18%, var(--color-bg-secondary)), var(--color-bg-elevated));
       box-shadow: var(--shadow-md);
     }
 
@@ -404,9 +404,9 @@ const socialCards = [
       bottom: -95px;
       width: 220px;
       height: 220px;
-      border: 1px solid var(--color-border-subtle);
+      border: 1px solid var(--color-blue-border);
       border-radius: 50%;
-      opacity: 0.55;
+      opacity: 0.45;
       pointer-events: none;
     }
 
@@ -425,15 +425,13 @@ const socialCards = [
       flex: 0 0 auto;
       width: 52px;
       height: 52px;
-      border: 1px solid var(--color-border);
+      border: 1px solid var(--color-blue-border);
       border-radius: 15px;
-      color: var(--color-accent);
-      background: var(--color-bg);
+      color: var(--color-blue);
+      background: color-mix(in srgb, var(--color-navy) 38%, var(--color-bg));
     }
 
-    .panel-label {
-      margin-bottom: 0.3rem;
-    }
+    .panel-label { margin-bottom: 0.3rem; }
 
     .email-panel h2 {
       margin: 0;
@@ -458,6 +456,7 @@ const socialCards = [
       justify-content: center;
       gap: 0.5rem;
       min-height: 45px;
+      min-width: 118px;
       padding: 0.72rem 1rem;
       border-radius: 10px;
       font: inherit;
@@ -469,45 +468,39 @@ const socialCards = [
     }
 
     .action-primary {
-      border: 1px solid var(--color-text);
+      border: 1px solid var(--color-blue-border);
       background: var(--gradient-blue);
       color: #ffffff;
     }
 
     .action-primary:hover {
-      color: var(--color-bg);
-      opacity: 0.88;
+      color: #ffffff;
+      opacity: 0.92;
       transform: translateY(-1px);
     }
 
     .action-secondary {
-      border: 1px solid var(--color-border);
-      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid var(--color-blue-border);
+      background: var(--color-navy-surface);
       color: var(--color-text-secondary);
     }
 
     .action-secondary:hover {
-      border-color: var(--color-text-muted);
+      border-color: var(--color-blue);
       color: var(--color-text);
+      background: color-mix(in srgb, var(--color-navy) 42%, var(--color-bg-elevated));
       transform: translateY(-1px);
     }
 
-    .copy-success-icon {
-      display: none;
-    }
+    .copy-success-icon { display: none; }
 
     .copy-button[data-copied='true'] {
-      border-color: rgba(52, 211, 153, 0.45);
-      color: #6ee7b7;
+      border-color: var(--color-blue);
+      color: var(--color-accent-hover);
     }
 
-    .copy-button[data-copied='true'] .copy-default-icon {
-      display: none;
-    }
-
-    .copy-button[data-copied='true'] .copy-success-icon {
-      display: inline-flex;
-    }
+    .copy-button[data-copied='true'] .copy-default-icon { display: none; }
+    .copy-button[data-copied='true'] .copy-success-icon { display: inline-flex; }
 
     .privacy-note {
       position: relative;
@@ -521,10 +514,10 @@ const socialCards = [
       line-height: 1.5;
     }
 
+    .privacy-note :global(svg) { color: var(--color-blue); }
+
     .topics-section,
-    .social-section {
-      padding-top: clamp(3rem, 7vw, 5rem);
-    }
+    .social-section { padding-top: clamp(3rem, 7vw, 5rem); }
 
     .section-heading {
       display: flex;
@@ -536,7 +529,7 @@ const socialCards = [
     .heading-line {
       flex: 1;
       height: 1px;
-      background: linear-gradient(to right, var(--color-border), transparent);
+      background: linear-gradient(to right, var(--color-blue-border), transparent);
     }
 
     .topic-list {
@@ -550,16 +543,14 @@ const socialCards = [
       align-items: center;
       gap: 0.45rem;
       padding: 0.55rem 0.78rem;
-      border: 1px solid var(--color-border);
+      border: 1px solid color-mix(in srgb, var(--color-blue-border) 58%, var(--color-border));
       border-radius: 999px;
       color: var(--color-text-secondary);
-      background: var(--color-bg-secondary);
+      background: linear-gradient(145deg, var(--color-navy-surface), var(--color-bg-secondary));
       font-size: 0.78rem;
     }
 
-    .topic-list :global(svg) {
-      color: var(--color-accent);
-    }
+    .topic-list :global(svg) { color: var(--color-blue); }
 
     .social-grid {
       display: grid;
@@ -576,15 +567,15 @@ const socialCards = [
       border: 1px solid var(--color-border);
       border-radius: 16px;
       color: var(--color-text-secondary);
-      background: var(--color-bg-secondary);
+      background: var(--gradient-card), var(--color-bg-secondary);
       text-decoration: none;
       transition: transform var(--transition-base), border-color var(--transition-base), background var(--transition-base);
     }
 
     .social-card:hover {
-      border-color: var(--color-text-muted);
+      border-color: var(--color-blue-border);
       color: var(--color-text);
-      background: var(--color-bg-elevated);
+      background: color-mix(in srgb, var(--color-navy) 24%, var(--color-bg-elevated));
       transform: translateY(-2px);
     }
 
@@ -593,10 +584,10 @@ const socialCards = [
       place-items: center;
       width: 42px;
       height: 42px;
-      border: 1px solid var(--color-border);
+      border: 1px solid var(--color-blue-border);
       border-radius: 12px;
-      color: var(--color-accent);
-      background: var(--color-bg);
+      color: var(--color-blue);
+      background: color-mix(in srgb, var(--color-navy) 32%, var(--color-bg));
     }
 
     .social-copy {
@@ -632,48 +623,55 @@ const socialCards = [
         padding-left: 1rem;
       }
 
-      .contact-hero {
-        grid-template-columns: 1fr;
-      }
+      .contact-hero { grid-template-columns: 1fr; }
 
       .portrait-card {
-        justify-self: start;
-        width: min(72vw, 300px);
+        justify-self: center;
+        width: min(82vw, 300px);
         transform: none;
       }
 
-      .social-grid {
-        grid-template-columns: 1fr;
-      }
+      .social-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 520px) {
+      .contact-page { padding-top: 2.35rem; }
+      .contact-copy h1 { font-size: clamp(2.35rem, 13vw, 3.25rem); }
+
+      .email-panel-head {
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .email-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+      }
+
       .email-actions {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
       }
 
       .action-button {
         width: 100%;
+        min-width: 0;
       }
+    }
 
-      .email-panel-head {
-        align-items: flex-start;
-      }
+    @media (max-width: 380px) {
+      .email-actions { grid-template-columns: 1fr; }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .portrait-card,
       .action-button,
-      .social-card {
-        transition: none;
-      }
+      .social-card { transition: none; }
 
       .portrait-card:hover,
       .action-button:hover,
-      .social-card:hover {
-        transform: none;
-      }
+      .social-card:hover { transform: none; }
     }
   </style>
 </BaseLayout>

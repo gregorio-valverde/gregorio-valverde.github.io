@@ -45,24 +45,9 @@ const esUrl = lang === 'es' ? currentAbsoluteUrl : alternateAbsoluteUrl;
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#303a46" />
+    <meta name="theme-color" content="#29333e" />
 
     <ClientRouter />
-
-    <script is:inline>
-      (function() {
-        const stored = localStorage.getItem('theme');
-        const theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-        document.documentElement.setAttribute('data-theme', theme);
-      })();
-    </script>
-
-    <script is:inline>
-      document.addEventListener('astro:before-swap', (e) => {
-        const theme = document.documentElement.getAttribute('data-theme');
-        e.newDocument.documentElement.setAttribute('data-theme', theme);
-      });
-    </script>
 
     <style>
       body { display: flex; flex-direction: column; min-height: 100vh; }
