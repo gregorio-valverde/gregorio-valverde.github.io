@@ -30,6 +30,7 @@ const projectsCollection = defineCollection({
     learnings: z.array(z.string()),
     featured: z.boolean().default(false),
     status: z.enum(['completed', 'ongoing', 'archived']).default('completed'),
+    showcase: z.enum(['airflow-dbt-framework']).optional(),
     order: z.number().optional(),
     relatedProjects: z.array(z.string()).optional(),
     relatedDecisions: z.array(z.string()).optional(),

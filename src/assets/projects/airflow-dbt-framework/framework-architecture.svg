@@ -1,0 +1,111 @@
+<svg width="1400" height="720" viewBox="0 0 1400 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="background" x1="78" y1="40" x2="1320" y2="680" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111B2A"/>
+      <stop offset="1" stop-color="#0B111B"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="190" y1="0" x2="1190" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7798C8"/>
+      <stop offset="0.52" stop-color="#4EA1E8"/>
+      <stop offset="1" stop-color="#96B8E8"/>
+    </linearGradient>
+    <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="1" y="1" width="1398" height="718" rx="34" fill="url(#background)" stroke="#273A55" stroke-width="2"/>
+  <circle cx="1230" cy="74" r="250" fill="#285B91" fill-opacity="0.08"/>
+  <circle cx="112" cy="672" r="225" fill="#326B9E" fill-opacity="0.06"/>
+
+  <text x="72" y="78" fill="#8EA9CC" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="3">METADATA-DRIVEN ELT</text>
+  <text x="72" y="126" fill="#F4F7FB" font-family="Arial, sans-serif" font-size="38" font-weight="700">Reusable orchestration from source to analytical model</text>
+  <text x="72" y="164" fill="#9AAFC8" font-family="Arial, sans-serif" font-size="20">One factory · independent pipelines · tested transformations · documented outputs</text>
+
+  <path d="M216 347H1182" stroke="url(#accent)" stroke-opacity="0.35" stroke-width="3"/>
+
+  <g>
+    <rect x="70" y="236" width="220" height="222" rx="24" fill="#152238" stroke="#385573" stroke-width="2"/>
+    <rect x="98" y="270" width="50" height="62" rx="8" fill="#1E314E" stroke="#7699C8" stroke-width="2"/>
+    <path d="M110 287H137M110 298H137M110 309H130" stroke="#9AB7DE" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="194" cy="283" rx="32" ry="12" stroke="#9AB7DE" stroke-width="3"/>
+    <path d="M162 283V322C162 329 176 335 194 335C212 335 226 329 226 322V283" stroke="#9AB7DE" stroke-width="3"/>
+    <text x="180" y="382" text-anchor="middle" fill="#F4F7FB" font-family="Arial, sans-serif" font-size="24" font-weight="700">YAML + SOURCES</text>
+    <text x="180" y="414" text-anchor="middle" fill="#9BAEC5" font-family="Arial, sans-serif" font-size="16">contracts · files · APIs</text>
+  </g>
+
+  <g>
+    <rect x="340" y="210" width="248" height="274" rx="28" fill="#182A43" stroke="#4A78A8" stroke-width="2"/>
+    <circle cx="464" cy="288" r="47" fill="#203B5D" stroke="#74A7D9" stroke-width="2"/>
+    <path d="M464 253L485 272L476 300L449 307L435 282L449 260L464 253Z" fill="#75A7D9" fill-opacity="0.92"/>
+    <circle cx="464" cy="281" r="9" fill="#182A43"/>
+    <path d="M464 247V257M506 270L497 275M501 318L492 312M422 318L431 312M422 270L431 275" stroke="#9BC0E7" stroke-width="3" stroke-linecap="round"/>
+    <text x="464" y="373" text-anchor="middle" fill="#F4F7FB" font-family="Arial, sans-serif" font-size="26" font-weight="700">AIRFLOW 3</text>
+    <text x="464" y="407" text-anchor="middle" fill="#A8BED8" font-family="Arial, sans-serif" font-size="17">DAG factory</text>
+    <rect x="389" y="432" width="150" height="30" rx="15" fill="#223C5B"/>
+    <text x="464" y="452" text-anchor="middle" fill="#BBD0E7" font-family="Arial, sans-serif" font-size="13">parallel TaskGroups</text>
+  </g>
+
+  <g>
+    <rect x="638" y="236" width="220" height="222" rx="24" fill="#152238" stroke="#385573" stroke-width="2"/>
+    <ellipse cx="748" cy="287" rx="48" ry="17" stroke="#9AB7DE" stroke-width="3"/>
+    <path d="M700 287V337C700 347 721 355 748 355C775 355 796 347 796 337V287" stroke="#9AB7DE" stroke-width="3"/>
+    <path d="M700 312C700 322 721 330 748 330C775 330 796 322 796 312" stroke="#557EA8" stroke-width="2"/>
+    <text x="748" y="392" text-anchor="middle" fill="#F4F7FB" font-family="Arial, sans-serif" font-size="24" font-weight="700">POSTGRESQL</text>
+    <text x="748" y="424" text-anchor="middle" fill="#9BAEC5" font-family="Arial, sans-serif" font-size="16">raw schema · full refresh</text>
+  </g>
+
+  <g>
+    <rect x="908" y="210" width="248" height="274" rx="28" fill="#1B2B42" stroke="#4A78A8" stroke-width="2"/>
+    <path d="M1032 248C1001 248 976 271 976 299C976 324 995 345 1020 349L1008 380L1042 355C1068 351 1088 329 1088 302C1088 272 1063 248 1032 248Z" fill="#E7784B"/>
+    <circle cx="1019" cy="298" r="6" fill="#1B2B42"/>
+    <circle cx="1044" cy="298" r="6" fill="#1B2B42"/>
+    <text x="1032" y="399" text-anchor="middle" fill="#F5F7FB" font-family="Arial, sans-serif" font-size="29" font-weight="700">DBT BUILD</text>
+    <text x="1032" y="431" text-anchor="middle" fill="#A8BED8" font-family="Arial, sans-serif" font-size="16">views · tables · tests · docs</text>
+    <rect x="964" y="451" width="136" height="24" rx="12" fill="#3B2B2A"/>
+    <text x="1032" y="468" text-anchor="middle" fill="#F0AA8F" font-family="Arial, sans-serif" font-size="12">tag-selected models</text>
+  </g>
+
+  <g>
+    <rect x="1206" y="236" width="124" height="222" rx="24" fill="#152238" stroke="#385573" stroke-width="2"/>
+    <rect x="1232" y="275" width="24" height="70" rx="6" fill="#5B84B4"/>
+    <rect x="1261" y="251" width="24" height="94" rx="6" fill="#80A8D8"/>
+    <rect x="1290" y="301" width="14" height="44" rx="5" fill="#B4CAE5"/>
+    <text x="1268" y="392" text-anchor="middle" fill="#F4F7FB" font-family="Arial, sans-serif" font-size="21" font-weight="700">MARTS</text>
+    <text x="1268" y="420" text-anchor="middle" fill="#9BAEC5" font-family="Arial, sans-serif" font-size="14">analytics</text>
+  </g>
+
+  <g fill="#79B8EE" filter="url(#softGlow)">
+    <circle cx="315" cy="347" r="5"/>
+    <circle cx="613" cy="347" r="5"/>
+    <circle cx="883" cy="347" r="5"/>
+    <circle cx="1181" cy="347" r="5"/>
+  </g>
+  <g stroke="#9CC5E9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M310 338L321 347L310 356"/>
+    <path d="M608 338L619 347L608 356"/>
+    <path d="M878 338L889 347L878 356"/>
+    <path d="M1176 338L1187 347L1176 356"/>
+  </g>
+
+  <g>
+    <rect x="70" y="526" width="1260" height="122" rx="24" fill="#111D2D" stroke="#2A405C"/>
+    <text x="102" y="571" fill="#8EA9CC" font-family="Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="2">HORIZONTAL SCALING PATTERN</text>
+    <rect x="102" y="592" width="178" height="34" rx="17" fill="#1B304A"/>
+    <text x="191" y="614" text-anchor="middle" fill="#C2D4E8" font-family="Arial, sans-serif" font-size="14">YAML contract</text>
+    <text x="302" y="614" fill="#6FA9DC" font-family="Arial, sans-serif" font-size="20" font-weight="700">+</text>
+    <rect x="330" y="592" width="178" height="34" rx="17" fill="#1B304A"/>
+    <text x="419" y="614" text-anchor="middle" fill="#C2D4E8" font-family="Arial, sans-serif" font-size="14">Extractor</text>
+    <text x="530" y="614" fill="#6FA9DC" font-family="Arial, sans-serif" font-size="20" font-weight="700">+</text>
+    <rect x="558" y="592" width="178" height="34" rx="17" fill="#1B304A"/>
+    <text x="647" y="614" text-anchor="middle" fill="#C2D4E8" font-family="Arial, sans-serif" font-size="14">Pipeline config</text>
+    <path d="M770 609H850" stroke="#669BCB" stroke-width="3"/>
+    <path d="M840 600L852 609L840 618" stroke="#8AB8DF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="880" y="580" width="414" height="46" rx="23" fill="#203A58" stroke="#4779A8"/>
+    <text x="1087" y="609" text-anchor="middle" fill="#E3EDF8" font-family="Arial, sans-serif" font-size="16" font-weight="700">NEW REUSABLE ELT PIPELINE</text>
+  </g>
+</svg>

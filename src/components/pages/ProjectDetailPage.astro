@@ -6,6 +6,7 @@ import ScrollToTop from '../ScrollToTop.astro';
 import BackLink from '../BackLink.astro';
 import RelatedContent from '../RelatedContent.astro';
 import ImpactMetrics from '../ImpactMetrics.astro';
+import AirflowDbtFrameworkShowcase from '../projects/AirflowDbtFrameworkShowcase.astro';
 import { getCollection, render } from 'astro:content';
 import { calculateReadingTime } from '../../utils/readingTime';
 import { localizePath, ui, type Lang } from '../../i18n';
@@ -17,7 +18,7 @@ const { Content } = await render(project);
 const copy = ui[lang].projectDetail;
 const projectCopy = ui[lang].projects;
 
-const { title, role, year, duration, teamSize, outcomeSummary, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, relatedProjects, relatedDecisions, status } = project.data;
+const { title, role, year, duration, teamSize, outcomeSummary, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, relatedProjects, relatedDecisions, status, showcase } = project.data;
 const statusConfig = {
   completed: { label: projectCopy.completed, class: 'status--completed' },
   ongoing: { label: projectCopy.ongoing, class: 'status--ongoing' },
@@ -46,6 +47,8 @@ const readingTime = `${calculateReadingTime(allText)} ${copy.minRead}`;
       </div>
       <p class="outcome-summary">{outcomeSummary}</p>
     </header>
+
+    {showcase === 'airflow-dbt-framework' && <AirflowDbtFrameworkShowcase lang={lang} />}
 
     <section class="case-study-section"><h2>{copy.overview}</h2><p>{overview}</p></section>
     <section class="case-study-section"><h2>{copy.problem}</h2><p>{problem}</p></section>
@@ -79,7 +82,8 @@ const readingTime = `${calculateReadingTime(allText)} ${copy.minRead}`;
 
   <style>
     .case-study {
-      max-width: 800px;
+      width: 100%;
+      max-width: 1120px;
       margin: 0 auto;
       padding: 2rem 1.5rem;
     }
@@ -129,6 +133,7 @@ const readingTime = `${calculateReadingTime(allText)} ${copy.minRead}`;
 
     .case-study-meta {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       gap: 0.75rem;
       font-size: 0.9375rem;

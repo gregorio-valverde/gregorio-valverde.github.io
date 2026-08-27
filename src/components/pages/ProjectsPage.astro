@@ -22,7 +22,7 @@ const featuredCount = sortedProjects.filter(p => p.data.featured).length;
 
 <BaseLayout lang={lang}>
   <SEO slot="head" title={copy.title} description={copy.description} type="website" />
-  <main class="page-container">
+  <main class="page-container projects-page">
     <header class="page-header">
       <h1 class="page-title">{copy.heading}</h1>
       <p class="page-intro">{copy.intro}</p>
@@ -36,4 +36,14 @@ const featuredCount = sortedProjects.filter(p => p.data.featured).length;
       </div>
     ) : <p class="empty-state">{copy.empty}</p>}
   </main>
+
+  <style>
+    .projects-page {
+      max-width: 1120px;
+    }
+
+    .projects-page .page-intro {
+      max-width: none;
+    }
+  </style>
 </BaseLayout>

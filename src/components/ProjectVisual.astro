@@ -2,16 +2,61 @@
 interface Props { slug: string; techStack?: string[]; }
 const { slug, techStack = [] } = Astro.props;
 const isForecast = slug.includes('electricity') || techStack.some((t) => /machine learning|forecast|pandas|scikit/i.test(t));
+const isDataPlatform = slug.includes('airflow-dbt-elt-framework');
 const nodes = techStack.slice(0,4);
 ---
 <div class="project-visual" aria-hidden="true">
-  {isForecast ? (
-    <svg class="forecast" viewBox="0 0 420 120" preserveAspectRatio="none">
-      <path class="grid" d="M0 30H420M0 60H420M0 90H420" />
-      <path class="line line-history" d="M0 88 C35 74 55 82 82 62 S135 48 160 68 S205 84 230 49 S275 38 300 55" />
-      <path class="line line-forecast" d="M300 55 C330 42 345 65 365 45 S397 32 420 40" />
-      <circle class="pulse" cx="300" cy="55" r="4" />
-    </svg>
+  {isDataPlatform ? (
+    <div class="data-platform-visual">
+      <div class="platform-copy">
+        <span class="platform-kicker"><i></i> Modular ELT architecture</span>
+        <strong>Data <em>Platform</em></strong>
+        <span class="platform-stack">Airflow <b>×</b> dbt <b>×</b> PostgreSQL</span>
+      </div>
+
+      <div class="platform-system">
+        <span class="platform-orbit platform-orbit--outer"></span>
+        <span class="platform-orbit platform-orbit--inner"></span>
+        <span class="platform-packet platform-packet--one"></span>
+        <span class="platform-packet platform-packet--two"></span>
+        <span class="platform-core">
+          <i></i><i></i><i></i>
+        </span>
+        <span class="platform-node platform-node--yaml">YAML</span>
+        <span class="platform-node platform-node--dbt">dbt</span>
+        <span class="platform-node platform-node--bi">BI</span>
+      </div>
+    </div>
+  ) : isForecast ? (
+    <div class="electricity-visual">
+      <div class="electricity-copy">
+        <span class="electricity-kicker"><i></i> Time series · Machine Learning</span>
+        <strong>Electricity <em>Forecasting</em></strong>
+        <span class="electricity-stack">XGBoost <b>×</b> ARIMAX <b>×</b> LSTM</span>
+      </div>
+
+      <div class="forecast-panel">
+        <div class="forecast-panel-header">
+          <span>Daily demand</span>
+          <strong><i></i> Prediction</strong>
+        </div>
+        <svg viewBox="0 0 300 82" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="forecast-area" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#34d6ff" stop-opacity=".3" />
+              <stop offset="1" stop-color="#34d6ff" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <path class="forecast-grid" d="M0 18H300M0 42H300M0 66H300" />
+          <path class="forecast-area" d="M0 63 C18 54 28 61 43 48 S68 33 83 47 S108 68 124 46 S151 24 170 39 S197 57 218 34 L218 82 H0Z" />
+          <path class="forecast-history" d="M0 63 C18 54 28 61 43 48 S68 33 83 47 S108 68 124 46 S151 24 170 39 S197 57 218 34" />
+          <path class="forecast-future" d="M218 34 C236 23 245 48 261 30 S284 19 300 27" />
+          <path class="forecast-now" d="M218 8V73" />
+          <circle class="forecast-pulse" cx="218" cy="34" r="4" />
+        </svg>
+        <span class="forecast-model">XGBoost · Best balance</span>
+      </div>
+    </div>
   ) : (
     <div class="mini-flow">
       {(nodes.length ? nodes : ['Source','Airflow','dbt','BI']).map((node, index) => (
@@ -22,4 +67,363 @@ const nodes = techStack.slice(0,4);
 </div>
 <style>
 .project-visual{height:126px;margin:-1.5rem -1.75rem 1.2rem;border-bottom:1px solid var(--color-border);background:radial-gradient(circle at 20% 20%,var(--color-accent-muted),transparent 42%),var(--color-bg);overflow:hidden;border-radius:8px 8px 0 0}.forecast{width:100%;height:100%}.grid{stroke:var(--color-border);stroke-width:1;fill:none}.line{fill:none;stroke-width:3;vector-effect:non-scaling-stroke}.line-history{stroke:var(--color-text-muted)}.line-forecast{stroke:var(--color-accent);stroke-dasharray:8 8;animation:dash 7s linear infinite}.pulse{fill:var(--color-accent);animation:pulse 1.8s ease-in-out infinite}@keyframes dash{to{stroke-dashoffset:-64}}@keyframes pulse{50%{r:7;opacity:.35}}.mini-flow{height:100%;display:flex;align-items:center;justify-content:center;padding:1rem;gap:.45rem}.mini-node{min-width:52px;max-width:82px;padding:.48rem .55rem;border:1px solid var(--color-border);border-radius:8px;background:var(--color-bg-elevated);font-size:.62rem;color:var(--color-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}.mini-link{position:relative;width:26px;height:1px;background:var(--color-border)}.mini-link:after{content:'›';position:absolute;right:-3px;top:-9px;color:var(--color-text-muted)}.mini-link b{position:absolute;width:4px;height:4px;top:-2px;border-radius:50%;background:var(--color-accent);animation:miniFlow 1.8s linear infinite}@keyframes miniFlow{from{left:0}to{left:22px}}@media(max-width:640px){.project-visual{margin:-1.25rem -1.5rem 1rem}}@media(prefers-reduced-motion:reduce){.line-forecast,.pulse,.mini-link b{animation:none}.mini-link b{left:50%}}
+.electricity-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: .85rem 1.8rem;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(255, 178, 55, .25), transparent 26%),
+    radial-gradient(circle at 42% 110%, rgba(38, 210, 255, .2), transparent 40%),
+    linear-gradient(115deg, #071522 0%, #102336 54%, #292113 100%);
+}
+
+.electricity-visual::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: repeating-linear-gradient(120deg, transparent 0 38px, rgba(255, 197, 82, .035) 39px 40px);
+  content: '';
+}
+
+.electricity-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.electricity-kicker {
+  display: flex;
+  align-items: center;
+  gap: .42rem;
+  color: #b9d9e8;
+  font-size: .57rem;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.electricity-kicker i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffbd4a;
+  box-shadow: 0 0 13px #ffbd4a;
+}
+
+.electricity-copy > strong {
+  margin-top: .18rem;
+  color: #f4f9ff;
+  font-size: clamp(1.55rem, 3.15vw, 2.35rem);
+  font-weight: 760;
+  letter-spacing: -.052em;
+  line-height: 1;
+}
+
+.electricity-copy > strong em {
+  color: transparent;
+  background: linear-gradient(92deg, #ffb83f 0%, #ffd36f 42%, #54dcff 100%);
+  background-clip: text;
+  font-style: normal;
+  -webkit-background-clip: text;
+}
+
+.electricity-stack {
+  margin-top: .48rem;
+  color: #aabace;
+  font-size: .64rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+.electricity-stack b {
+  padding: 0 .28rem;
+  color: #45d8ff;
+}
+
+.forecast-panel {
+  position: relative;
+  width: 310px;
+  height: 105px;
+  flex: 0 0 310px;
+  padding: .55rem .7rem .35rem;
+  border: 1px solid rgba(173, 211, 232, .17);
+  border-radius: 13px;
+  background: rgba(5, 17, 29, .57);
+  box-shadow: 0 14px 36px rgba(1, 8, 18, .35), inset 0 1px rgba(255, 255, 255, .04);
+  backdrop-filter: blur(5px);
+}
+
+.forecast-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #92a9bb;
+  font-size: .48rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.forecast-panel-header strong {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  color: #ffcf70;
+  font-size: inherit;
+}
+
+.forecast-panel-header strong i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffbd4a;
+  box-shadow: 0 0 9px #ffbd4a;
+}
+
+.forecast-panel svg {
+  display: block;
+  width: 100%;
+  height: 70px;
+  overflow: visible;
+}
+
+.forecast-grid { fill: none; stroke: rgba(148, 183, 207, .1); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.forecast-area { fill: url(#forecast-area); }
+.forecast-history { fill: none; stroke: #35d5ff; stroke-width: 2.2; vector-effect: non-scaling-stroke; }
+.forecast-future { fill: none; stroke: #ffc354; stroke-width: 2.4; stroke-dasharray: 7 6; vector-effect: non-scaling-stroke; animation: forecastTravel 5s linear infinite; }
+.forecast-now { fill: none; stroke: rgba(255, 211, 111, .3); stroke-width: 1; stroke-dasharray: 2 4; vector-effect: non-scaling-stroke; }
+.forecast-pulse { fill: #ffbd4a; filter: drop-shadow(0 0 5px #ffbd4a); animation: forecastPulse 1.9s ease-in-out infinite; }
+
+.forecast-model {
+  position: absolute;
+  right: .7rem;
+  bottom: .3rem;
+  color: #9eb3c4;
+  font-size: .43rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+@keyframes forecastTravel { to { stroke-dashoffset: -52; } }
+@keyframes forecastPulse { 50% { r: 6; opacity: .45; } }
+
+@media (max-width: 640px) {
+  .electricity-visual { padding: .8rem 1rem; }
+  .electricity-copy > strong { max-width: 190px; font-size: 1.55rem; }
+  .forecast-panel { right: -32px; width: 240px; flex-basis: 240px; }
+}
+
+@media (max-width: 460px) {
+  .electricity-kicker { max-width: 190px; font-size: .49rem; letter-spacing: .08em; }
+  .electricity-stack { font-size: .54rem; }
+  .forecast-panel { position: absolute; right: -105px; opacity: .7; }
+}
+
+.data-platform-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 1rem 1.8rem;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 82% 42%, rgba(124, 108, 255, .34), transparent 27%),
+    radial-gradient(circle at 12% 0%, rgba(40, 215, 255, .22), transparent 34%),
+    linear-gradient(115deg, #071421 0%, #0d2236 48%, #17183c 100%);
+}
+
+.data-platform-visual::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(145, 184, 220, .06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(145, 184, 220, .06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  content: '';
+  mask-image: linear-gradient(90deg, transparent, #000 35%, #000);
+}
+
+.data-platform-visual::after {
+  position: absolute;
+  z-index: -1;
+  right: 10%;
+  bottom: -52px;
+  width: 300px;
+  height: 105px;
+  border-radius: 50%;
+  background: rgba(40, 215, 255, .11);
+  filter: blur(28px);
+  content: '';
+}
+
+.platform-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.platform-kicker {
+  display: flex;
+  align-items: center;
+  gap: .42rem;
+  color: #9edcf0;
+  font-size: .57rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.platform-kicker i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #35e2a2;
+  box-shadow: 0 0 12px #35e2a2;
+}
+
+.platform-copy > strong {
+  margin-top: .18rem;
+  color: #f4f9ff;
+  font-size: clamp(1.7rem, 3.5vw, 2.55rem);
+  font-weight: 760;
+  letter-spacing: -.055em;
+  line-height: 1;
+}
+
+.platform-copy > strong em {
+  color: transparent;
+  background: linear-gradient(92deg, #28d7ff 4%, #8c7dff 58%, #df8cff 100%);
+  background-clip: text;
+  font-style: normal;
+  -webkit-background-clip: text;
+}
+
+.platform-stack {
+  margin-top: .48rem;
+  color: #aabace;
+  font-size: .64rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+.platform-stack b {
+  padding: 0 .28rem;
+  color: #ffbd5c;
+  font-weight: 700;
+}
+
+.platform-system {
+  position: relative;
+  width: 245px;
+  height: 118px;
+  flex: 0 0 245px;
+}
+
+.platform-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 1px solid rgba(105, 203, 255, .23);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(-12deg);
+}
+
+.platform-orbit--outer { width: 220px; height: 82px; }
+.platform-orbit--inner { width: 142px; height: 54px; border-color: rgba(151, 124, 255, .34); }
+
+.platform-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-content: center;
+  border: 1px solid rgba(76, 218, 255, .52);
+  border-radius: 17px;
+  background: linear-gradient(145deg, rgba(38, 209, 255, .19), rgba(130, 91, 255, .26)), rgba(8, 19, 35, .9);
+  box-shadow: 0 0 0 6px rgba(61, 190, 255, .05), 0 12px 30px rgba(4, 9, 25, .45);
+  transform: translate(-50%, -50%) rotate(-4deg);
+}
+
+.platform-core i {
+  display: block;
+  width: 25px;
+  height: 6px;
+  margin: 1.5px 0;
+  border: 1px solid rgba(213, 242, 255, .8);
+  border-radius: 50%;
+  background: rgba(40, 215, 255, .16);
+}
+
+.platform-node {
+  position: absolute;
+  display: grid;
+  min-width: 36px;
+  height: 24px;
+  place-items: center;
+  padding: 0 .42rem;
+  border: 1px solid rgba(166, 198, 229, .2);
+  border-radius: 7px;
+  color: #d9e9f8;
+  background: rgba(12, 27, 47, .86);
+  box-shadow: 0 8px 18px rgba(1, 7, 18, .28);
+  font-size: .5rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.platform-node--yaml { top: 12px; left: 3px; border-color: rgba(53, 226, 162, .4); }
+.platform-node--dbt { top: 8px; right: 8px; border-color: rgba(255, 184, 77, .45); color: #ffd895; }
+.platform-node--bi { right: 0; bottom: 7px; border-color: rgba(179, 127, 255, .48); }
+
+.platform-packet {
+  position: absolute;
+  z-index: 2;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #28d7ff;
+  box-shadow: 0 0 14px #28d7ff;
+  animation: platformDrift 3.2s ease-in-out infinite alternate;
+}
+
+.platform-packet--one { top: 31px; left: 57px; }
+.platform-packet--two { right: 49px; bottom: 25px; background: #d185ff; box-shadow: 0 0 14px #d185ff; animation-delay: -1.6s; }
+
+@keyframes platformDrift {
+  from { transform: translate(-7px, 3px) scale(.75); opacity: .55; }
+  to { transform: translate(9px, -5px) scale(1.1); opacity: 1; }
+}
+
+@media (max-width: 640px) {
+  .data-platform-visual { padding: .85rem 1rem; }
+  .platform-copy > strong { font-size: 1.65rem; }
+  .platform-system { right: -28px; width: 190px; flex-basis: 190px; transform: scale(.86); }
+}
+
+@media (max-width: 460px) {
+  .platform-kicker { font-size: .5rem; letter-spacing: .09em; }
+  .platform-stack { font-size: .55rem; }
+  .platform-system { position: absolute; right: -70px; opacity: .72; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .platform-packet,
+  .forecast-future,
+  .forecast-pulse { animation: none; }
+}
 </style>

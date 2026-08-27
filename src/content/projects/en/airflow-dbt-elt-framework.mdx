@@ -1,0 +1,128 @@
+---
+title: "Modular ELT Data Platform with Airflow and dbt"
+role: "Data Engineer / Solution Architect"
+year: 2026
+duration: "Portfolio project · reusable architecture"
+teamSize: 1
+outcomeSummary: "A metadata-driven Data Platform that generates reusable ELT pipelines, loads an idempotent PostgreSQL raw layer, and runs dbt models, tests, and documentation."
+overview: "The solution turns a repeated integration pattern into an extensible architecture. YAML contracts define raw tables, extractors encapsulate access to each source, a factory generates Airflow TaskGroups, and dbt transforms data from raw sources into staging views and final analytical models."
+problem: "Building a specific DAG for every source repeats schema synchronization, loading, dependency, and dbt execution logic. As new sources are added, this duplication makes it harder to maintain consistent behavior, control concurrency, and ensure that every integration follows the same quality criteria."
+constraints:
+  - "The project had to be locally reproducible through Docker and Astronomer Runtime."
+  - "Extractors had to support different complexity levels and source-specific connections."
+  - "The demonstration loader currently supports full refresh only."
+  - "dbt had to run only after at least one raw load completed and no previous load failed."
+approach: "I separated pipeline definition from orchestration. Each integration registers an identifier, a YAML contract, an extractor —which may or may not require a connection— and its execution options. DagEltGenerator interprets that configuration, creates an independent TaskGroup per pipeline, controls its inclusion in each run, and launches dbt build with the selected tag after the raw loads complete."
+keyDecisions:
+  - decision: "Define raw sources through YAML contracts"
+    reasoning: "Centralizing table names, columns, types, nullability, and indexes makes it possible to synchronize PostgreSQL and validate DataFrame shape without scattering metadata across Python code."
+    alternatives:
+      - "Define the schema directly inside each extractor"
+      - "Create every table manually through SQL"
+  - decision: "Build a reusable DAG factory"
+    reasoning: "The factory centralizes gating, synchronization, extraction, loading, concurrency, and dbt execution. Each new integration contributes only its source-specific logic."
+    alternatives:
+      - "Maintain a complete independent DAG for each source"
+      - "Build one monolithic Python operator"
+  - decision: "Exchange DataFrames through temporary Parquet files"
+    reasoning: "Parquet avoids moving complete DataFrames through XCom, preserves types better than CSV, and establishes a clear boundary between extraction and load tasks."
+    alternatives:
+      - "Serialize the DataFrame directly into XCom"
+      - "Repeat extraction inside the load task"
+  - decision: "Separate raw, staging, and marts in dbt"
+    reasoning: "Raw sources preserve the input and centralize declarative tests, staging normalizes through views, and final models are materialized as analysis-ready tables."
+    alternatives:
+      - "Transform data inside Airflow before loading it"
+      - "Build a single SQL modeling layer"
+techStack:
+  - "Apache Airflow 3"
+  - "dbt Core"
+  - "PostgreSQL"
+  - "Python"
+  - "Pandas"
+  - "Docker"
+  - "Astronomer Runtime"
+  - "YAML"
+  - "PyArrow / Parquet"
+  - "SQLAlchemy"
+impact:
+  metrics:
+    - label: "Demo pipelines"
+      value: "5"
+    - label: "Data layers"
+      value: "raw → staging → marts"
+    - label: "Orchestration pattern"
+      value: "1 reusable factory"
+  qualitative: "The Data Platform reduces repeated code and supports horizontal growth: adding a source mainly requires its contract, extractor, and configuration. Orchestration, concurrency, full-refresh idempotency, and downstream dbt execution remain standardized."
+learnings:
+  - "Separating metadata, source logic, and orchestration simplifies the onboarding of new pipelines."
+  - "Idempotency should be defined by the observable result of a rerun, not only by the absence of errors."
+  - "Staging views and mart tables balance storage cost, validation, and analytical performance."
+  - "Observability should be designed as an additional layer driven by execution metadata and dbt artifacts."
+featured: true
+status: completed
+showcase: airflow-dbt-framework
+order: 1
+---
+
+## How the Data Platform scales
+
+Project growth follows a consistent sequence:
+
+1. Define the raw structure in a YAML file.
+2. Implement the extractor for the new source.
+3. Register the pipeline with its connection and options.
+4. Add the dbt source, models, tests, and documentation.
+5. Associate the models with the tag executed by the DAG.
+
+A pipeline configuration contains only source-specific information:
+
+```python
+{
+    "pipeline_id": "employees",
+    "yaml_path": "/usr/local/airflow/include/elt/config/src/src_hr_employees.yml",
+    "extractor": extract_src_hr_employees,
+    "conn_id": "dw_postgres",
+    "sync_enabled": True,
+    "load_mode_default": "full_refresh",
+    "enabled": True,
+}
+```
+
+The factory uses this definition to automatically create run gating, destination synchronization, extraction, raw loading, and the downstream `dbt build` dependency.
+
+## Operational guarantees
+
+- A successful rerun with the same input leaves the same raw state instead of accumulating the previous batch again.
+- `max_active_runs=1` prevents two demonstration DAG runs from modifying the same tables simultaneously.
+- `include_pipelines` and `exclude_pipelines` execute a subset of sources without changing code.
+- Independent TaskGroups allow pipelines to run in parallel up to the limit defined by `max_active_tasks` or an Airflow pool.
+- Tag-selected `dbt build` runs after raw loading and combines model construction, tests, and dependency order in one command.
+
+## Environment configuration
+
+The same pattern supports behavior changes without modifying the main class:
+
+- Retries and alerts through Airflow `default_args`.
+- Scheduling through a cron expression.
+- Global or pipeline-specific connections.
+- Separate dbt targets for development and production.
+- Destination databases selected through connections and environment variables.
+
+The public demonstration uses the `dev` target, manual execution, zero retries, and disabled email notifications. These are configurable options rather than factory limitations.
+
+## Quality and documentation in dbt
+
+`sources.yml` documents raw sources and applies declarative tests such as `not_null`, `unique`, `relationships`, and `accepted_values`. Staging then performs casting, cleaning, and normalization through views. Final models are materialized as dimension and fact tables.
+
+The `schema.yml` documentation defines the purpose, grain, relevant columns, and relationships of each final model. The repository therefore keeps both the transformation and its analytical contract together.
+
+## Next evolution: observability
+
+The natural next layer would persist Airflow metadata and dbt artifacts in audit tables: duration, processed rows, states, retries, test results, and freshness. Grafana could consume those metrics to analyze historical reliability and performance.
+
+This is presented as a possible evolution, not as an already implemented repository feature.
+
+## Repository
+
+[View the project on GitHub](https://github.com/gregorio-valverde/airflow-dbt-elt-framework)

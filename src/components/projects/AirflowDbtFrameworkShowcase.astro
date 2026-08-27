@@ -1,0 +1,614 @@
+---
+import frameworkArchitecture from '../../assets/projects/airflow-dbt-framework/framework-architecture.svg';
+import type { Lang } from '../../i18n';
+
+interface Props { lang: Lang; }
+
+const { lang } = Astro.props;
+
+const copy = lang === 'es' ? {
+  eyebrow: 'Arquitectura del proyecto',
+  title: 'Una fábrica de ELT, no un DAG aislado',
+  intro: 'Selecciona una etapa para ver qué responsabilidad asume cada capa. El movimiento representa el paso del dato; la lógica específica de cada origen permanece desacoplada de la orquestación.',
+  architectureAlt: 'Arquitectura de la Data Platform ELT: contratos YAML y fuentes pasan por una fábrica de DAGs de Airflow, PostgreSQL raw, dbt y modelos analíticos.',
+  architectureCaption: 'El patrón para añadir una integración se mantiene constante: contrato YAML + extractor + configuración del pipeline.',
+  selectStage: 'Selecciona una etapa de la arquitectura',
+  detailLabel: 'Detalle de la etapa',
+  capabilitiesTitle: 'Qué aporta el diseño',
+  implemented: 'Implementado',
+  configurable: 'Configurable',
+  evolution: 'Evolución',
+  stages: [
+    {
+      title: 'Fuentes + YAML',
+      label: 'Contrato',
+      description: 'Cada fuente se define mediante un contrato YAML que declara tabla, esquema, columnas, tipos, nulabilidad e índices. El extractor solo se ocupa de obtener los datos.',
+      bullets: ['Contrato de entrada versionable', 'Tipos y orden de columnas consistentes', 'Extractores independientes de la fábrica'],
+    },
+    {
+      title: 'Airflow 3',
+      label: 'Orquestación',
+      description: 'La clase principal recibe pipelines, extractores, conexiones, concurrencia y la etiqueta de dbt. A partir de esos argumentos genera un TaskGroup por pipeline.',
+      bullets: ['Ejecución paralela controlada', 'Pipelines incluidos o excluidos por ejecución', 'Conexiones configurables por pipeline'],
+    },
+    {
+      title: 'PostgreSQL raw',
+      label: 'Carga',
+      description: 'La tabla raw se crea o sincroniza desde el YAML. El modo full refresh reemplaza el estado anterior para que una repetición correcta no acumule el mismo lote.',
+      bullets: ['Sincronización de esquema e índices', 'Intercambio temporal mediante Parquet', 'Semántica idempotente de full refresh'],
+    },
+    {
+      title: 'dbt staging',
+      label: 'Validación',
+      description: 'Las fuentes raw se documentan y prueban en sources.yml. Los modelos de staging, materializados como vistas, tipan, normalizan y preparan el dato sin duplicar almacenamiento innecesario.',
+      bullets: ['Tests declarativos por fuente y columna', 'Limpieza y estandarización SQL', 'Vistas ligeras para el volumen del proyecto'],
+    },
+    {
+      title: 'Marts',
+      label: 'Consumo',
+      description: 'Dimensiones y hechos se materializan como tablas. schema.yml documenta modelos, columnas, relaciones y tests para exponer una capa analítica fiable.',
+      bullets: ['Modelos finales orientados a análisis', 'Documentación y lineage de dbt', 'Ejecución selectiva mediante dbt build y tags'],
+    },
+  ],
+  capabilities: [
+    { state: 'implemented', title: 'Núcleo operativo', text: 'Metadatos YAML, fábrica de DAGs, pipelines paralelos, selección por ejecución e idempotencia full refresh.' },
+    { state: 'configurable', title: 'Operación por entorno', text: 'Retries, alertas por correo, schedules, pools, conexiones de destino y targets dev/prod mediante argumentos y variables.' },
+    { state: 'evolution', title: 'Observabilidad', text: 'Persistencia de ejecuciones en tablas de auditoría, artefactos de dbt y métricas visualizadas con Grafana.' },
+  ],
+} : {
+  eyebrow: 'Project architecture',
+  title: 'An ELT factory, not an isolated DAG',
+  intro: 'Select a stage to inspect the responsibility of each layer. Motion represents data movement, while source-specific logic remains decoupled from orchestration.',
+  architectureAlt: 'ELT Data Platform architecture: YAML contracts and sources flow through an Airflow DAG factory, PostgreSQL raw, dbt, and analytical models.',
+  architectureCaption: 'The integration pattern remains constant: YAML contract + extractor + pipeline configuration.',
+  selectStage: 'Select an architecture stage',
+  detailLabel: 'Stage details',
+  capabilitiesTitle: 'What the design provides',
+  implemented: 'Implemented',
+  configurable: 'Configurable',
+  evolution: 'Evolution',
+  stages: [
+    {
+      title: 'Sources + YAML',
+      label: 'Contract',
+      description: 'Each source is defined through a YAML contract containing its table, schema, columns, types, nullability, and indexes. The extractor is responsible only for retrieving data.',
+      bullets: ['Versionable input contract', 'Consistent column order and types', 'Extractors independent from the factory'],
+    },
+    {
+      title: 'Airflow 3',
+      label: 'Orchestration',
+      description: 'The main class receives pipelines, extractors, connections, concurrency settings, and a dbt tag. It generates one TaskGroup for each pipeline from those arguments.',
+      bullets: ['Controlled parallel execution', 'Pipelines included or excluded per run', 'Connections configurable per pipeline'],
+    },
+    {
+      title: 'PostgreSQL raw',
+      label: 'Load',
+      description: 'The raw table is created or synchronized from YAML. Full-refresh mode replaces the previous state so a successful rerun does not accumulate the same batch.',
+      bullets: ['Schema and index synchronization', 'Temporary Parquet task handoff', 'Idempotent full-refresh semantics'],
+    },
+    {
+      title: 'dbt staging',
+      label: 'Validation',
+      description: 'Raw sources are documented and tested in sources.yml. Staging models are views that cast, normalize, and prepare data without unnecessary storage duplication.',
+      bullets: ['Declarative tests by source and column', 'SQL cleaning and standardization', 'Lightweight views for the project volume'],
+    },
+    {
+      title: 'Marts',
+      label: 'Consumption',
+      description: 'Dimensions and facts are materialized as tables. schema.yml documents models, columns, relationships, and tests to expose a trusted analytical layer.',
+      bullets: ['Analysis-ready final models', 'dbt documentation and lineage', 'Tag-selected execution through dbt build'],
+    },
+  ],
+  capabilities: [
+    { state: 'implemented', title: 'Operational core', text: 'YAML metadata, DAG factory, parallel pipelines, per-run selection, and full-refresh idempotency.' },
+    { state: 'configurable', title: 'Environment operations', text: 'Retries, email alerts, schedules, pools, destination connections, and dev/prod targets through arguments and variables.' },
+    { state: 'evolution', title: 'Observability', text: 'Execution metadata in audit tables, dbt artifacts, and operational metrics visualized with Grafana.' },
+  ],
+};
+
+const stateLabels = {
+  implemented: copy.implemented,
+  configurable: copy.configurable,
+  evolution: copy.evolution,
+};
+---
+
+<section class="framework-showcase" data-framework-showcase>
+  <header class="showcase-header">
+    <p class="showcase-eyebrow">{copy.eyebrow}</p>
+    <h2>{copy.title}</h2>
+    <p>{copy.intro}</p>
+  </header>
+
+  <figure class="architecture-figure">
+    <img
+      src={frameworkArchitecture.src}
+      width="1400"
+      height="720"
+      loading="eager"
+      alt={copy.architectureAlt}
+    />
+    <figcaption>{copy.architectureCaption}</figcaption>
+  </figure>
+
+  <div class="interactive-architecture">
+    <p class="sr-only" id={`framework-instructions-${lang}`}>{copy.selectStage}</p>
+    <div
+      class="architecture-flow"
+      role="tablist"
+      aria-labelledby={`framework-instructions-${lang}`}
+    >
+      {copy.stages.map((stage, index) => (
+        <>
+          <button
+            class:list={['architecture-node', { 'is-active': index === 0 }]}
+            type="button"
+            role="tab"
+            id={`framework-tab-${lang}-${index}`}
+            aria-controls={`framework-panel-${lang}-${index}`}
+            aria-selected={index === 0 ? 'true' : 'false'}
+            tabindex={index === 0 ? 0 : -1}
+            data-stage-index={index}
+          >
+            <span class="node-number">{String(index + 1).padStart(2, '0')}</span>
+            <strong>{stage.title}</strong>
+            <small>{stage.label}</small>
+          </button>
+          {index < copy.stages.length - 1 && (
+            <span class="flow-connector" aria-hidden="true"><i></i></span>
+          )}
+        </>
+      ))}
+    </div>
+
+    <div class="stage-panels" aria-label={copy.detailLabel}>
+      {copy.stages.map((stage, index) => (
+        <article
+          class="stage-panel"
+          role="tabpanel"
+          id={`framework-panel-${lang}-${index}`}
+          aria-labelledby={`framework-tab-${lang}-${index}`}
+          hidden={index !== 0}
+          data-stage-panel={index}
+        >
+          <div>
+            <span>{stage.label}</span>
+            <h3>{stage.title}</h3>
+            <p>{stage.description}</p>
+          </div>
+          <ul>
+            {stage.bullets.map((bullet) => <li>{bullet}</li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <div class="capabilities-block">
+    <h3>{copy.capabilitiesTitle}</h3>
+    <div class="capability-grid">
+      {copy.capabilities.map((capability) => (
+        <article class={`capability-card capability-card--${capability.state}`}>
+          <span>{stateLabels[capability.state as keyof typeof stateLabels]}</span>
+          <h4>{capability.title}</h4>
+          <p>{capability.text}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const setupFrameworkShowcase = (root: Element) => {
+    if (root.getAttribute('data-showcase-ready') === 'true') return;
+    root.setAttribute('data-showcase-ready', 'true');
+
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-stage-index]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-stage-panel]'));
+
+    const activate = (nextIndex: number, focus = false) => {
+      tabs.forEach((tab, index) => {
+        const active = index === nextIndex;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        tab.tabIndex = active ? 0 : -1;
+        if (active && focus) tab.focus();
+      });
+
+      panels.forEach((panel, index) => {
+        panel.hidden = index !== nextIndex;
+      });
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activate(index));
+      tab.addEventListener('keydown', (event) => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        const last = tabs.length - 1;
+        const next = event.key === 'Home'
+          ? 0
+          : event.key === 'End'
+            ? last
+            : event.key === 'ArrowRight'
+              ? (index + 1) % tabs.length
+              : (index - 1 + tabs.length) % tabs.length;
+        activate(next, true);
+      });
+    });
+  };
+
+  const initializeFrameworkShowcases = () => {
+    document.querySelectorAll('[data-framework-showcase]').forEach(setupFrameworkShowcase);
+  };
+
+  document.addEventListener('astro:page-load', initializeFrameworkShowcases);
+  initializeFrameworkShowcases();
+</script>
+
+<style>
+  .framework-showcase {
+    width: 100%;
+    margin: 0 0 4rem;
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--color-bg-secondary) 88%, #0c1b2e 12%);
+    box-shadow: 0 24px 80px rgba(2, 8, 18, 0.2);
+  }
+
+  .showcase-header {
+    max-width: none;
+    padding: 1rem 1rem 1.5rem;
+  }
+
+  .showcase-eyebrow {
+    margin: 0 0 0.5rem;
+    color: var(--color-accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .showcase-header h2 {
+    margin: 0 0 0.75rem;
+    color: var(--color-text);
+    font-size: clamp(1.55rem, 3vw, 2.35rem);
+    letter-spacing: -0.025em;
+  }
+
+  .showcase-header > p:last-child {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .architecture-figure {
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: #0b111b;
+  }
+
+  .architecture-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .architecture-figure figcaption {
+    padding: 0.8rem 1rem;
+    border-top: 1px solid rgba(148, 173, 207, 0.16);
+    color: #aebed2;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .interactive-architecture {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--color-bg) 86%, #10243d 14%);
+  }
+
+  .architecture-flow {
+    display: grid;
+    grid-template-columns: 1fr 34px 1fr 34px 1fr 34px 1fr 34px 1fr;
+    align-items: center;
+  }
+
+  .architecture-node {
+    min-height: 112px;
+    padding: 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: 11px;
+    background: var(--color-bg-elevated);
+    color: var(--color-text);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 180ms ease, transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+  }
+
+  .architecture-node:hover,
+  .architecture-node:focus-visible {
+    border-color: color-mix(in srgb, var(--color-accent) 65%, var(--color-border));
+    transform: translateY(-2px);
+    outline: none;
+  }
+
+  .architecture-node.is-active {
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-bg-elevated) 78%, var(--color-accent-muted) 22%);
+    box-shadow: 0 0 0 3px var(--color-accent-muted);
+  }
+
+  .node-number {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--color-accent);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .architecture-node strong,
+  .architecture-node small {
+    display: block;
+  }
+
+  .architecture-node strong {
+    font-size: 0.86rem;
+    line-height: 1.25;
+  }
+
+  .architecture-node small {
+    margin-top: 0.38rem;
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+  }
+
+  .flow-connector {
+    position: relative;
+    height: 1px;
+    overflow: visible;
+    background: var(--color-border);
+  }
+
+  .flow-connector::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    right: -1px;
+    width: 8px;
+    height: 8px;
+    border-top: 1px solid var(--color-accent);
+    border-right: 1px solid var(--color-accent);
+    transform: rotate(45deg);
+  }
+
+  .flow-connector i {
+    position: absolute;
+    top: -3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--color-accent) 70%, transparent);
+    animation: dataFlow 2.2s linear infinite;
+  }
+
+  .stage-panels {
+    margin-top: 1rem;
+  }
+
+  .stage-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.65fr);
+    gap: 1.25rem;
+    padding: 1.25rem;
+    border: 1px solid color-mix(in srgb, var(--color-border) 75%, transparent);
+    border-radius: 12px;
+    background: var(--color-bg-secondary);
+    animation: panelIn 220ms ease-out;
+  }
+
+  .stage-panel[hidden] {
+    display: none;
+  }
+
+  .stage-panel span {
+    color: var(--color-accent);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .stage-panel h3 {
+    margin: 0.35rem 0 0.55rem;
+    color: var(--color-text);
+    font-size: 1.25rem;
+  }
+
+  .stage-panel p,
+  .stage-panel li {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.65;
+  }
+
+  .stage-panel p {
+    margin: 0;
+  }
+
+  .stage-panel ul {
+    align-self: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stage-panel li {
+    position: relative;
+    padding: 0.36rem 0 0.36rem 1.15rem;
+  }
+
+  .stage-panel li::before {
+    content: '';
+    position: absolute;
+    top: 0.9rem;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  .capabilities-block {
+    padding: 1.5rem 0.25rem 0.25rem;
+  }
+
+  .capabilities-block > h3 {
+    margin: 0 0 1rem;
+    color: var(--color-text);
+    font-size: 1.1rem;
+  }
+
+  .capability-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+
+  .capability-card {
+    padding: 1.05rem;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-bg-elevated);
+  }
+
+  .capability-card > span {
+    display: inline-flex;
+    padding: 0.24rem 0.5rem;
+    border-radius: 999px;
+    color: var(--color-accent);
+    background: var(--color-accent-muted);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .capability-card--evolution > span {
+    color: var(--color-text-secondary);
+    background: color-mix(in srgb, var(--color-bg) 75%, var(--color-border) 25%);
+  }
+
+  .capability-card h4 {
+    margin: 0.75rem 0 0.45rem;
+    color: var(--color-text);
+    font-size: 0.95rem;
+  }
+
+  .capability-card p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @keyframes dataFlow {
+    from { left: 0; opacity: 0; }
+    18% { opacity: 1; }
+    82% { opacity: 1; }
+    to { left: calc(100% - 7px); opacity: 0; }
+  }
+
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 920px) {
+    .architecture-flow {
+      grid-template-columns: repeat(9, max-content);
+      overflow-x: auto;
+      padding: 0.25rem 0.15rem 0.75rem;
+      scrollbar-width: thin;
+    }
+
+    .architecture-node {
+      width: 152px;
+    }
+
+    .flow-connector {
+      width: 30px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .framework-showcase {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 14px;
+    }
+
+    .showcase-header {
+      padding: 0.8rem 0.55rem 1.1rem;
+    }
+
+    .architecture-figure {
+      overflow-x: auto;
+    }
+
+    .architecture-figure img {
+      min-width: 760px;
+    }
+
+    .architecture-figure figcaption {
+      position: sticky;
+      left: 0;
+      width: calc(100vw - 2.4rem);
+    }
+
+    .interactive-architecture {
+      padding: 0.7rem;
+    }
+
+    .stage-panel {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+    }
+
+    .capability-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow-connector i,
+    .stage-panel {
+      animation: none;
+    }
+
+    .architecture-node {
+      transition: none;
+    }
+  }
+</style>
