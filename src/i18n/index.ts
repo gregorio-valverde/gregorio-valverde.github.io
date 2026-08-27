@@ -142,7 +142,7 @@ export const ui = {
     },
     home: {
       eyebrow: 'Data Engineering · BI · Analytics',
-      title: 'Construyo sistemas de datos prácticos para operaciones de negocio.',
+      title: 'Construyo sistemas de datos robustos para operaciones de negocio',
       subtitle: 'Pipelines de datos, modelos analíticos y cuadros de mando diseñados para convertir datos operativos en información útil para el negocio.',
       viewProjects: 'Ver proyectos',
       contact: 'Contacto',
