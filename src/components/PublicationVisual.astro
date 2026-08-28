@@ -1,6 +1,4 @@
 ---
-import { Image } from 'astro:assets';
-import { getPublicationMedia } from '../data/publicationMedia';
 import type { Lang } from '../i18n';
 
 interface Props {
@@ -13,28 +11,166 @@ interface Props {
 const {
   slug,
   lang = 'es',
-  priority = false,
   variant = 'card',
 } = Astro.props as Props;
 
-const media = getPublicationMedia(slug, lang);
+const normalizedSlug = slug.toLowerCase();
+const isDbtArchitecture = normalizedSlug.includes('dbt-first-data-architecture');
+const isDataMaturity = normalizedSlug.includes('data-maturity-technology-culture');
+const isCommunication = normalizedSlug.includes('communication-also-part-of-engineering');
+
+const copy = lang === 'es'
+  ? {
+      dbtKicker: 'Decisión de arquitectura',
+      dbtTitle: 'Modelos antes que dashboards',
+      dbtFooter: 'Gobernanza · Calidad · Escalabilidad',
+      maturityKicker: 'Madurez del dato',
+      maturityTitle: 'De herramientas a cultura',
+      maturityFooter: 'La tecnología es solo una parte del cambio',
+      systems: 'Sistemas',
+      platform: 'Plataforma',
+      culture: 'Cultura',
+      communicationKicker: 'Artículo · Ingeniería',
+      communicationTitle: 'La ingeniería también comunica',
+      communicationFooter: 'Técnica · Negocio · Personas',
+      technical: 'Técnica',
+      business: 'Negocio',
+      people: 'Personas',
+      genericKicker: 'Data Engineering',
+      genericTitle: 'Ideas que conectan datos y negocio',
+      genericFooter: 'Arquitectura · Analítica · Decisiones',
+    }
+  : {
+      dbtKicker: 'Architecture decision',
+      dbtTitle: 'Models before dashboards',
+      dbtFooter: 'Governance · Quality · Scalability',
+      maturityKicker: 'Data maturity',
+      maturityTitle: 'From tools to culture',
+      maturityFooter: 'Technology is only one part of the change',
+      systems: 'Systems',
+      platform: 'Platform',
+      culture: 'Culture',
+      communicationKicker: 'Article · Engineering',
+      communicationTitle: 'Engineering also communicates',
+      communicationFooter: 'Technical · Business · People',
+      technical: 'Technical',
+      business: 'Business',
+      people: 'People',
+      genericKicker: 'Data Engineering',
+      genericTitle: 'Ideas connecting data and business',
+      genericFooter: 'Architecture · Analytics · Decisions',
+    };
 ---
 
 <div
   class:list={[
     'publication-visual',
     `publication-visual--${variant}`,
-    `publication-visual--${media.mode}`,
+    isDbtArchitecture && 'publication-visual--dbt',
+    isDataMaturity && 'publication-visual--maturity',
+    isCommunication && 'publication-visual--communication',
+    !isDbtArchitecture && !isDataMaturity && !isCommunication && 'publication-visual--generic',
   ]}
-  style={`--publication-image-position: ${media.position};`}
+  aria-hidden="true"
 >
-  <Image
-    src={media.image}
-    alt={media.alt}
-    loading={priority ? 'eager' : 'lazy'}
-    decoding="async"
-  />
-  <div class="visual-shade" aria-hidden="true"></div>
+  {isDbtArchitecture ? (
+    <div class="cover-scene dbt-scene">
+      <div class="cover-copy">
+        <span class="cover-kicker"><i></i>{copy.dbtKicker}</span>
+        <strong>{copy.dbtTitle}</strong>
+        <span class="cover-footer">{copy.dbtFooter}</span>
+      </div>
+
+      <div class="lineage-board">
+        <div class="board-header">
+          <span><i></i> lineage.yml</span>
+          <b>dbt</b>
+        </div>
+        <div class="lineage-flow">
+          <span class="lineage-node lineage-node--raw"><b>RAW</b><small>source</small></span>
+          <span class="lineage-link lineage-link--one"><i></i></span>
+          <span class="lineage-node lineage-node--stg"><b>STG</b><small>clean</small></span>
+          <span class="lineage-link lineage-link--two"><i></i></span>
+          <span class="lineage-node lineage-node--mart"><b>MART</b><small>model</small></span>
+          <span class="lineage-link lineage-link--three"><i></i></span>
+          <span class="lineage-node lineage-node--bi"><b>BI</b><small>serve</small></span>
+        </div>
+        <div class="board-tests">
+          <span><i></i> unique</span>
+          <span><i></i> not_null</span>
+          <span><i></i> relationships</span>
+        </div>
+      </div>
+    </div>
+  ) : isDataMaturity ? (
+    <div class="cover-scene maturity-scene">
+      <div class="cover-copy">
+        <span class="cover-kicker"><i></i>{copy.maturityKicker}</span>
+        <strong>{copy.maturityTitle}</strong>
+        <span class="cover-footer">{copy.maturityFooter}</span>
+      </div>
+
+      <div class="maturity-map">
+        <span class="maturity-beam"><i></i></span>
+        <div class="maturity-stage maturity-stage--one">
+          <span>01</span>
+          <i class="stage-icon stage-icon--systems"><b></b><b></b><b></b></i>
+          <strong>{copy.systems}</strong>
+        </div>
+        <div class="maturity-stage maturity-stage--two">
+          <span>02</span>
+          <i class="stage-icon stage-icon--platform"><b></b><b></b><b></b></i>
+          <strong>{copy.platform}</strong>
+        </div>
+        <div class="maturity-stage maturity-stage--three">
+          <span>03</span>
+          <i class="stage-icon stage-icon--culture"><b></b><b></b><b></b></i>
+          <strong>{copy.culture}</strong>
+        </div>
+      </div>
+    </div>
+  ) : isCommunication ? (
+    <div class="cover-scene communication-scene">
+      <div class="cover-copy">
+        <span class="cover-kicker"><i></i>{copy.communicationKicker}</span>
+        <strong>{copy.communicationTitle}</strong>
+        <span class="cover-footer">{copy.communicationFooter}</span>
+      </div>
+
+      <div class="communication-map">
+        <span class="communication-ring communication-ring--outer"></span>
+        <span class="communication-ring communication-ring--inner"></span>
+        <span class="message-path message-path--one"><i></i></span>
+        <span class="message-path message-path--two"><i></i></span>
+        <span class="message-path message-path--three"><i></i></span>
+
+        <span class="communication-core">
+          <i></i><i></i><i></i>
+          <b>DATA</b>
+        </span>
+        <span class="communication-node communication-node--technical">{copy.technical}</span>
+        <span class="communication-node communication-node--business">{copy.business}</span>
+        <span class="communication-node communication-node--people">{copy.people}</span>
+      </div>
+    </div>
+  ) : (
+    <div class="cover-scene generic-scene">
+      <div class="cover-copy">
+        <span class="cover-kicker"><i></i>{copy.genericKicker}</span>
+        <strong>{copy.genericTitle}</strong>
+        <span class="cover-footer">{copy.genericFooter}</span>
+      </div>
+
+      <div class="generic-grid">
+        <span class="generic-orbit"></span>
+        <span class="generic-cube generic-cube--one"><i></i><i></i><i></i></span>
+        <span class="generic-cube generic-cube--two"><i></i><i></i><i></i></span>
+        <span class="generic-cube generic-cube--three"><i></i><i></i><i></i></span>
+        <span class="generic-packet generic-packet--one"></span>
+        <span class="generic-packet generic-packet--two"></span>
+      </div>
+    </div>
+  )}
 </div>
 
 <style>
@@ -45,9 +181,7 @@ const media = getPublicationMedia(slug, lang);
     min-height: 100%;
     overflow: hidden;
     isolation: isolate;
-    background:
-      radial-gradient(circle at 80% 20%, var(--color-blue-muted), transparent 42%),
-      color-mix(in srgb, var(--color-navy) 18%, var(--color-bg-secondary));
+    background: #071421;
   }
 
   .publication-visual--detail {
@@ -58,57 +192,808 @@ const media = getPublicationMedia(slug, lang);
     box-shadow: var(--shadow-lg);
   }
 
-  .publication-visual :global(img) {
+  .cover-scene {
+    position: relative;
+    display: flex;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: var(--publication-image-position, center);
-    transition: transform 480ms cubic-bezier(0.2, 0.75, 0.25, 1), filter 300ms ease;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    overflow: hidden;
+    isolation: isolate;
+    padding: 1rem;
   }
 
-  .publication-visual--contain :global(img) {
-    object-fit: contain;
-    object-position: center;
-    padding: clamp(0.7rem, 2vw, 1.25rem);
-  }
-
-  .publication-visual--detail.publication-visual--contain :global(img) {
-    padding: clamp(1rem, 3vw, 2rem);
-  }
-
-  .visual-shade {
+  .cover-scene::before {
     position: absolute;
+    z-index: -2;
     inset: 0;
-    z-index: 1;
-    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(151, 193, 225, 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(151, 193, 225, 0.055) 1px, transparent 1px);
+    background-size: 32px 32px;
+    content: '';
+    mask-image: linear-gradient(90deg, transparent, #000 31%, #000);
+  }
+
+  .cover-scene::after {
+    position: absolute;
+    z-index: -1;
+    right: -8%;
+    bottom: -40%;
+    width: 60%;
+    height: 75%;
+    border-radius: 50%;
+    content: '';
+    filter: blur(42px);
+    opacity: 0.72;
+  }
+
+  .dbt-scene {
     background:
-      linear-gradient(180deg, transparent 52%, rgba(10, 27, 42, 0.32) 100%),
-      linear-gradient(90deg, rgba(122, 169, 213, 0.045), transparent 34%);
+      radial-gradient(circle at 85% 20%, rgba(255, 123, 80, 0.24), transparent 28%),
+      radial-gradient(circle at 24% 110%, rgba(42, 213, 255, 0.16), transparent 42%),
+      linear-gradient(118deg, #07141f 0%, #10263a 53%, #2c1717 100%);
   }
 
-  :global(.publication-card:hover) .publication-visual :global(img) {
-    transform: scale(1.035);
-    filter: saturate(1.05) contrast(1.015);
+  .dbt-scene::after { background: rgba(255, 119, 76, 0.18); }
+
+  .maturity-scene {
+    background:
+      radial-gradient(circle at 89% 20%, rgba(96, 227, 179, 0.22), transparent 28%),
+      radial-gradient(circle at 35% 112%, rgba(86, 137, 255, 0.2), transparent 43%),
+      linear-gradient(118deg, #07141f 0%, #11243d 52%, #122d2a 100%);
   }
 
-  @media (max-width: 560px) {
+  .maturity-scene::after { background: rgba(65, 224, 169, 0.16); }
+
+  .communication-scene {
+    background:
+      radial-gradient(circle at 86% 24%, rgba(163, 111, 255, 0.26), transparent 28%),
+      radial-gradient(circle at 20% 110%, rgba(44, 210, 255, 0.18), transparent 42%),
+      linear-gradient(118deg, #07141f 0%, #11243b 49%, #241843 100%);
+  }
+
+  .communication-scene::after { background: rgba(141, 91, 255, 0.2); }
+
+  .generic-scene {
+    background:
+      radial-gradient(circle at 84% 22%, rgba(47, 213, 255, 0.22), transparent 28%),
+      radial-gradient(circle at 22% 110%, rgba(127, 104, 255, 0.2), transparent 43%),
+      linear-gradient(118deg, #07141f 0%, #10243a 50%, #18183d 100%);
+  }
+
+  .generic-scene::after { background: rgba(61, 195, 255, 0.16); }
+
+  .cover-copy {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    width: 58%;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cover-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.48rem;
+    color: #a9dbea;
+    font-size: clamp(0.48rem, 0.75vw, 0.62rem);
+    font-weight: 760;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .cover-kicker i {
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    background: #48dcff;
+    box-shadow: 0 0 13px #48dcff;
+    animation: coverSignal 2.1s ease-in-out infinite;
+  }
+
+  .publication-visual--dbt .cover-kicker i { background: #ff8461; box-shadow: 0 0 13px #ff8461; }
+  .publication-visual--maturity .cover-kicker i { background: #55e2ac; box-shadow: 0 0 13px #55e2ac; }
+  .publication-visual--communication .cover-kicker i { background: #b082ff; box-shadow: 0 0 13px #b082ff; }
+
+  .cover-copy > strong {
+    max-width: 720px;
+    margin-top: clamp(0.28rem, 1vw, 0.55rem);
+    color: #f4f8fc;
+    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+    font-weight: 770;
+    letter-spacing: -0.058em;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  .cover-footer {
+    margin-top: 0.58rem;
+    color: #aabccb;
+    font-size: clamp(0.49rem, 0.72vw, 0.64rem);
+    font-weight: 620;
+    letter-spacing: 0.035em;
+  }
+
+  /* dbt architecture */
+  .lineage-board {
+    position: relative;
+    z-index: 3;
+    width: min(43%, 510px);
+    min-width: 285px;
+    padding: clamp(0.75rem, 2vw, 1.2rem);
+    border: 1px solid rgba(182, 213, 233, 0.17);
+    border-radius: clamp(14px, 2vw, 22px);
+    background: rgba(5, 18, 29, 0.62);
+    box-shadow: 0 24px 60px rgba(0, 7, 18, 0.38), inset 0 1px rgba(255, 255, 255, 0.045);
+    backdrop-filter: blur(8px);
+    transform: perspective(850px) rotateY(-5deg) rotateX(2deg);
+    transition: transform 420ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  }
+
+  :global(.publication-card:hover) .lineage-board {
+    transform: perspective(850px) rotateY(-2deg) rotateX(0deg) translateY(-3px);
+  }
+
+  .board-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid rgba(171, 205, 226, 0.11);
+    color: #91a9bb;
+    font-size: clamp(0.42rem, 0.8vw, 0.62rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .board-header span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.36rem;
+  }
+
+  .board-header span i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #58dfb2;
+    box-shadow: 0 0 8px #58dfb2;
+  }
+
+  .board-header b {
+    color: #ffad8e;
+    font-size: 1.05em;
+  }
+
+  .lineage-flow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    padding: clamp(0.9rem, 2.3vw, 1.65rem) 0;
+  }
+
+  .lineage-node {
+    display: flex;
+    min-width: clamp(44px, 6vw, 67px);
+    min-height: clamp(37px, 5vw, 52px);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border: 1px solid rgba(170, 207, 231, 0.2);
+    border-radius: clamp(8px, 1.4vw, 13px);
+    background: rgba(14, 32, 50, 0.84);
+    box-shadow: 0 10px 23px rgba(1, 7, 18, 0.25);
+  }
+
+  .lineage-node b {
+    color: #eaf5fb;
+    font-size: clamp(0.45rem, 0.9vw, 0.68rem);
+    letter-spacing: 0.06em;
+  }
+
+  .lineage-node small {
+    margin-top: 2px;
+    color: #8299aa;
+    font-size: clamp(0.33rem, 0.6vw, 0.48rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .lineage-node--raw { border-color: rgba(83, 211, 255, 0.38); }
+  .lineage-node--stg { border-color: rgba(93, 231, 181, 0.38); }
+  .lineage-node--mart { border-color: rgba(255, 135, 96, 0.48); }
+  .lineage-node--bi { border-color: rgba(183, 123, 255, 0.45); }
+
+  .lineage-link {
+    position: relative;
+    width: clamp(18px, 3vw, 42px);
+    height: 1px;
+    overflow: hidden;
+    background: linear-gradient(90deg, rgba(76, 204, 255, 0.18), rgba(103, 224, 255, 0.7), rgba(76, 204, 255, 0.18));
+  }
+
+  .lineage-link::after {
+    position: absolute;
+    top: -8px;
+    right: -1px;
+    color: rgba(145, 220, 249, 0.7);
+    content: '›';
+  }
+
+  .lineage-link i {
+    position: absolute;
+    top: -2px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #ff8b68;
+    box-shadow: 0 0 8px #ff8b68;
+    animation: lineagePacket 2.3s linear infinite;
+  }
+
+  .lineage-link--two i { animation-delay: -0.8s; background: #59e3b0; box-shadow: 0 0 8px #59e3b0; }
+  .lineage-link--three i { animation-delay: -1.55s; background: #b781ff; box-shadow: 0 0 8px #b781ff; }
+
+  .board-tests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid rgba(171, 205, 226, 0.11);
+  }
+
+  .board-tests span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.22rem 0.4rem;
+    border: 1px solid rgba(168, 201, 222, 0.14);
+    border-radius: 999px;
+    color: #8fa8b9;
+    font-size: clamp(0.34rem, 0.6vw, 0.46rem);
+    font-weight: 650;
+  }
+
+  .board-tests i {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #55dfad;
+  }
+
+  /* Maturity */
+  .maturity-map {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    width: min(45%, 520px);
+    min-width: 300px;
+    height: min(72%, 310px);
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: clamp(0.45rem, 1.5vw, 1.2rem);
+    padding: 1rem 0.3rem 0.5rem;
+  }
+
+  .maturity-beam {
+    position: absolute;
+    z-index: -1;
+    right: 6%;
+    bottom: 29%;
+    left: 6%;
+    height: 2px;
+    overflow: hidden;
+    background: linear-gradient(90deg, rgba(73, 205, 255, 0.16), rgba(91, 229, 177, 0.72), rgba(169, 118, 255, 0.72));
+    transform: rotate(-13deg);
+    transform-origin: left center;
+  }
+
+  .maturity-beam i {
+    position: absolute;
+    top: -3px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #5be3b3;
+    box-shadow: 0 0 13px #5be3b3;
+    animation: maturityProgress 3.6s ease-in-out infinite;
+  }
+
+  .maturity-stage {
+    position: relative;
+    display: flex;
+    width: 31%;
+    align-items: center;
+    flex-direction: column;
+    padding: clamp(0.65rem, 1.8vw, 1.1rem) 0.45rem;
+    border: 1px solid rgba(173, 210, 232, 0.18);
+    border-radius: clamp(12px, 1.8vw, 19px);
+    background: rgba(7, 23, 38, 0.66);
+    box-shadow: 0 16px 32px rgba(0, 8, 20, 0.3);
+    backdrop-filter: blur(7px);
+    transition: transform 260ms ease, border-color 260ms ease;
+  }
+
+  .maturity-stage--one { min-height: 47%; }
+  .maturity-stage--two { min-height: 67%; border-color: rgba(82, 211, 255, 0.28); }
+  .maturity-stage--three { min-height: 88%; border-color: rgba(91, 229, 177, 0.37); }
+
+  :global(.publication-card:hover) .maturity-stage--one { transform: translateY(-2px); }
+  :global(.publication-card:hover) .maturity-stage--two { transform: translateY(-5px); }
+  :global(.publication-card:hover) .maturity-stage--three { transform: translateY(-8px); }
+
+  .maturity-stage > span {
+    align-self: flex-start;
+    color: #728b9e;
+    font-size: clamp(0.38rem, 0.75vw, 0.55rem);
+    font-weight: 760;
+    letter-spacing: 0.08em;
+  }
+
+  .maturity-stage > strong {
+    margin-top: auto;
+    color: #dcecf5;
+    font-size: clamp(0.45rem, 0.95vw, 0.72rem);
+    font-weight: 720;
+    text-align: center;
+  }
+
+  .stage-icon {
+    position: relative;
+    display: flex;
+    width: clamp(28px, 4vw, 48px);
+    height: clamp(28px, 4vw, 48px);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 3px;
+    margin: auto 0;
+    border: 1px solid rgba(136, 204, 235, 0.24);
+    border-radius: 13px;
+    background: rgba(36, 131, 171, 0.12);
+  }
+
+  .stage-icon b {
+    display: block;
+    width: 48%;
+    height: 4px;
+    border: 1px solid rgba(191, 226, 242, 0.62);
+    border-radius: 50%;
+  }
+
+  .stage-icon--platform { background: rgba(91, 131, 255, 0.13); border-color: rgba(101, 151, 255, 0.36); }
+  .stage-icon--culture { background: rgba(80, 221, 169, 0.14); border-color: rgba(86, 226, 172, 0.42); }
+
+  .stage-icon--culture b {
+    width: 7px;
+    height: 7px;
+    border: 0;
+    border-radius: 50%;
+    background: #60dfb1;
+    box-shadow: -10px 7px 0 rgba(105, 216, 255, 0.75), 10px 7px 0 rgba(175, 125, 255, 0.75);
+  }
+
+  .stage-icon--culture b:nth-child(2),
+  .stage-icon--culture b:nth-child(3) { display: none; }
+
+  /* Communication */
+  .communication-map {
+    position: relative;
+    z-index: 3;
+    width: min(43%, 500px);
+    min-width: 290px;
+    height: min(78%, 330px);
+  }
+
+  .communication-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 1px solid rgba(121, 191, 239, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) rotate(-8deg);
+  }
+
+  .communication-ring--outer { width: 90%; height: 68%; }
+  .communication-ring--inner { width: 58%; height: 44%; border-color: rgba(177, 121, 255, 0.32); transform: translate(-50%, -50%) rotate(13deg); }
+
+  .communication-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    width: clamp(64px, 9vw, 104px);
+    height: clamp(64px, 9vw, 104px);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border: 1px solid rgba(177, 123, 255, 0.48);
+    border-radius: 31%;
+    background: linear-gradient(145deg, rgba(71, 209, 255, 0.13), rgba(158, 91, 255, 0.24)), rgba(7, 21, 38, 0.9);
+    box-shadow: 0 0 0 8px rgba(154, 97, 255, 0.05), 0 20px 44px rgba(0, 7, 19, 0.4);
+    transform: translate(-50%, -50%) rotate(4deg);
+  }
+
+  .communication-core i {
+    width: 42%;
+    height: 4px;
+    margin: 2px 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #51d8ff, #b27cff);
+  }
+
+  .communication-core b {
+    margin-top: 0.3rem;
+    color: #e7f4fb;
+    font-size: clamp(0.4rem, 0.75vw, 0.58rem);
+    letter-spacing: 0.12em;
+  }
+
+  .communication-node {
+    position: absolute;
+    display: grid;
+    min-width: clamp(62px, 8vw, 98px);
+    min-height: clamp(28px, 4vw, 42px);
+    place-items: center;
+    padding: 0.4rem;
+    border: 1px solid rgba(168, 205, 229, 0.2);
+    border-radius: 11px;
+    background: rgba(8, 23, 39, 0.78);
+    box-shadow: 0 13px 28px rgba(0, 7, 18, 0.3);
+    color: #d8eaf4;
+    font-size: clamp(0.4rem, 0.8vw, 0.62rem);
+    font-weight: 700;
+    backdrop-filter: blur(6px);
+  }
+
+  .communication-node--technical { top: 7%; left: 2%; border-color: rgba(68, 207, 255, 0.42); }
+  .communication-node--business { top: 8%; right: 1%; border-color: rgba(255, 179, 82, 0.42); }
+  .communication-node--people { right: 10%; bottom: 2%; border-color: rgba(182, 119, 255, 0.48); }
+
+  .message-path {
+    position: absolute;
+    z-index: 2;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(87, 213, 255, 0.12), rgba(139, 131, 255, 0.65), rgba(87, 213, 255, 0.12));
+    transform-origin: left center;
+  }
+
+  .message-path--one { top: 34%; left: 22%; width: 31%; transform: rotate(19deg); }
+  .message-path--two { top: 36%; left: 52%; width: 30%; transform: rotate(-21deg); }
+  .message-path--three { top: 62%; left: 54%; width: 28%; transform: rotate(27deg); }
+
+  .message-path i {
+    position: absolute;
+    top: -3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #51d9ff;
+    box-shadow: 0 0 11px #51d9ff;
+    animation: messageTravel 2.8s linear infinite;
+  }
+
+  .message-path--two i { animation-delay: -0.95s; background: #ffb45d; box-shadow: 0 0 11px #ffb45d; }
+  .message-path--three i { animation-delay: -1.8s; background: #b77fff; box-shadow: 0 0 11px #b77fff; }
+
+  /* Generic */
+  .generic-grid {
+    position: relative;
+    z-index: 3;
+    width: min(43%, 500px);
+    min-width: 285px;
+    height: min(74%, 320px);
+  }
+
+  .generic-orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 90%;
+    height: 58%;
+    border: 1px solid rgba(89, 209, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) rotate(-12deg);
+  }
+
+  .generic-cube {
+    position: absolute;
+    display: flex;
+    width: clamp(55px, 8vw, 88px);
+    height: clamp(55px, 8vw, 88px);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    border: 1px solid rgba(116, 209, 255, 0.34);
+    border-radius: 22%;
+    background: rgba(8, 24, 41, 0.75);
+    box-shadow: 0 18px 37px rgba(0, 8, 20, 0.34);
+    backdrop-filter: blur(7px);
+  }
+
+  .generic-cube i {
+    width: 46%;
+    height: 5px;
+    border: 1px solid rgba(197, 231, 246, 0.6);
+    border-radius: 50%;
+  }
+
+  .generic-cube--one { top: 5%; left: 4%; transform: rotate(-7deg); }
+  .generic-cube--two { top: 27%; left: 42%; border-color: rgba(146, 119, 255, 0.44); transform: rotate(4deg); }
+  .generic-cube--three { right: 1%; bottom: 2%; border-color: rgba(71, 225, 174, 0.42); transform: rotate(-3deg); }
+
+  .generic-packet {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #54dcff;
+    box-shadow: 0 0 14px #54dcff;
+    animation: genericFloat 3.2s ease-in-out infinite alternate;
+  }
+
+  .generic-packet--one { top: 18%; right: 18%; }
+  .generic-packet--two { bottom: 18%; left: 24%; background: #ad7fff; box-shadow: 0 0 14px #ad7fff; animation-delay: -1.6s; }
+
+  /* Variant-specific sizing keeps the same scene readable in cards, featured blocks, and detail pages. */
+  .publication-visual--card .cover-copy {
+    width: 64%;
+  }
+
+  .publication-visual--card .lineage-board,
+  .publication-visual--card .maturity-map,
+  .publication-visual--card .communication-map,
+  .publication-visual--card .generic-grid {
+    position: absolute;
+    right: -5%;
+    width: 52%;
+    min-width: 180px;
+    opacity: 0.82;
+  }
+
+  .publication-visual--card .lineage-board {
+    padding: 0.55rem;
+    border-radius: 12px;
+  }
+
+  .publication-visual--card .board-header {
+    padding-bottom: 0.4rem;
+    font-size: 0.4rem;
+  }
+
+  .publication-visual--card .lineage-flow {
+    gap: 0.18rem;
+    padding: 0.66rem 0;
+  }
+
+  .publication-visual--card .lineage-node {
+    min-width: 34px;
+    min-height: 31px;
+    border-radius: 7px;
+  }
+
+  .publication-visual--card .lineage-node b { font-size: 0.4rem; }
+  .publication-visual--card .lineage-node small { display: none; }
+  .publication-visual--card .lineage-link { width: 10px; }
+  .publication-visual--card .board-tests { display: none; }
+
+  .publication-visual--card .maturity-map {
+    right: -3%;
+    height: 78%;
+    min-width: 178px;
+  }
+
+  .publication-visual--card .maturity-stage {
+    padding: 0.48rem 0.24rem;
+    border-radius: 9px;
+  }
+
+  .publication-visual--card .maturity-stage > strong { font-size: 0.4rem; }
+  .publication-visual--card .stage-icon { width: 29px; height: 29px; border-radius: 8px; }
+
+  .publication-visual--card .communication-map {
+    right: -4%;
+    height: 88%;
+    min-width: 184px;
+  }
+
+  .publication-visual--card .communication-core {
+    width: 58px;
+    height: 58px;
+  }
+
+  .publication-visual--card .communication-node {
+    min-width: 53px;
+    min-height: 25px;
+    padding: 0.28rem;
+    border-radius: 7px;
+    font-size: 0.36rem;
+  }
+
+  .publication-visual--card .generic-grid {
+    right: -4%;
+    height: 82%;
+    min-width: 180px;
+  }
+
+  .publication-visual--card .generic-cube {
+    width: 50px;
+    height: 50px;
+  }
+
+  .publication-visual--featured .cover-scene {
+    gap: clamp(1.5rem, 3vw, 3rem);
+    padding: clamp(1.5rem, 3vw, 2.8rem);
+  }
+
+  .publication-visual--featured .cover-copy {
+    width: min(54%, 580px);
+  }
+
+  .publication-visual--featured .cover-copy > strong {
+    font-size: clamp(1.8rem, 3.5vw, 3.35rem);
+  }
+
+  .publication-visual--featured .cover-kicker {
+    font-size: clamp(0.56rem, 0.9vw, 0.7rem);
+  }
+
+  .publication-visual--featured .cover-footer {
+    margin-top: 0.9rem;
+    font-size: clamp(0.6rem, 1vw, 0.78rem);
+  }
+
+  .publication-visual--detail .cover-scene {
+    gap: clamp(2rem, 4vw, 4rem);
+    padding: clamp(1.7rem, 4vw, 3.4rem);
+  }
+
+  .publication-visual--detail .cover-copy {
+    width: min(54%, 620px);
+  }
+
+  .publication-visual--detail .cover-copy > strong {
+    font-size: clamp(2.2rem, 4.7vw, 4.5rem);
+  }
+
+  .publication-visual--detail .cover-kicker {
+    font-size: clamp(0.62rem, 1vw, 0.78rem);
+  }
+
+  .publication-visual--detail .cover-footer {
+    margin-top: clamp(0.8rem, 1.7vw, 1.15rem);
+    font-size: clamp(0.68rem, 1.15vw, 0.9rem);
+  }
+
+  @keyframes coverSignal {
+    50% { opacity: 0.43; transform: scale(0.72); }
+  }
+
+  @keyframes lineagePacket {
+    from { left: -7px; opacity: 0; }
+    14% { opacity: 1; }
+    86% { opacity: 1; }
+    to { left: calc(100% + 3px); opacity: 0; }
+  }
+
+  @keyframes messageTravel {
+    from { left: -7px; opacity: 0; }
+    14% { opacity: 1; }
+    86% { opacity: 1; }
+    to { left: calc(100% + 3px); opacity: 0; }
+  }
+
+  @keyframes maturityProgress {
+    0% { left: -8px; opacity: 0; }
+    14% { opacity: 1; }
+    50% { box-shadow: 0 0 18px #5be3b3; }
+    86% { opacity: 1; }
+    100% { left: calc(100% + 3px); opacity: 0; }
+  }
+
+  @keyframes genericFloat {
+    from { opacity: 0.55; transform: translate(-8px, 5px) scale(0.78); }
+    to { opacity: 1; transform: translate(10px, -7px) scale(1.12); }
+  }
+
+  @media (max-width: 900px) {
+    .cover-copy { width: 52%; }
+    .lineage-board,
+    .maturity-map,
+    .communication-map,
+    .generic-grid { min-width: 255px; }
+  }
+
+  @media (max-width: 680px) {
+    .publication-visual--card .cover-scene {
+      padding: 0.9rem;
+    }
+
+    .publication-visual--card .cover-copy > strong {
+      font-size: 1.28rem;
+    }
+
+    .publication-visual--featured .cover-scene {
+      gap: 1.1rem;
+      padding: 1.2rem;
+    }
+
+    .publication-visual--featured .cover-copy > strong {
+      font-size: clamp(1.65rem, 7vw, 2.35rem);
+    }
+
     .publication-visual--detail {
       aspect-ratio: 4 / 3;
       min-height: 0;
       border-radius: 17px;
     }
 
-    .publication-visual--detail.publication-visual--contain :global(img) {
-      object-position: center;
-      padding: 0.75rem;
+    .publication-visual--detail .cover-scene {
+      gap: 1.1rem;
+      padding: 1.2rem;
+    }
+
+    .publication-visual--detail .cover-copy > strong {
+      font-size: clamp(1.7rem, 8vw, 2.5rem);
+    }
+
+    .publication-visual--detail .cover-kicker {
+      font-size: 0.56rem;
+    }
+
+    .publication-visual--detail .cover-footer {
+      margin-top: 0.7rem;
+      font-size: 0.62rem;
+    }
+
+    .cover-scene { padding: 1.05rem; }
+    .cover-copy { width: 58%; }
+    .cover-copy > strong { font-size: clamp(1.4rem, 7.5vw, 2.5rem); }
+    .lineage-board,
+    .maturity-map,
+    .communication-map,
+    .generic-grid {
+      position: absolute;
+      right: -10%;
+      width: 53%;
+      min-width: 220px;
+      opacity: 0.76;
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .publication-visual :global(img) { transition: none; }
+  @media (max-width: 460px) {
+    .cover-copy { width: 69%; }
+    .cover-copy > strong { font-size: 1.45rem; }
+    .cover-footer { max-width: 210px; }
+    .lineage-board,
+    .maturity-map,
+    .communication-map,
+    .generic-grid { right: -28%; opacity: 0.59; }
+    .board-tests { display: none; }
+  }
 
-    :global(.publication-card:hover) .publication-visual :global(img) {
-      transform: none;
+  @media (prefers-reduced-motion: reduce) {
+    .cover-kicker i,
+    .lineage-link i,
+    .maturity-beam i,
+    .message-path i,
+    .generic-packet {
+      animation: none;
     }
+
+    .lineage-link i,
+    .message-path i { left: 50%; }
+    .maturity-beam i { left: 50%; }
+    .lineage-board,
+    .maturity-stage { transition: none; }
   }
 </style>

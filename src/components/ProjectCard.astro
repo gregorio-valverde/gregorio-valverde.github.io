@@ -12,7 +12,7 @@ interface Props {
   year: number;
   techStack?: string[];
   featured?: boolean;
-  status?: 'completed' | 'ongoing' | 'archived';
+  status?: 'completed' | 'ongoing' | 'coming-soon' | 'archived';
   lang?: Lang;
 }
 
@@ -29,11 +29,13 @@ const {
 } = Astro.props;
 
 const copy = ui[lang].projects;
+const isComingSoon = status === 'coming-soon';
 const displayTech = techStack.slice(0, 4);
 const hasMoreTech = techStack.length > 4;
 const statusConfig = {
   completed: { label: copy.completed, class: 'status--completed' },
   ongoing: { label: copy.ongoing, class: 'status--ongoing' },
+  'coming-soon': { label: lang === 'es' ? 'Próximamente' : 'Coming soon', class: 'status--coming-soon' },
   archived: { label: copy.archived, class: 'status--archived' },
 };
 const statusInfo = statusConfig[status];
@@ -56,18 +58,18 @@ const href = localizePath(`/projects/${slug}`, lang);
     )}
   </div>
 
-  <Fragment slot="meta">{role} · {year}</Fragment>
+  {!isComingSoon && <Fragment slot="meta">{role} · {year}</Fragment>}
   <Fragment slot="title">{title}</Fragment>
-  <Fragment slot="description">{outcomeSummary}</Fragment>
+  <Fragment slot="description">{isComingSoon ? (lang === 'es' ? 'En proceso.' : 'In progress.') : outcomeSummary}</Fragment>
 
-  {displayTech.length > 0 && (
+  {!isComingSoon && displayTech.length > 0 && (
     <div slot="tags" class="tags-list">
       {displayTech.map((tech) => <span class="tag">{tech}</span>)}
       {hasMoreTech && <span class="tag-more">+{techStack.length - 4}</span>}
     </div>
   )}
 
-  <ForwardLink text={copy.viewCaseStudy} />
+  <ForwardLink text={isComingSoon ? (lang === 'es' ? 'Ver estado' : 'View status') : copy.viewCaseStudy} />
 </BaseCard>
 
 <style>
@@ -77,6 +79,7 @@ const href = localizePath(`/projects/${slug}`, lang);
   .featured-badge svg { flex-shrink: 0; }
   .status-badge { display: inline-flex; align-items: center; font-size: 0.625rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.25rem 0.5rem; border-radius: 4px; }
   .status--ongoing { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+  .status--coming-soon { background: rgba(255, 153, 0, 0.14); color: #ffb13b; }
   .status--archived { background: rgba(115, 115, 115, 0.15); color: var(--color-text-muted); }
   :global(.project-card) { overflow: hidden; transform: translateY(0); transition: transform .22s ease, border-color .22s ease, background .22s ease; }
   :global(.project-card:hover) { transform: translateY(-4px); }

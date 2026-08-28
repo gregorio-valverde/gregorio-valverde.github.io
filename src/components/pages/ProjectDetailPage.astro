@@ -19,9 +19,11 @@ const copy = ui[lang].projectDetail;
 const projectCopy = ui[lang].projects;
 
 const { title, role, year, duration, teamSize, outcomeSummary, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, relatedProjects, relatedDecisions, status, showcase } = project.data;
+const isComingSoon = status === 'coming-soon';
 const statusConfig = {
   completed: { label: projectCopy.completed, class: 'status--completed' },
   ongoing: { label: projectCopy.ongoing, class: 'status--ongoing' },
+  'coming-soon': { label: lang === 'es' ? 'Próximamente' : 'Coming soon', class: 'status--coming-soon' },
   archived: { label: projectCopy.archived, class: 'status--archived' },
 };
 const statusInfo = statusConfig[status || 'completed'];
@@ -30,10 +32,19 @@ const readingTime = `${calculateReadingTime(allText)} ${copy.minRead}`;
 ---
 
 <BaseLayout lang={lang} alternatePath={alternatePath}>
-  <SEO slot="head" title={`${title} - ${copy.caseStudy}`} description={outcomeSummary} type="article" />
-  <StructuredData type="Project" lang={lang} data={{ title, outcomeSummary, problem, impact: impact.qualitative, techStack, year }} />
+  <SEO slot="head" title={isComingSoon ? title : `${title} - ${copy.caseStudy}`} description={outcomeSummary} type="article" />
+  {!isComingSoon && <StructuredData type="Project" lang={lang} data={{ title, outcomeSummary, problem, impact: impact.qualitative, techStack, year }} />}
 
   <main class="case-study">
+    {isComingSoon ? (
+      <section class="coming-soon-page" aria-labelledby="coming-soon-title">
+        <span class="coming-soon-kicker">AWS</span>
+        <h1 id="coming-soon-title">{title}</h1>
+        <p>{lang === 'es' ? 'En proceso.' : 'In progress.'}</p>
+        <BackLink href={localizePath('/projects', lang)} text={copy.allProjects} />
+      </section>
+    ) : (
+      <Fragment>
     <header class="case-study-header">
       <div class="header-badges">
         {status && status !== 'completed' && <span class:list={['status-badge', statusInfo.class]}>{statusInfo.label}</span>}
@@ -77,6 +88,8 @@ const readingTime = `${calculateReadingTime(allText)} ${copy.minRead}`;
     {Content && <section class="case-study-content"><Content /></section>}
     <RelatedContent relatedProjects={relatedProjects} relatedDecisions={relatedDecisions} lang={lang} />
     <BackLink href={localizePath('/projects', lang)} text={copy.allProjects} />
+      </Fragment>
+    )}
   </main>
   <ScrollToTop />
 
@@ -86,6 +99,36 @@ const readingTime = `${calculateReadingTime(allText)} ${copy.minRead}`;
       max-width: 1120px;
       margin: 0 auto;
       padding: 2rem 1.5rem;
+    }
+
+    .coming-soon-page {
+      display: flex;
+      min-height: min(620px, 72vh);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .coming-soon-kicker {
+      color: #ffb13b;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+    }
+
+    .coming-soon-page h1 {
+      max-width: 780px;
+      margin: 0.7rem 0 0;
+      font-size: clamp(2.25rem, 7vw, 5rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+    }
+
+    .coming-soon-page p {
+      margin: 1.25rem 0 2.5rem;
+      color: var(--color-text-secondary);
+      font-size: 1.15rem;
     }
 
     .case-study-header {
@@ -116,6 +159,11 @@ const readingTime = `${calculateReadingTime(allText)} ${copy.minRead}`;
     .status--ongoing {
       background: rgba(34, 197, 94, 0.15);
       color: #22c55e;
+    }
+
+    .status--coming-soon {
+      background: rgba(255, 153, 0, 0.14);
+      color: #ffb13b;
     }
 
     .status--archived {

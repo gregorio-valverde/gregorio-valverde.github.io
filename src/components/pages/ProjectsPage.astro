@@ -29,9 +29,19 @@ const featuredCount = sortedProjects.filter(p => p.data.featured).length;
       <PageStats text={copy.stats(totalProjects, featuredCount)} />
     </header>
     {sortedProjects.length > 0 ? (
-      <div class="card-list">
+      <div class="projects-grid">
         {sortedProjects.map((project) => (
-          <ProjectCard title={project.data.title} slug={contentSlug(project.id)} outcomeSummary={project.data.outcomeSummary} role={project.data.role} year={project.data.year} techStack={project.data.techStack} featured={project.data.featured} status={project.data.status} lang={lang} />
+          <ProjectCard
+            title={project.data.title}
+            slug={contentSlug(project.id)}
+            outcomeSummary={project.data.outcomeSummary}
+            role={project.data.role}
+            year={project.data.year}
+            techStack={project.data.techStack}
+            featured={project.data.featured}
+            status={project.data.status}
+            lang={lang}
+          />
         ))}
       </div>
     ) : <p class="empty-state">{copy.empty}</p>}
@@ -44,6 +54,32 @@ const featuredCount = sortedProjects.filter(p => p.data.featured).length;
 
     .projects-page .page-intro {
       max-width: none;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+      align-items: stretch;
+    }
+
+    .projects-grid > :global(.project-card) {
+      min-width: 0;
+      height: 100%;
+    }
+
+    .projects-grid > :global(.project-card:last-child:nth-child(odd)) {
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 760px) {
+      .projects-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .projects-grid > :global(.project-card:last-child:nth-child(odd)) {
+        grid-column: auto;
+      }
     }
   </style>
 </BaseLayout>
