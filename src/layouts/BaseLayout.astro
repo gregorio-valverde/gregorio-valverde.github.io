@@ -20,7 +20,8 @@ interface Props {
 const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
 const otherLang: Lang = lang === 'en' ? 'es' : 'en';
 const currentPath = Astro.url.pathname;
-const alternatePath = Astro.props.alternatePath ?? switchLanguagePath(currentPath, otherLang);
+const alternatePath =
+  Astro.props.alternatePath ?? switchLanguagePath(currentPath, otherLang);
 const currentAbsoluteUrl = new URL(currentPath, siteConfig.url).href;
 const alternateAbsoluteUrl = new URL(alternatePath, siteConfig.url).href;
 const enUrl = lang === 'en' ? currentAbsoluteUrl : alternateAbsoluteUrl;
@@ -41,25 +42,74 @@ const esUrl = lang === 'es' ? currentAbsoluteUrl : alternateAbsoluteUrl;
     <link rel="alternate" hreflang="x-default" href={esUrl} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/favicon-16x16.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/apple-touch-icon.png"
+    />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#29333e" />
+
+    <!-- Google Analytics -->
+    <script
+      is:inline
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-E3QNQLY611"
+    ></script>
+
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+
+      gtag('js', new Date());
+      gtag('config', 'G-E3QNQLY611');
+    </script>
 
     <ClientRouter />
 
     <style>
-      body { display: flex; flex-direction: column; min-height: 100vh; }
-      main { flex: 1; }
-      .site-header { position: sticky; top: 0; z-index: 100; }
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      main {
+        flex: 1;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
     </style>
   </head>
+
   <body>
     <header class="site-header">
       <Navigation lang={lang} alternatePath={alternatePath} />
     </header>
-    <main><slot /></main>
+
+    <main>
+      <slot />
+    </main>
+
     <Footer />
   </body>
 </html>
